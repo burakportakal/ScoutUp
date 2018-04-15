@@ -1,0 +1,988 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C3B705FA-47CD-4859-A94F-B7F2B9DBFD41}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ScoutUp</RootNamespace>
+    <AssemblyName>ScoutUp</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Web.Razor">
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Webpages">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Webpages.Deployment">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Webpages.Razor">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Webpages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Helpers">
+      <HintPath>..\packages\Microsoft.AspNet.Webpages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure">
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc">
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Site.css" />
+    <Content Include="css\bootstrap.min.css" />
+    <Content Include="css\emoji.css" />
+    <Content Include="css\font-awesome.min.css" />
+    <Content Include="css\ionicons.css" />
+    <Content Include="css\ionicons.min.css" />
+    <Content Include="css\jquery.scrollbar.css" />
+    <Content Include="css\style.css" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\ionicons.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="images\404.png" />
+    <Content Include="images\app-store.png" />
+    <Content Include="images\bottom-shadow.png" />
+    <Content Include="images\bullet.png" />
+    <Content Include="images\down-arrow.png" />
+    <Content Include="images\envato.png" />
+    <Content Include="images\envato_logo.png" />
+    <Content Include="images\face-map.png" />
+    <Content Include="images\fav.png" />
+    <Content Include="images\google-play.png" />
+    <Content Include="images\iPhone.png" />
+    <Content Include="images\logo-black.png" />
+    <Content Include="images\logo.png" />
+    <Content Include="js\bootstrap.min.js" />
+    <Content Include="js\jquery-3.1.1.min.js" />
+    <Content Include="js\jquery.appear.min.js" />
+    <Content Include="js\jquery.incremental-counter.js" />
+    <Content Include="js\jquery.scrollbar.min.js" />
+    <Content Include="js\jquery.sticky-kit.min.js" />
+    <Content Include="js\masonry.pkgd.min.js" />
+    <Content Include="js\script.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="fonts\ionicons.eot" />
+    <Content Include="fonts\ionicons.ttf" />
+    <Content Include="fonts\ionicons.woff" />
+    <Content Include="less\ionicons.less" />
+    <Content Include="less\_ionicons-font.less" />
+    <Content Include="less\_ionicons-icons.less" />
+    <Content Include="less\_ionicons-variables.less" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="src\alert-circled.svg" />
+    <Content Include="src\alert.svg" />
+    <Content Include="src\android-add-circle.svg" />
+    <Content Include="src\android-add.svg" />
+    <Content Include="src\android-alarm-clock.svg" />
+    <Content Include="src\android-alert.svg" />
+    <Content Include="src\android-apps.svg" />
+    <Content Include="src\android-archive.svg" />
+    <Content Include="src\android-arrow-back.svg" />
+    <Content Include="src\android-arrow-down.svg" />
+    <Content Include="src\android-arrow-dropdown-circle.svg" />
+    <Content Include="src\android-arrow-dropdown.svg" />
+    <Content Include="src\android-arrow-dropleft-circle.svg" />
+    <Content Include="src\android-arrow-dropleft.svg" />
+    <Content Include="src\android-arrow-dropright-circle.svg" />
+    <Content Include="src\android-arrow-dropright.svg" />
+    <Content Include="src\android-arrow-dropup-circle.svg" />
+    <Content Include="src\android-arrow-dropup.svg" />
+    <Content Include="src\android-arrow-forward.svg" />
+    <Content Include="src\android-arrow-up.svg" />
+    <Content Include="src\android-attach.svg" />
+    <Content Include="src\android-bar.svg" />
+    <Content Include="src\android-bicycle.svg" />
+    <Content Include="src\android-boat.svg" />
+    <Content Include="src\android-bookmark.svg" />
+    <Content Include="src\android-bulb.svg" />
+    <Content Include="src\android-bus.svg" />
+    <Content Include="src\android-calendar.svg" />
+    <Content Include="src\android-call.svg" />
+    <Content Include="src\android-camera.svg" />
+    <Content Include="src\android-cancel.svg" />
+    <Content Include="src\android-car.svg" />
+    <Content Include="src\android-cart.svg" />
+    <Content Include="src\android-chat.svg" />
+    <Content Include="src\android-checkbox-blank.svg" />
+    <Content Include="src\android-checkbox-outline-blank.svg" />
+    <Content Include="src\android-checkbox-outline.svg" />
+    <Content Include="src\android-checkbox.svg" />
+    <Content Include="src\android-checkmark-circle.svg" />
+    <Content Include="src\android-clipboard.svg" />
+    <Content Include="src\android-close.svg" />
+    <Content Include="src\android-cloud-circle.svg" />
+    <Content Include="src\android-cloud-done.svg" />
+    <Content Include="src\android-cloud-outline.svg" />
+    <Content Include="src\android-cloud.svg" />
+    <Content Include="src\android-color-palette.svg" />
+    <Content Include="src\android-compass.svg" />
+    <Content Include="src\android-contact.svg" />
+    <Content Include="src\android-contacts.svg" />
+    <Content Include="src\android-contract.svg" />
+    <Content Include="src\android-create.svg" />
+    <Content Include="src\android-delete.svg" />
+    <Content Include="src\android-desktop.svg" />
+    <Content Include="src\android-document.svg" />
+    <Content Include="src\android-done-all.svg" />
+    <Content Include="src\android-done.svg" />
+    <Content Include="src\android-download.svg" />
+    <Content Include="src\android-drafts.svg" />
+    <Content Include="src\android-exit.svg" />
+    <Content Include="src\android-expand.svg" />
+    <Content Include="src\android-favorite-outline.svg" />
+    <Content Include="src\android-favorite.svg" />
+    <Content Include="src\android-film.svg" />
+    <Content Include="src\android-folder-open.svg" />
+    <Content Include="src\android-folder.svg" />
+    <Content Include="src\android-funnel.svg" />
+    <Content Include="src\android-globe.svg" />
+    <Content Include="src\android-hand.svg" />
+    <Content Include="src\android-hangout.svg" />
+    <Content Include="src\android-happy.svg" />
+    <Content Include="src\android-home.svg" />
+    <Content Include="src\android-image.svg" />
+    <Content Include="src\android-laptop.svg" />
+    <Content Include="src\android-list.svg" />
+    <Content Include="src\android-locate.svg" />
+    <Content Include="src\android-lock.svg" />
+    <Content Include="src\android-mail.svg" />
+    <Content Include="src\android-map.svg" />
+    <Content Include="src\android-menu.svg" />
+    <Content Include="src\android-microphone-off.svg" />
+    <Content Include="src\android-microphone.svg" />
+    <Content Include="src\android-more-horizontal.svg" />
+    <Content Include="src\android-more-vertical.svg" />
+    <Content Include="src\android-navigate.svg" />
+    <Content Include="src\android-notifications-none.svg" />
+    <Content Include="src\android-notifications-off.svg" />
+    <Content Include="src\android-notifications.svg" />
+    <Content Include="src\android-open.svg" />
+    <Content Include="src\android-options.svg" />
+    <Content Include="src\android-people.svg" />
+    <Content Include="src\android-person-add.svg" />
+    <Content Include="src\android-person.svg" />
+    <Content Include="src\android-phone-landscape.svg" />
+    <Content Include="src\android-phone-portrait.svg" />
+    <Content Include="src\android-pin.svg" />
+    <Content Include="src\android-plane.svg" />
+    <Content Include="src\android-playstore.svg" />
+    <Content Include="src\android-print.svg" />
+    <Content Include="src\android-radio-button-off.svg" />
+    <Content Include="src\android-radio-button-on.svg" />
+    <Content Include="src\android-refresh.svg" />
+    <Content Include="src\android-remove-circle.svg" />
+    <Content Include="src\android-remove.svg" />
+    <Content Include="src\android-restaurant.svg" />
+    <Content Include="src\android-sad.svg" />
+    <Content Include="src\android-search.svg" />
+    <Content Include="src\android-send.svg" />
+    <Content Include="src\android-settings.svg" />
+    <Content Include="src\android-share-alt.svg" />
+    <Content Include="src\android-share.svg" />
+    <Content Include="src\android-star-half.svg" />
+    <Content Include="src\android-star-outline.svg" />
+    <Content Include="src\android-star.svg" />
+    <Content Include="src\android-stopwatch.svg" />
+    <Content Include="src\android-subway.svg" />
+    <Content Include="src\android-sunny.svg" />
+    <Content Include="src\android-sync.svg" />
+    <Content Include="src\android-textsms.svg" />
+    <Content Include="src\android-time.svg" />
+    <Content Include="src\android-train.svg" />
+    <Content Include="src\android-unlock.svg" />
+    <Content Include="src\android-upload.svg" />
+    <Content Include="src\android-volume-down.svg" />
+    <Content Include="src\android-volume-mute.svg" />
+    <Content Include="src\android-volume-off.svg" />
+    <Content Include="src\android-volume-up.svg" />
+    <Content Include="src\android-walk.svg" />
+    <Content Include="src\android-warning.svg" />
+    <Content Include="src\android-watch.svg" />
+    <Content Include="src\android-wifi.svg" />
+    <Content Include="src\aperture.svg" />
+    <Content Include="src\archive.svg" />
+    <Content Include="src\arrow-down-a.svg" />
+    <Content Include="src\arrow-down-b.svg" />
+    <Content Include="src\arrow-down-c.svg" />
+    <Content Include="src\arrow-expand.svg" />
+    <Content Include="src\arrow-graph-down-left.svg" />
+    <Content Include="src\arrow-graph-down-right.svg" />
+    <Content Include="src\arrow-graph-up-left.svg" />
+    <Content Include="src\arrow-graph-up-right.svg" />
+    <Content Include="src\arrow-left-a.svg" />
+    <Content Include="src\arrow-left-b.svg" />
+    <Content Include="src\arrow-left-c.svg" />
+    <Content Include="src\arrow-move.svg" />
+    <Content Include="src\arrow-resize.svg" />
+    <Content Include="src\arrow-return-left.svg" />
+    <Content Include="src\arrow-return-right.svg" />
+    <Content Include="src\arrow-right-a.svg" />
+    <Content Include="src\arrow-right-b.svg" />
+    <Content Include="src\arrow-right-c.svg" />
+    <Content Include="src\arrow-shrink.svg" />
+    <Content Include="src\arrow-swap.svg" />
+    <Content Include="src\arrow-up-a.svg" />
+    <Content Include="src\arrow-up-b.svg" />
+    <Content Include="src\arrow-up-c.svg" />
+    <Content Include="src\asterisk.svg" />
+    <Content Include="src\at.svg" />
+    <Content Include="src\backspace-outline.svg" />
+    <Content Include="src\backspace.svg" />
+    <Content Include="src\bag.svg" />
+    <Content Include="src\battery-charging.svg" />
+    <Content Include="src\battery-empty.svg" />
+    <Content Include="src\battery-full.svg" />
+    <Content Include="src\battery-half.svg" />
+    <Content Include="src\battery-low.svg" />
+    <Content Include="src\beaker.svg" />
+    <Content Include="src\beer.svg" />
+    <Content Include="src\bluetooth.svg" />
+    <Content Include="src\bonfire.svg" />
+    <Content Include="src\bookmark.svg" />
+    <Content Include="src\bowtie.svg" />
+    <Content Include="src\briefcase.svg" />
+    <Content Include="src\bug.svg" />
+    <Content Include="src\calculator.svg" />
+    <Content Include="src\calendar.svg" />
+    <Content Include="src\camera.svg" />
+    <Content Include="src\card.svg" />
+    <Content Include="src\cash.svg" />
+    <Content Include="src\chatbox-working.svg" />
+    <Content Include="src\chatbox.svg" />
+    <Content Include="src\chatboxes.svg" />
+    <Content Include="src\chatbubble-working.svg" />
+    <Content Include="src\chatbubble.svg" />
+    <Content Include="src\chatbubbles.svg" />
+    <Content Include="src\checkmark-circled.svg" />
+    <Content Include="src\checkmark-round.svg" />
+    <Content Include="src\checkmark.svg" />
+    <Content Include="src\chevron-down.svg" />
+    <Content Include="src\chevron-left.svg" />
+    <Content Include="src\chevron-right.svg" />
+    <Content Include="src\chevron-up.svg" />
+    <Content Include="src\clipboard.svg" />
+    <Content Include="src\clock.svg" />
+    <Content Include="src\close-circled.svg" />
+    <Content Include="src\close-round.svg" />
+    <Content Include="src\close.svg" />
+    <Content Include="src\closed-captioning.svg" />
+    <Content Include="src\cloud.svg" />
+    <Content Include="src\code-download.svg" />
+    <Content Include="src\code-working.svg" />
+    <Content Include="src\code.svg" />
+    <Content Include="src\coffee.svg" />
+    <Content Include="src\compass.svg" />
+    <Content Include="src\compose.svg" />
+    <Content Include="src\connection-bars.svg" />
+    <Content Include="src\contrast.svg" />
+    <Content Include="src\crop.svg" />
+    <Content Include="src\cube.svg" />
+    <Content Include="src\disc.svg" />
+    <Content Include="src\document-text.svg" />
+    <Content Include="src\document.svg" />
+    <Content Include="src\drag.svg" />
+    <Content Include="src\earth.svg" />
+    <Content Include="src\easel.svg" />
+    <Content Include="src\edit.svg" />
+    <Content Include="src\egg.svg" />
+    <Content Include="src\eject.svg" />
+    <Content Include="src\email-unread.svg" />
+    <Content Include="src\email.svg" />
+    <Content Include="src\erlenmeyer-flask-bubbles.svg" />
+    <Content Include="src\erlenmeyer-flask.svg" />
+    <Content Include="src\eye-disabled.svg" />
+    <Content Include="src\eye.svg" />
+    <Content Include="src\female.svg" />
+    <Content Include="src\filing.svg" />
+    <Content Include="src\film-marker.svg" />
+    <Content Include="src\fireball.svg" />
+    <Content Include="src\flag.svg" />
+    <Content Include="src\flame.svg" />
+    <Content Include="src\flash-off.svg" />
+    <Content Include="src\flash.svg" />
+    <Content Include="src\folder.svg" />
+    <Content Include="src\fork-repo.svg" />
+    <Content Include="src\fork.svg" />
+    <Content Include="src\forward.svg" />
+    <Content Include="src\funnel.svg" />
+    <Content Include="src\gear-a.svg" />
+    <Content Include="src\gear-b.svg" />
+    <Content Include="src\grid.svg" />
+    <Content Include="src\hammer.svg" />
+    <Content Include="src\happy-outline.svg" />
+    <Content Include="src\happy.svg" />
+    <Content Include="src\headphone.svg" />
+    <Content Include="src\heart-broken.svg" />
+    <Content Include="src\heart.svg" />
+    <Content Include="src\help-buoy.svg" />
+    <Content Include="src\help-circled.svg" />
+    <Content Include="src\help.svg" />
+    <Content Include="src\home.svg" />
+    <Content Include="src\icecream.svg" />
+    <Content Include="src\image.svg" />
+    <Content Include="src\images.svg" />
+    <Content Include="src\information-circled.svg" />
+    <Content Include="src\information.svg" />
+    <Content Include="src\ionic.svg" />
+    <Content Include="src\ios-alarm-outline.svg" />
+    <Content Include="src\ios-alarm.svg" />
+    <Content Include="src\ios-albums-outline.svg" />
+    <Content Include="src\ios-albums.svg" />
+    <Content Include="src\ios-americanfootball-outline.svg" />
+    <Content Include="src\ios-americanfootball.svg" />
+    <Content Include="src\ios-analytics-outline.svg" />
+    <Content Include="src\ios-analytics.svg" />
+    <Content Include="src\ios-arrow-back.svg" />
+    <Content Include="src\ios-arrow-down.svg" />
+    <Content Include="src\ios-arrow-forward.svg" />
+    <Content Include="src\ios-arrow-left.svg" />
+    <Content Include="src\ios-arrow-right.svg" />
+    <Content Include="src\ios-arrow-thin-down.svg" />
+    <Content Include="src\ios-arrow-thin-left.svg" />
+    <Content Include="src\ios-arrow-thin-right.svg" />
+    <Content Include="src\ios-arrow-thin-up.svg" />
+    <Content Include="src\ios-arrow-up.svg" />
+    <Content Include="src\ios-at-outline.svg" />
+    <Content Include="src\ios-at.svg" />
+    <Content Include="src\ios-barcode-outline.svg" />
+    <Content Include="src\ios-barcode.svg" />
+    <Content Include="src\ios-baseball-outline.svg" />
+    <Content Include="src\ios-baseball.svg" />
+    <Content Include="src\ios-basketball-outline.svg" />
+    <Content Include="src\ios-basketball.svg" />
+    <Content Include="src\ios-bell-outline.svg" />
+    <Content Include="src\ios-bell.svg" />
+    <Content Include="src\ios-body-outline.svg" />
+    <Content Include="src\ios-body.svg" />
+    <Content Include="src\ios-bolt-outline.svg" />
+    <Content Include="src\ios-bolt.svg" />
+    <Content Include="src\ios-book-outline.svg" />
+    <Content Include="src\ios-book.svg" />
+    <Content Include="src\ios-bookmarks-outline.svg" />
+    <Content Include="src\ios-bookmarks.svg" />
+    <Content Include="src\ios-box-outline.svg" />
+    <Content Include="src\ios-box.svg" />
+    <Content Include="src\ios-briefcase-outline.svg" />
+    <Content Include="src\ios-briefcase.svg" />
+    <Content Include="src\ios-browsers-outline.svg" />
+    <Content Include="src\ios-browsers.svg" />
+    <Content Include="src\ios-calculator-outline.svg" />
+    <Content Include="src\ios-calculator.svg" />
+    <Content Include="src\ios-calendar-outline.svg" />
+    <Content Include="src\ios-calendar.svg" />
+    <Content Include="src\ios-camera-outline.svg" />
+    <Content Include="src\ios-camera.svg" />
+    <Content Include="src\ios-cart-outline.svg" />
+    <Content Include="src\ios-cart.svg" />
+    <Content Include="src\ios-chatboxes-outline.svg" />
+    <Content Include="src\ios-chatboxes.svg" />
+    <Content Include="src\ios-chatbubble-outline.svg" />
+    <Content Include="src\ios-chatbubble.svg" />
+    <Content Include="src\ios-checkmark-empty.svg" />
+    <Content Include="src\ios-checkmark-outline.svg" />
+    <Content Include="src\ios-checkmark.svg" />
+    <Content Include="src\ios-circle-filled.svg" />
+    <Content Include="src\ios-circle-outline.svg" />
+    <Content Include="src\ios-clock-outline.svg" />
+    <Content Include="src\ios-clock.svg" />
+    <Content Include="src\ios-close-empty.svg" />
+    <Content Include="src\ios-close-outline.svg" />
+    <Content Include="src\ios-close.svg" />
+    <Content Include="src\ios-cloud-download-outline.svg" />
+    <Content Include="src\ios-cloud-download.svg" />
+    <Content Include="src\ios-cloud-outline.svg" />
+    <Content Include="src\ios-cloud-upload-outline.svg" />
+    <Content Include="src\ios-cloud-upload.svg" />
+    <Content Include="src\ios-cloud.svg" />
+    <Content Include="src\ios-cloudy-night-outline.svg" />
+    <Content Include="src\ios-cloudy-night.svg" />
+    <Content Include="src\ios-cloudy-outline.svg" />
+    <Content Include="src\ios-cloudy.svg" />
+    <Content Include="src\ios-cog-outline.svg" />
+    <Content Include="src\ios-cog.svg" />
+    <Content Include="src\ios-color-filter-outline.svg" />
+    <Content Include="src\ios-color-filter.svg" />
+    <Content Include="src\ios-color-wand-outline.svg" />
+    <Content Include="src\ios-color-wand.svg" />
+    <Content Include="src\ios-compose-outline.svg" />
+    <Content Include="src\ios-compose.svg" />
+    <Content Include="src\ios-contact-outline.svg" />
+    <Content Include="src\ios-contact.svg" />
+    <Content Include="src\ios-copy-outline.svg" />
+    <Content Include="src\ios-copy.svg" />
+    <Content Include="src\ios-crop-strong.svg" />
+    <Content Include="src\ios-crop.svg" />
+    <Content Include="src\ios-download-outline.svg" />
+    <Content Include="src\ios-download.svg" />
+    <Content Include="src\ios-drag.svg" />
+    <Content Include="src\ios-email-outline.svg" />
+    <Content Include="src\ios-email.svg" />
+    <Content Include="src\ios-eye-outline.svg" />
+    <Content Include="src\ios-eye.svg" />
+    <Content Include="src\ios-fastforward-outline.svg" />
+    <Content Include="src\ios-fastforward.svg" />
+    <Content Include="src\ios-filing-outline.svg" />
+    <Content Include="src\ios-filing.svg" />
+    <Content Include="src\ios-film-outline.svg" />
+    <Content Include="src\ios-film.svg" />
+    <Content Include="src\ios-flag-outline.svg" />
+    <Content Include="src\ios-flag.svg" />
+    <Content Include="src\ios-flame-outline.svg" />
+    <Content Include="src\ios-flame.svg" />
+    <Content Include="src\ios-flask-outline.svg" />
+    <Content Include="src\ios-flask.svg" />
+    <Content Include="src\ios-flower-outline.svg" />
+    <Content Include="src\ios-flower.svg" />
+    <Content Include="src\ios-folder-outline.svg" />
+    <Content Include="src\ios-folder.svg" />
+    <Content Include="src\ios-football-outline.svg" />
+    <Content Include="src\ios-football.svg" />
+    <Content Include="src\ios-game-controller-a-outline.svg" />
+    <Content Include="src\ios-game-controller-a.svg" />
+    <Content Include="src\ios-game-controller-b-outline.svg" />
+    <Content Include="src\ios-game-controller-b.svg" />
+    <Content Include="src\ios-gear-outline.svg" />
+    <Content Include="src\ios-gear.svg" />
+    <Content Include="src\ios-glasses-outline.svg" />
+    <Content Include="src\ios-glasses.svg" />
+    <Content Include="src\ios-grid-view-outline.svg" />
+    <Content Include="src\ios-grid-view.svg" />
+    <Content Include="src\ios-heart-outline.svg" />
+    <Content Include="src\ios-heart.svg" />
+    <Content Include="src\ios-help-empty.svg" />
+    <Content Include="src\ios-help-outline.svg" />
+    <Content Include="src\ios-help.svg" />
+    <Content Include="src\ios-home-outline.svg" />
+    <Content Include="src\ios-home.svg" />
+    <Content Include="src\ios-infinite-outline.svg" />
+    <Content Include="src\ios-infinite.svg" />
+    <Content Include="src\ios-information-empty.svg" />
+    <Content Include="src\ios-information-outline.svg" />
+    <Content Include="src\ios-information.svg" />
+    <Content Include="src\ios-ionic-outline.svg" />
+    <Content Include="src\ios-keypad-outline.svg" />
+    <Content Include="src\ios-keypad.svg" />
+    <Content Include="src\ios-lightbulb-outline.svg" />
+    <Content Include="src\ios-lightbulb.svg" />
+    <Content Include="src\ios-list-outline.svg" />
+    <Content Include="src\ios-list.svg" />
+    <Content Include="src\ios-location-outline.svg" />
+    <Content Include="src\ios-location.svg" />
+    <Content Include="src\ios-locked-outline.svg" />
+    <Content Include="src\ios-locked.svg" />
+    <Content Include="src\ios-loop-strong.svg" />
+    <Content Include="src\ios-loop.svg" />
+    <Content Include="src\ios-medical-outline.svg" />
+    <Content Include="src\ios-medical.svg" />
+    <Content Include="src\ios-medkit-outline.svg" />
+    <Content Include="src\ios-medkit.svg" />
+    <Content Include="src\ios-mic-off.svg" />
+    <Content Include="src\ios-mic-outline.svg" />
+    <Content Include="src\ios-mic.svg" />
+    <Content Include="src\ios-minus-empty.svg" />
+    <Content Include="src\ios-minus-outline.svg" />
+    <Content Include="src\ios-minus.svg" />
+    <Content Include="src\ios-monitor-outline.svg" />
+    <Content Include="src\ios-monitor.svg" />
+    <Content Include="src\ios-moon-outline.svg" />
+    <Content Include="src\ios-moon.svg" />
+    <Content Include="src\ios-more-outline.svg" />
+    <Content Include="src\ios-more.svg" />
+    <Content Include="src\ios-musical-note.svg" />
+    <Content Include="src\ios-musical-notes.svg" />
+    <Content Include="src\ios-navigate-outline.svg" />
+    <Content Include="src\ios-navigate.svg" />
+    <Content Include="src\ios-nutrition-outline.svg" />
+    <Content Include="src\ios-nutrition.svg" />
+    <Content Include="src\ios-paper-outline.svg" />
+    <Content Include="src\ios-paper.svg" />
+    <Content Include="src\ios-paperplane-outline.svg" />
+    <Content Include="src\ios-paperplane.svg" />
+    <Content Include="src\ios-partlysunny-outline.svg" />
+    <Content Include="src\ios-partlysunny.svg" />
+    <Content Include="src\ios-pause-outline.svg" />
+    <Content Include="src\ios-pause.svg" />
+    <Content Include="src\ios-paw-outline.svg" />
+    <Content Include="src\ios-paw.svg" />
+    <Content Include="src\ios-people-outline.svg" />
+    <Content Include="src\ios-people.svg" />
+    <Content Include="src\ios-person-outline.svg" />
+    <Content Include="src\ios-person.svg" />
+    <Content Include="src\ios-personadd-outline.svg" />
+    <Content Include="src\ios-personadd.svg" />
+    <Content Include="src\ios-photos-outline.svg" />
+    <Content Include="src\ios-photos.svg" />
+    <Content Include="src\ios-pie-outline.svg" />
+    <Content Include="src\ios-pie.svg" />
+    <Content Include="src\ios-pint-outline.svg" />
+    <Content Include="src\ios-pint.svg" />
+    <Content Include="src\ios-play-outline.svg" />
+    <Content Include="src\ios-play.svg" />
+    <Content Include="src\ios-plus-empty.svg" />
+    <Content Include="src\ios-plus-outline.svg" />
+    <Content Include="src\ios-plus.svg" />
+    <Content Include="src\ios-pricetag-outline.svg" />
+    <Content Include="src\ios-pricetag.svg" />
+    <Content Include="src\ios-pricetags-outline.svg" />
+    <Content Include="src\ios-pricetags.svg" />
+    <Content Include="src\ios-printer-outline.svg" />
+    <Content Include="src\ios-printer.svg" />
+    <Content Include="src\ios-pulse-strong.svg" />
+    <Content Include="src\ios-pulse.svg" />
+    <Content Include="src\ios-rainy-outline.svg" />
+    <Content Include="src\ios-rainy.svg" />
+    <Content Include="src\ios-recording-outline.svg" />
+    <Content Include="src\ios-recording.svg" />
+    <Content Include="src\ios-redo-outline.svg" />
+    <Content Include="src\ios-redo.svg" />
+    <Content Include="src\ios-refresh-empty.svg" />
+    <Content Include="src\ios-refresh-outline.svg" />
+    <Content Include="src\ios-refresh.svg" />
+    <Content Include="src\ios-reload.svg" />
+    <Content Include="src\ios-reverse-camera-outline.svg" />
+    <Content Include="src\ios-reverse-camera.svg" />
+    <Content Include="src\ios-rewind-outline.svg" />
+    <Content Include="src\ios-rewind.svg" />
+    <Content Include="src\ios-rose-outline.svg" />
+    <Content Include="src\ios-rose.svg" />
+    <Content Include="src\ios-search-strong.svg" />
+    <Content Include="src\ios-search.svg" />
+    <Content Include="src\ios-settings-strong.svg" />
+    <Content Include="src\ios-settings.svg" />
+    <Content Include="src\ios-shuffle-strong.svg" />
+    <Content Include="src\ios-shuffle.svg" />
+    <Content Include="src\ios-skipbackward-outline.svg" />
+    <Content Include="src\ios-skipbackward.svg" />
+    <Content Include="src\ios-skipforward-outline.svg" />
+    <Content Include="src\ios-skipforward.svg" />
+    <Content Include="src\ios-snowy.svg" />
+    <Content Include="src\ios-speedometer-outline.svg" />
+    <Content Include="src\ios-speedometer.svg" />
+    <Content Include="src\ios-star-half.svg" />
+    <Content Include="src\ios-star-outline.svg" />
+    <Content Include="src\ios-star.svg" />
+    <Content Include="src\ios-stopwatch-outline.svg" />
+    <Content Include="src\ios-stopwatch.svg" />
+    <Content Include="src\ios-sunny-outline.svg" />
+    <Content Include="src\ios-sunny.svg" />
+    <Content Include="src\ios-telephone-outline.svg" />
+    <Content Include="src\ios-telephone.svg" />
+    <Content Include="src\ios-tennisball-outline.svg" />
+    <Content Include="src\ios-tennisball.svg" />
+    <Content Include="src\ios-thunderstorm-outline.svg" />
+    <Content Include="src\ios-thunderstorm.svg" />
+    <Content Include="src\ios-time-outline.svg" />
+    <Content Include="src\ios-time.svg" />
+    <Content Include="src\ios-timer-outline.svg" />
+    <Content Include="src\ios-timer.svg" />
+    <Content Include="src\ios-toggle-outline.svg" />
+    <Content Include="src\ios-toggle.svg" />
+    <Content Include="src\ios-trash-outline.svg" />
+    <Content Include="src\ios-trash.svg" />
+    <Content Include="src\ios-undo-outline.svg" />
+    <Content Include="src\ios-undo.svg" />
+    <Content Include="src\ios-unlocked-outline.svg" />
+    <Content Include="src\ios-unlocked.svg" />
+    <Content Include="src\ios-upload-outline.svg" />
+    <Content Include="src\ios-upload.svg" />
+    <Content Include="src\ios-videocam-outline.svg" />
+    <Content Include="src\ios-videocam.svg" />
+    <Content Include="src\ios-volume-high.svg" />
+    <Content Include="src\ios-volume-low.svg" />
+    <Content Include="src\ios-wineglass-outline.svg" />
+    <Content Include="src\ios-wineglass.svg" />
+    <Content Include="src\ios-world-outline.svg" />
+    <Content Include="src\ios-world.svg" />
+    <Content Include="src\ipad.svg" />
+    <Content Include="src\iphone.svg" />
+    <Content Include="src\ipod.svg" />
+    <Content Include="src\jet.svg" />
+    <Content Include="src\key.svg" />
+    <Content Include="src\knife.svg" />
+    <Content Include="src\laptop.svg" />
+    <Content Include="src\leaf.svg" />
+    <Content Include="src\levels.svg" />
+    <Content Include="src\lightbulb.svg" />
+    <Content Include="src\link.svg" />
+    <Content Include="src\load-a.svg" />
+    <Content Include="src\load-b.svg" />
+    <Content Include="src\load-c.svg" />
+    <Content Include="src\load-d.svg" />
+    <Content Include="src\location.svg" />
+    <Content Include="src\lock-combination.svg" />
+    <Content Include="src\locked.svg" />
+    <Content Include="src\log-in.svg" />
+    <Content Include="src\log-out.svg" />
+    <Content Include="src\loop.svg" />
+    <Content Include="src\magnet.svg" />
+    <Content Include="src\male.svg" />
+    <Content Include="src\man.svg" />
+    <Content Include="src\map.svg" />
+    <Content Include="src\medkit.svg" />
+    <Content Include="src\merge.svg" />
+    <Content Include="src\mic-a.svg" />
+    <Content Include="src\mic-b.svg" />
+    <Content Include="src\mic-c.svg" />
+    <Content Include="src\minus-circled.svg" />
+    <Content Include="src\minus-round.svg" />
+    <Content Include="src\minus.svg" />
+    <Content Include="src\model-s.svg" />
+    <Content Include="src\monitor.svg" />
+    <Content Include="src\more.svg" />
+    <Content Include="src\mouse.svg" />
+    <Content Include="src\music-note.svg" />
+    <Content Include="src\navicon-round.svg" />
+    <Content Include="src\navicon.svg" />
+    <Content Include="src\navigate.svg" />
+    <Content Include="src\network.svg" />
+    <Content Include="src\no-smoking.svg" />
+    <Content Include="src\nuclear.svg" />
+    <Content Include="src\outlet.svg" />
+    <Content Include="src\paintbrush.svg" />
+    <Content Include="src\paintbucket.svg" />
+    <Content Include="src\paper-airplane.svg" />
+    <Content Include="src\paperclip.svg" />
+    <Content Include="src\pause.svg" />
+    <Content Include="src\person-add.svg" />
+    <Content Include="src\person-stalker.svg" />
+    <Content Include="src\person.svg" />
+    <Content Include="src\pie-graph.svg" />
+    <Content Include="src\pin.svg" />
+    <Content Include="src\pinpoint.svg" />
+    <Content Include="src\pizza.svg" />
+    <Content Include="src\plane.svg" />
+    <Content Include="src\planet.svg" />
+    <Content Include="src\play.svg" />
+    <Content Include="src\playstation.svg" />
+    <Content Include="src\plus-circled.svg" />
+    <Content Include="src\plus-round.svg" />
+    <Content Include="src\plus.svg" />
+    <Content Include="src\podium.svg" />
+    <Content Include="src\pound.svg" />
+    <Content Include="src\power.svg" />
+    <Content Include="src\pricetag.svg" />
+    <Content Include="src\pricetags.svg" />
+    <Content Include="src\printer.svg" />
+    <Content Include="src\pull-request.svg" />
+    <Content Include="src\qr-scanner.svg" />
+    <Content Include="src\quote.svg" />
+    <Content Include="src\radio-waves.svg" />
+    <Content Include="src\record.svg" />
+    <Content Include="src\refresh.svg" />
+    <Content Include="src\reply-all.svg" />
+    <Content Include="src\reply.svg" />
+    <Content Include="src\ribbon-a.svg" />
+    <Content Include="src\ribbon-b.svg" />
+    <Content Include="src\sad-outline.svg" />
+    <Content Include="src\sad.svg" />
+    <Content Include="src\scissors.svg" />
+    <Content Include="src\search.svg" />
+    <Content Include="src\settings.svg" />
+    <Content Include="src\share.svg" />
+    <Content Include="src\shuffle.svg" />
+    <Content Include="src\skip-backward.svg" />
+    <Content Include="src\skip-forward.svg" />
+    <Content Include="src\social-android-outline.svg" />
+    <Content Include="src\social-android.svg" />
+    <Content Include="src\social-angular-outline.svg" />
+    <Content Include="src\social-angular.svg" />
+    <Content Include="src\social-apple-outline.svg" />
+    <Content Include="src\social-apple.svg" />
+    <Content Include="src\social-bitcoin-outline.svg" />
+    <Content Include="src\social-bitcoin.svg" />
+    <Content Include="src\social-buffer-outline.svg" />
+    <Content Include="src\social-buffer.svg" />
+    <Content Include="src\social-chrome-outline.svg" />
+    <Content Include="src\social-chrome.svg" />
+    <Content Include="src\social-codepen-outline.svg" />
+    <Content Include="src\social-codepen.svg" />
+    <Content Include="src\social-css3-outline.svg" />
+    <Content Include="src\social-css3.svg" />
+    <Content Include="src\social-designernews-outline.svg" />
+    <Content Include="src\social-designernews.svg" />
+    <Content Include="src\social-dribbble-outline.svg" />
+    <Content Include="src\social-dribbble.svg" />
+    <Content Include="src\social-dropbox-outline.svg" />
+    <Content Include="src\social-dropbox.svg" />
+    <Content Include="src\social-euro-outline.svg" />
+    <Content Include="src\social-euro.svg" />
+    <Content Include="src\social-facebook-outline.svg" />
+    <Content Include="src\social-facebook.svg" />
+    <Content Include="src\social-foursquare-outline.svg" />
+    <Content Include="src\social-foursquare.svg" />
+    <Content Include="src\social-freebsd-devil.svg" />
+    <Content Include="src\social-github-outline.svg" />
+    <Content Include="src\social-github.svg" />
+    <Content Include="src\social-google-outline.svg" />
+    <Content Include="src\social-google.svg" />
+    <Content Include="src\social-googleplus-outline.svg" />
+    <Content Include="src\social-googleplus.svg" />
+    <Content Include="src\social-hackernews-outline.svg" />
+    <Content Include="src\social-hackernews.svg" />
+    <Content Include="src\social-html5-outline.svg" />
+    <Content Include="src\social-html5.svg" />
+    <Content Include="src\social-instagram-outline.svg" />
+    <Content Include="src\social-instagram.svg" />
+    <Content Include="src\social-javascript-outline.svg" />
+    <Content Include="src\social-javascript.svg" />
+    <Content Include="src\social-linkedin-outline.svg" />
+    <Content Include="src\social-linkedin.svg" />
+    <Content Include="src\social-markdown.svg" />
+    <Content Include="src\social-nodejs.svg" />
+    <Content Include="src\social-octocat.svg" />
+    <Content Include="src\social-pinterest-outline.svg" />
+    <Content Include="src\social-pinterest.svg" />
+    <Content Include="src\social-python.svg" />
+    <Content Include="src\social-reddit-outline.svg" />
+    <Content Include="src\social-reddit.svg" />
+    <Content Include="src\social-rss-outline.svg" />
+    <Content Include="src\social-rss.svg" />
+    <Content Include="src\social-sass.svg" />
+    <Content Include="src\social-skype-outline.svg" />
+    <Content Include="src\social-skype.svg" />
+    <Content Include="src\social-snapchat-outline.svg" />
+    <Content Include="src\social-snapchat.svg" />
+    <Content Include="src\social-tumblr-outline.svg" />
+    <Content Include="src\social-tumblr.svg" />
+    <Content Include="src\social-tux.svg" />
+    <Content Include="src\social-twitch-outline.svg" />
+    <Content Include="src\social-twitch.svg" />
+    <Content Include="src\social-twitter-outline.svg" />
+    <Content Include="src\social-twitter.svg" />
+    <Content Include="src\social-usd-outline.svg" />
+    <Content Include="src\social-usd.svg" />
+    <Content Include="src\social-vimeo-outline.svg" />
+    <Content Include="src\social-vimeo.svg" />
+    <Content Include="src\social-whatsapp-outline.svg" />
+    <Content Include="src\social-whatsapp.svg" />
+    <Content Include="src\social-windows-outline.svg" />
+    <Content Include="src\social-windows.svg" />
+    <Content Include="src\social-wordpress-outline.svg" />
+    <Content Include="src\social-wordpress.svg" />
+    <Content Include="src\social-yahoo-outline.svg" />
+    <Content Include="src\social-yahoo.svg" />
+    <Content Include="src\social-yen-outline.svg" />
+    <Content Include="src\social-yen.svg" />
+    <Content Include="src\social-youtube-outline.svg" />
+    <Content Include="src\social-youtube.svg" />
+    <Content Include="src\soup-can-outline.svg" />
+    <Content Include="src\soup-can.svg" />
+    <Content Include="src\speakerphone.svg" />
+    <Content Include="src\speedometer.svg" />
+    <Content Include="src\spoon.svg" />
+    <Content Include="src\star.svg" />
+    <Content Include="src\stats-bars.svg" />
+    <Content Include="src\steam.svg" />
+    <Content Include="src\stop.svg" />
+    <Content Include="src\thermometer.svg" />
+    <Content Include="src\thumbsdown.svg" />
+    <Content Include="src\thumbsup.svg" />
+    <Content Include="src\toggle-filled.svg" />
+    <Content Include="src\toggle.svg" />
+    <Content Include="src\transgender.svg" />
+    <Content Include="src\trash-a.svg" />
+    <Content Include="src\trash-b.svg" />
+    <Content Include="src\trophy.svg" />
+    <Content Include="src\tshirt-outline.svg" />
+    <Content Include="src\tshirt.svg" />
+    <Content Include="src\umbrella.svg" />
+    <Content Include="src\university.svg" />
+    <Content Include="src\unlocked.svg" />
+    <Content Include="src\upload.svg" />
+    <Content Include="src\usb.svg" />
+    <Content Include="src\videocamera.svg" />
+    <Content Include="src\volume-high.svg" />
+    <Content Include="src\volume-low.svg" />
+    <Content Include="src\volume-medium.svg" />
+    <Content Include="src\volume-mute.svg" />
+    <Content Include="src\wand.svg" />
+    <Content Include="src\waterdrop.svg" />
+    <Content Include="src\wifi.svg" />
+    <Content Include="src\wineglass.svg" />
+    <Content Include="src\woman.svg" />
+    <Content Include="src\wrench.svg" />
+    <Content Include="src\xbox.svg" />
+    <None Include="Views\Home\index.cshtml" />
+    <None Include="Views\Home\newsfeed.cshtml" />
+    <Content Include="Web.config" />
+    <Content Include="scss\ionicons.scss" />
+    <Content Include="scss\_ionicons-font.scss" />
+    <Content Include="scss\_ionicons-icons.scss" />
+    <Content Include="scss\_ionicons-variables.scss" />
+    <Content Include="Views\Home\loginsonrasi.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Classes\LoginResult.cs" />
+    <Compile Include="Classes\User.cs" />
+    <Compile Include="Controllers\ApiController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="DAL\ScoutUpDB.cs" />
+    <Compile Include="DAL\ScoutUpInitializer.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Hobbies.cs" />
+    <Compile Include="Models\Post.cs" />
+    <Compile Include="Models\PostComments.cs" />
+    <Compile Include="Models\PostLikes.cs" />
+    <Compile Include="Models\PostPhotos.cs" />
+    <Compile Include="Models\PostPhotosLocation.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserFollow.cs" />
+    <Compile Include="Models\UserHobbies.cs" />
+    <Compile Include="Models\UserPhotos.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\web.config" />
+    <Content Include="packages.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
+    <Content Include="Views\Users\Create.cshtml" />
+    <Content Include="Views\Users\Delete.cshtml" />
+    <Content Include="Views\Users\Details.cshtml" />
+    <Content Include="Views\Users\Edit.cshtml" />
+    <Content Include="Views\Users\Index.cshtml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="images\album\" />
+    <Folder Include="images\covers\" />
+    <Folder Include="images\post-images\" />
+    <Folder Include="images\users\" />
+    <Folder Include="png\512\" />
+    <Folder Include="Views\Api\" />
+    <Folder Include="Views\UserActions\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>3689</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:3689/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,74 @@
+﻿@model ScoutUp.Models.User
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>User</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserSurname)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserSurname)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserPassword)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserPassword)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserEmail)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserEmail)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserCity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserCity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserBirthDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserBirthDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserGender)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserGender)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.UserID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

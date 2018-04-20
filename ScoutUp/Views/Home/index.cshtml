@@ -136,7 +136,7 @@
 						<button class="btn-secondary" type="submit" >Login</button>
                         </form>
 					</div>
-					<button class="btn btn-default" id="register-btn" name="register-btn">Register!</button>
+					<button class="btn-secondary" id="register-btn" name="register-btn">Register!</button>
 					<img class="form-shadow" src="../../../../images/bottom-shadow.png" alt="" />
 				</div><!-- Sign in Form End -->
                 <div class="sign-up-form" id="sign-up-form" hidden="true">
@@ -433,9 +433,7 @@
         <script type="text/javascript">
             $(function () {
                 $('#register-btn').click(function (evt) {
-                    evt.preventDefault();
-                    $('#sign-in-form').attr("hidden", true);
-                    $('#sign-up-form').attr("hidden", false);
+                    window.location.href = '@Url.Content("~/home/register")';
                 });
             });
 	$(function(){
@@ -446,8 +444,7 @@
 			var postData=$(this).serialize();
 
 			$.post(url, postData, function (o) {
-
-			    if (o!= null) {
+			    if (o.Result == 1) {
 			        alert('giriş başarılı');
 				    window.location.href = '@Url.Content("~/home/newsfeed")';
 				}

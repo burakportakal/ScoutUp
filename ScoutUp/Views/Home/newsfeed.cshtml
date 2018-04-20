@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@model ScoutUp.Models.User
+<!DOCTYPE html>
 <html lang="en">
 	<head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -69,7 +70,7 @@
                   <li><a href="timeline-about.html">Timeline About</a></li>
                   <li><a href="timeline-album.html">Timeline Album</a></li>
                   <li><a href="timeline-friends.html">Timeline Friends</a></li>
-                  <li><a href="edit-profile-basic.html">Edit: Basic Info</a></li>
+                  <li><a href='@Url.Content("~/users/editprofilebasic/")'>Edit: Basic Info</a></li>
                   <li><a href="edit-profile-work-edu.html">Edit: Work</a></li>
                   <li><a href="edit-profile-interests.html">Edit: Interests</a></li>
                   <li><a href="edit-profile-settings.html">Account Settings</a></li>

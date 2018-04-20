@@ -15,60 +15,37 @@ namespace ScoutUp.Controllers
     {
         private ScoutUpDB db = new ScoutUpDB();
 
-        // GET: Users
-        public ActionResult Index()
-        {
-            return View(db.Users.ToList());
-        }
-
-        // GET: Users/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-           ScoutUp.Models. User user = db.Users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
-        }
+        /// <summary>
+        /// Kullanıcı Login kısmı 
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         [HttpPost]
-        public ActionResult Login(string email,string password)
+        public ActionResult Login(string email, string password)
         {
             if (email == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ScoutUp.Models.User user = db.Users.Where(e => e.UserEmail == email).Where(p => p.UserPassword ==password).FirstOrDefault();
+            ScoutUp.Models.User user = db.Users.Where(e => e.UserEmail == email).Where(p => p.UserPassword == password).FirstOrDefault();
             if (user == null)
             {
-                return HttpNotFound();
+                return Json(new LoginResult(0));
             }
             Session["email"] = user.UserEmail;
-            return Json(new ScoutUp.Classes.User { UserID=user.UserID,
-                UserName =user.UserName,
-                UserSurname =user.UserSurname,
-                UserEmail =user.UserEmail,
-                UserCity =user.UserCity,
-                UserBirthDate =user.UserBirthDate,
-                UserFollow =user.UserFollow,
-                UserGender =user.UserGender,
-                UserHobbies =user.UserHobbies,
-                UserPhotos =user.UserPhotos });
-        }
-
-        // GET: Users/Create
-        public ActionResult Create()
-        {
-            return View();
+            Session["id"] = user.UserID;
+            return Json(new LoginResult(1));
         }
 
         // POST: Users/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Kullanıcı register bölümü LoginResult olduğuna bakma sadece kaydolup kaydolmadığını anlamak için.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "UserName,UserSurname,UserPassword,UserEmail,UserCity,UserBirthDate,UserGender")] ScoutUp.Models. User user)
@@ -91,63 +68,54 @@ namespace ScoutUp.Controllers
             return Json(new LoginResult(0));
         }
 
-        // GET: Users/Edit/5
-        public ActionResult Edit(int? id)
+        /// <summary>
+        /// Profil update edildilten sonra ve ilk girişte çalışır id parametresi verimediği zaman zaten giriş yapmış olması gerektiği için sessiondan id parametresi alınarak devam edilir.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public ActionResult EditProfileBasic(int? id)
         {
+            if (Session["email"] == null)
+                Response.Redirect("/home");
             if (id == null)
+            {
+                id =Convert.ToInt32( Session["id"].ToString());
+            }
+            ScoutUp.Models.User user = db.Users.Find(id);
+            if (Session["email"].ToString() != user.UserEmail)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-           ScoutUp.Models. User user = db.Users.Find(id);
             if (user == null)
             {
                 return HttpNotFound();
             }
             return View(user);
         }
-
-        // POST: Users/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// <summary>
+        /// Kullanıcı profilinin editleme kısmı sadece editlenen kısımlar değişir gerisi kalır entry.Property bu işe yarıyor.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "UserID,UserName,UserSurname,UserPassword,UserEmail,UserCity,UserBirthDate,UserGender")]ScoutUp.Models. User user)
+        public ActionResult EditProfileBasic([Bind(Include = "UserID,UserName,UserSurname,UserEmail,UserCity,UserBirthDate,UserGender")]ScoutUp.Models.User user)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(user).State = EntityState.Modified;
+                db.Users.Attach(user);
+                var entry = db.Entry(user);
+
+                entry.Property(e => e.UserName).IsModified = true;
+                entry.Property(e => e.UserSurname).IsModified = true;
+                entry.Property(e => e.UserBirthDate).IsModified = true;
+                entry.Property(e => e.UserCity).IsModified = true;
+                entry.Property(e => e.UserGender).IsModified = true;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return View(user);
             }
-            return View(user);
+            return Redirect("Home");
         }
-
-        // GET: Users/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-           ScoutUp.Models. User user = db.Users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            return View(user);
-        }
-
-        // POST: Users/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-           ScoutUp.Models. User user = db.Users.Find(id);
-            db.Users.Remove(user);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)

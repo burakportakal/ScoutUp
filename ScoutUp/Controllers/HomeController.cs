@@ -20,11 +20,13 @@ namespace ScoutUp.Controllers
             if (Session["email"] == null)
                 Response.Redirect("/");
             ViewBag.email = Session["email"];
+            ViewBag.id = Session["id"];
             return View();
         }
-        public ActionResult loginsonrasi()
+        public ActionResult Register()
         {
             return View();
         }
+    
     }
 }

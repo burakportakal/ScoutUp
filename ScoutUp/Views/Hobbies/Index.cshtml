@@ -1,0 +1,33 @@
+﻿@model IEnumerable<ScoutUp.Models.Hobbies>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.HobbiesName)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.HobbiesName)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.HobbiesID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.HobbiesID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.HobbiesID })
+        </td>
+    </tr>
+}
+
+</table>

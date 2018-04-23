@@ -6,7 +6,7 @@ using System.Data.Entity;
 using ScoutUp.Models;
 namespace ScoutUp.DAL
 {
-    public class ScoutUpInitializer: System.Data.Entity.DropCreateDatabaseIfModelChanges<ScoutUpDB>
+    public class ScoutUpInitializer: System.Data.Entity.DropCreateDatabaseAlways<ScoutUpDB>
     {
         protected override void Seed(ScoutUpDB context)
         {
@@ -15,7 +15,23 @@ namespace ScoutUp.DAL
             };
             users.ForEach(s => context.Users.Add(s));
             context.SaveChanges();
+            var Hobbies = new List<Hobbies> {
+                new Hobbies { HobbiesName="Bilgisayar" },
+                new Hobbies {HobbiesName="Spor" },
+                new Hobbies { HobbiesName="Müzik" },
+                new Hobbies {HobbiesName="Futbol" },
+                new Hobbies { HobbiesName="Kodlama" },
+                new Hobbies {HobbiesName="Java" },
+                new Hobbies { HobbiesName="Asp" },
+                new Hobbies {HobbiesName="Gitar" },
+                new Hobbies { HobbiesName="Telefon" },
+                new Hobbies {HobbiesName="Sosyal" }
 
+            };
+            Hobbies.ForEach(s => context.Hobbies.Add(s));
+            context.SaveChanges();
+            
+            context.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityRole { Name = "user" });
         }
     }
 }

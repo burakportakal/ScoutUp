@@ -9,6 +9,12 @@ using System.Web.Mvc;
 using ScoutUp.DAL;
 using ScoutUp.Models;
 using ScoutUp.Classes;
+using System.Security.Claims;
+using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin;
+
 namespace ScoutUp.Controllers
 {
     public class UsersController : Controller
@@ -24,18 +30,42 @@ namespace ScoutUp.Controllers
         [HttpPost]
         public ActionResult Login(string email, string password)
         {
-            if (email == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ScoutUp.Models.User user = db.Users.Where(e => e.UserEmail == email).Where(p => p.UserPassword == password).FirstOrDefault();
-            if (user == null)
+            if (email == null || password==null)
             {
                 return Json(new LoginResult(0));
             }
-            Session["email"] = user.UserEmail;
-            Session["id"] = user.UserID;
-            return Json(new LoginResult(1));
+            ScoutUp.Models.User user = db.Users.Where(e => e.UserEmail == email).Where(p => p.UserPassword == password).FirstOrDefault();
+            if (user != null)
+            {
+                HttpContext.GetOwinContext().Authentication.SignOut();
+                Session["id"] = user.UserID;
+                   var ident = new ClaimsIdentity(
+                 new[] { 
+                 // adding following 2 claim just for supporting default antiforgery provider
+                 new Claim(ClaimTypes.NameIdentifier, email),
+                 new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity", "http://www.w3.org/2001/XMLSchema#string"),
+
+                 new Claim(ClaimTypes.Name,email),
+                  new Claim(ClaimTypes.PrimarySid,user.UserID.ToString()),
+
+                 // optionally you could add roles if any
+                 new Claim(ClaimTypes.Role, "User"),
+                 },
+                 DefaultAuthenticationTypes.ApplicationCookie);
+                
+                   HttpContext.GetOwinContext().Authentication.SignIn(
+                      new AuthenticationProperties { IsPersistent = true }, ident);
+                   return Json(new LoginResult(1));
+            }
+           else 
+            {
+                return Json(new LoginResult(0));
+            }
+        }
+        public ActionResult Logout()
+        {
+            HttpContext.GetOwinContext().Authentication.SignOut();
+            return RedirectToAction("index", "Home");
         }
 
         // POST: Users/Create
@@ -55,6 +85,7 @@ namespace ScoutUp.Controllers
                 if (ModelState.IsValid)
                 {
                     db.Users.Add(user);
+                    
                     db.SaveChanges();
                     return Json(new LoginResult(1));
                 }
@@ -73,16 +104,23 @@ namespace ScoutUp.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        [Authorize]
         public ActionResult EditProfileBasic(int? id)
         {
-            if (Session["email"] == null)
-                Response.Redirect("/home");
             if (id == null)
             {
-                id =Convert.ToInt32( Session["id"].ToString());
+                var t = HttpContext.GetOwinContext().Authentication.User.Claims;
+                foreach (var item in t)
+                {
+                    if (item.Type.Contains("primarysid"))
+                    {
+                        id = Convert.ToInt32(item.Value);
+                        break;
+                    }
+                }
             }
             ScoutUp.Models.User user = db.Users.Find(id);
-            if (Session["email"].ToString() != user.UserEmail)
+            if (HttpContext.GetOwinContext().Authentication.User.Identity.Name != user.UserEmail)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -97,6 +135,7 @@ namespace ScoutUp.Controllers
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditProfileBasic([Bind(Include = "UserID,UserName,UserSurname,UserEmail,UserCity,UserBirthDate,UserGender")]ScoutUp.Models.User user)
@@ -115,6 +154,102 @@ namespace ScoutUp.Controllers
                 return View(user);
             }
             return Redirect("Home");
+        }
+        /// <summary>
+        /// Sayfa yüklenirken kullanıcının seçmediği hobbileri oto komplete gönderir
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        public ActionResult All()
+        {
+            var t = HttpContext.GetOwinContext().Authentication.User.Claims;
+            int userID = 0;
+            foreach (var item in t)
+            {
+                if (item.Type.Contains("primarysid"))
+                    userID = Convert.ToInt32(item.Value);
+
+            }
+            User user = db.Users.Where(e => e.UserID == userID).FirstOrDefault();
+            List<Hobbies> userHobbies = db.Hobbies.ToList();
+            foreach (var item in user.UserHobbies)
+            {
+                userHobbies.Remove(item.Hobbies);
+            }
+            return Json(userHobbies, JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// sayfa yüklenirken çalışan edit sayfası userı bulur gönderir burdan gelen veriyle seçtiği hobileri yeşil kutularda gösterir içerisinde userHobbiesid bulunduğu için silmesi kolay
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        public ActionResult EditProfileInterests()
+        {
+            var t = HttpContext.GetOwinContext().Authentication.User.Claims;
+            int userID = 0;
+            foreach (var item in t)
+            {
+                if (item.Type.Contains("primarysid"))
+                    userID = Convert.ToInt32(item.Value);
+
+            }
+            User user = db.Users.Where(e => e.UserID == userID).FirstOrDefault();
+            return View(user);
+        }
+        /// <summary>
+        /// Kullanıcı yeni hobi eklemek istediğinde burası çalışır 1 veya daha fazla hobi seçip gönderebilir. daha önce seçtiği hobiyi seçemediği için bu durum sorun olmuyor.
+        /// </summary>
+        /// <param name="HobbiesName"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost]
+        public ActionResult EditProfileInterests(string HobbiesName)
+        {
+            string[] split = HobbiesName.Split(',');
+            List<Hobbies> hobbies = new List<Hobbies>();
+            List<UserHobbies> userHobbies = new List<UserHobbies>();
+            foreach (var item in split)
+            {
+                var ids = db.Hobbies.Where(e => e.HobbiesName == item).FirstOrDefault();
+                hobbies.Add(ids);
+            }
+            var t = HttpContext.GetOwinContext().Authentication.User.Claims;
+            int userID = 0;
+            foreach (var item in t)
+            {
+                if (item.Type.Contains("primarysid"))
+                    userID = Convert.ToInt32(item.Value);
+
+            }
+            foreach (var item in hobbies)
+            {
+                userHobbies.Add(new UserHobbies { UserID = userID, HobbiesID = item.HobbiesID });
+            }
+            db.UserHobbies.AddRange(userHobbies);
+            db.SaveChanges();
+            return RedirectToAction("EditProfileInterests");
+        }
+        /// <summary>
+        /// tıklanan hobiyi siler
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        // GET: UserHobbies/Delete/5
+        [Authorize]
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            UserHobbies userHobbies = db.UserHobbies.Find(id);
+            if (userHobbies == null)
+            {
+                return HttpNotFound();
+            }
+            db.UserHobbies.Remove(userHobbies);
+            db.SaveChanges();
+            return RedirectToAction("editprofileinterests", "Hobbies");
         }
         protected override void Dispose(bool disposing)
         {

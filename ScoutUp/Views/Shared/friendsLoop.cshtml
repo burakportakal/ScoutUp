@@ -1,0 +1,16 @@
+﻿@foreach (var item in Model)
+{
+    <div class="col-md-6 col-sm-6">
+        <div class="friend-card">
+            <img src="../../images/covers/1.jpg" alt="profile-cover" class="img-responsive cover" />
+            <div class="card-info">
+                <img src="../../images/users/user-3.jpg" alt="user" class="profile-photo-lg" />
+                <div class="friend-info">
+                    <a class="stop-follow" href="@Url.Content("~/users/stopfollow/")@item.id" class="pull-right text-green">Takip Ediliyor</a>
+                    <h5><a href='@Url.Content("~/users/index/")@item.id' class="profile-link">@item.Name</a></h5>
+                    <p>Student at Harvard</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}

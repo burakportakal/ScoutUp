@@ -18,24 +18,34 @@ namespace ScoutUp.Controllers
         [Authorize]
         public ActionResult Newsfeed()
         {
-            string username = HttpContext.GetOwinContext().Authentication.User.Identity.Name;
-            var type = HttpContext.GetOwinContext().Authentication.User.Identity.AuthenticationType;
-            var t = HttpContext.GetOwinContext().Authentication.User.Claims;
-            string id = "";
-            foreach (var item in t)
-            {
-                if (item.Type.Contains("primarysid"))
-                    id = item.Value;
-
-            }
-            var tt = HttpContext.GetOwinContext().Authentication.User.IsInRole("RoleName");
-            ViewBag.email = username;
-            ViewBag.id = id;
+            Models.User user = getUserModel();
+            ViewBag.email = user.UserEmail;
+            ViewBag.id = user.UserID;
+            UsersController controller = getUserController();
+            ViewBag.followSuggest = controller.FollowSuggest();
+            ViewBag.followerCount = controller.FollowerCount(user.UserID);
             return View();
+        }
+        public int usersFollowers()
+        {
+            UsersController controller = getUserController();
+            Models.User user = getUserModel();
+            int followerCount = controller.FollowerCount(user.UserID);
+            return followerCount;
         }
         public ActionResult Register()
         {
             return View();
+        }
+        private Models.User getUserModel()
+        {
+            return getUserController().GetUser();
+        }
+        private UsersController getUserController()
+        {
+            var controller = DependencyResolver.Current.GetService<UsersController>();
+            controller.ControllerContext = new ControllerContext(this.Request.RequestContext, controller);
+            return controller;
         }
     
     }

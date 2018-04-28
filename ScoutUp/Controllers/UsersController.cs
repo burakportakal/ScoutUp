@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -12,15 +11,73 @@ using ScoutUp.Classes;
 using System.Security.Claims;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin;
 
 namespace ScoutUp.Controllers
 {
     public class UsersController : Controller
     {
-        private ScoutUpDB db = new ScoutUpDB();
+        private readonly ScoutUpDB _db = new ScoutUpDB();
+        #region timeline index about album followers
+        public ActionResult Index(int? id)
+        {
+            User user;
+            var targetUser = true;
+            if (id == null)
+            {
+                targetUser = false;
+                user = GetUser();
+            }
+            else
+            {
+                user = _db.Users.Find(id);
+            }
+            if (user == null)
+                return HttpNotFound();
 
+            if (targetUser)
+            {
+                ViewBag.Following = IsFollowing(user);
+            }
+            ViewBag.followerCount = FollowerCount(id);
+            return View(user);
+        }
+        [Authorize]
+        public ActionResult About(int? id)
+        {
+            User user;
+            bool targetUser = true;
+            if (id == null)
+            {
+                targetUser = false;
+                user = GetUser();
+            }
+            else
+            {
+                user = _db.Users.Find(id);
+            }
+            if (user == null)
+                return HttpNotFound();
+            if (targetUser)
+            {
+                ViewBag.Following = IsFollowing(user);
+            }
+            ViewBag.followerCount = FollowerCount(id);
+            return View(user);
+        }
+        private bool IsFollowing(User targetUser)
+        {
+            User user = GetUser();
+            int rowCount = _db.UserFollow.Where(e => e.UserID == user.UserID).Count(e => e.UserBeingFollowedUserID == targetUser.UserID);
+            return rowCount == 1;
+        }
+        private bool IsFollowingReverse(User targetUser)
+        {
+            User user = GetUser();
+            int rowCount = _db.UserFollow.Where(e => e.UserID == targetUser.UserID).Count(e => e.UserBeingFollowedUserID == user.UserID);
+            return rowCount == 1;
+        }
+        #endregion
+        #region login logout create
         /// <summary>
         /// Kullanıcı Login kısmı 
         /// </summary>
@@ -34,7 +91,7 @@ namespace ScoutUp.Controllers
             {
                 return Json(new LoginResult(0));
             }
-            ScoutUp.Models.User user = db.Users.Where(e => e.UserEmail == email).Where(p => p.UserPassword == password).FirstOrDefault();
+            User user = _db.Users.Where(e => e.UserEmail == email).FirstOrDefault(p => p.UserPassword == password);
             if (user != null)
             {
                 HttpContext.GetOwinContext().Authentication.SignOut();
@@ -78,56 +135,40 @@ namespace ScoutUp.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "UserName,UserSurname,UserPassword,UserEmail,UserCity,UserBirthDate,UserGender")] ScoutUp.Models. User user)
+        public ActionResult Create([Bind(Include = "UserName,UserSurname,UserPassword,UserEmail,UserCity,UserBirthDate,UserGender,UserAbout")] ScoutUp.Models. User user)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    db.Users.Add(user);
-                    
-                    db.SaveChanges();
+                    _db.Users.Add(user);
+                    _db.SaveChanges();
                     return Json(new LoginResult(1));
                 }
             }
             catch (DataException)
             {
-
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
             }
 
             return Json(new LoginResult(0));
         }
-
+        #endregion
+        #region edit profile hobbies
         /// <summary>
         /// Profil update edildilten sonra ve ilk girişte çalışır id parametresi verimediği zaman zaten giriş yapmış olması gerektiği için sessiondan id parametresi alınarak devam edilir.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [Authorize]
-        public ActionResult EditProfileBasic(int? id)
+        public ActionResult EditProfileBasic()
         {
-            if (id == null)
-            {
-                var t = HttpContext.GetOwinContext().Authentication.User.Claims;
-                foreach (var item in t)
-                {
-                    if (item.Type.Contains("primarysid"))
-                    {
-                        id = Convert.ToInt32(item.Value);
-                        break;
-                    }
-                }
-            }
-            ScoutUp.Models.User user = db.Users.Find(id);
-            if (HttpContext.GetOwinContext().Authentication.User.Identity.Name != user.UserEmail)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            Models.User user = GetUser();
             if (user == null)
             {
                 return HttpNotFound();
             }
+            ViewBag.followerCount = FollowerCount(user.UserID);
             return View(user);
         }
         /// <summary>
@@ -138,22 +179,20 @@ namespace ScoutUp.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditProfileBasic([Bind(Include = "UserID,UserName,UserSurname,UserEmail,UserCity,UserBirthDate,UserGender")]ScoutUp.Models.User user)
+        public ActionResult EditProfileBasic([Bind(Include = "UserID,UserName,UserSurname,UserEmail,UserCity,UserBirthDate,UserGender,UserAbout")]ScoutUp.Models.User user)
         {
-            if (ModelState.IsValid)
-            {
-                db.Users.Attach(user);
-                var entry = db.Entry(user);
+            if (!ModelState.IsValid) return Redirect("Home");
+            _db.Users.Attach(user);
+            var entry = _db.Entry(user);
 
-                entry.Property(e => e.UserName).IsModified = true;
-                entry.Property(e => e.UserSurname).IsModified = true;
-                entry.Property(e => e.UserBirthDate).IsModified = true;
-                entry.Property(e => e.UserCity).IsModified = true;
-                entry.Property(e => e.UserGender).IsModified = true;
-                db.SaveChanges();
-                return View(user);
-            }
-            return Redirect("Home");
+            entry.Property(e => e.UserName).IsModified = true;
+            entry.Property(e => e.UserSurname).IsModified = true;
+            entry.Property(e => e.UserBirthDate).IsModified = true;
+            entry.Property(e => e.UserCity).IsModified = true;
+            entry.Property(e => e.UserGender).IsModified = true;
+            entry.Property(e => e.UserAbout).IsModified = true;
+            _db.SaveChanges();
+            return View(user);
         }
         /// <summary>
         /// Sayfa yüklenirken kullanıcının seçmediği hobbileri oto komplete gönderir
@@ -163,15 +202,15 @@ namespace ScoutUp.Controllers
         public ActionResult All()
         {
             var t = HttpContext.GetOwinContext().Authentication.User.Claims;
-            int userID = 0;
+            int userId = 0;
             foreach (var item in t)
             {
                 if (item.Type.Contains("primarysid"))
-                    userID = Convert.ToInt32(item.Value);
+                    userId = Convert.ToInt32(item.Value);
 
             }
-            User user = db.Users.Where(e => e.UserID == userID).FirstOrDefault();
-            List<Hobbies> userHobbies = db.Hobbies.ToList();
+            User user = _db.Users.FirstOrDefault(e => e.UserID == userId);
+            List<Hobbies> userHobbies = _db.Hobbies.ToList();
             foreach (var item in user.UserHobbies)
             {
                 userHobbies.Remove(item.Hobbies);
@@ -185,48 +224,43 @@ namespace ScoutUp.Controllers
         [Authorize]
         public ActionResult EditProfileInterests()
         {
-            var t = HttpContext.GetOwinContext().Authentication.User.Claims;
-            int userID = 0;
-            foreach (var item in t)
-            {
-                if (item.Type.Contains("primarysid"))
-                    userID = Convert.ToInt32(item.Value);
-
-            }
-            User user = db.Users.Where(e => e.UserID == userID).FirstOrDefault();
+            User user = GetUser();
+            ViewBag.followerCount = FollowerCount(user.UserID);
             return View(user);
         }
         /// <summary>
         /// Kullanıcı yeni hobi eklemek istediğinde burası çalışır 1 veya daha fazla hobi seçip gönderebilir. daha önce seçtiği hobiyi seçemediği için bu durum sorun olmuyor.
         /// </summary>
-        /// <param name="HobbiesName"></param>
+        /// <param name="hobbiesName"></param>
         /// <returns></returns>
         [Authorize]
         [HttpPost]
-        public ActionResult EditProfileInterests(string HobbiesName)
+        public ActionResult EditProfileInterests(string hobbiesName)
         {
-            string[] split = HobbiesName.Split(',');
-            List<Hobbies> hobbies = new List<Hobbies>();
+            string[] split = hobbiesName.Split(',');
             List<UserHobbies> userHobbies = new List<UserHobbies>();
-            foreach (var item in split)
-            {
-                var ids = db.Hobbies.Where(e => e.HobbiesName == item).FirstOrDefault();
-                hobbies.Add(ids);
-            }
+            List<Hobbies> hobbies = split.Select(item => _db.Hobbies.FirstOrDefault(e => e.HobbiesName == item)).ToList();
             var t = HttpContext.GetOwinContext().Authentication.User.Claims;
-            int userID = 0;
+            int userId = 0;
             foreach (var item in t)
             {
                 if (item.Type.Contains("primarysid"))
-                    userID = Convert.ToInt32(item.Value);
+                    userId = Convert.ToInt32(item.Value);
 
             }
             foreach (var item in hobbies)
             {
-                userHobbies.Add(new UserHobbies { UserID = userID, HobbiesID = item.HobbiesID });
+                userHobbies.Add(new UserHobbies { UserID = userId, HobbiesID = item.HobbiesID });
             }
-            db.UserHobbies.AddRange(userHobbies);
-            db.SaveChanges();
+            try
+            {
+                _db.UserHobbies.AddRange(userHobbies);
+                _db.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
             return RedirectToAction("EditProfileInterests");
         }
         /// <summary>
@@ -242,20 +276,217 @@ namespace ScoutUp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            UserHobbies userHobbies = db.UserHobbies.Find(id);
+            UserHobbies userHobbies = _db.UserHobbies.Find(id);
             if (userHobbies == null)
             {
                 return HttpNotFound();
             }
-            db.UserHobbies.Remove(userHobbies);
-            db.SaveChanges();
-            return RedirectToAction("editprofileinterests", "Hobbies");
+            _db.UserHobbies.Remove(userHobbies);
+            _db.SaveChanges();
+            return RedirectToAction("EditProfileInterests");
+        }
+        #endregion
+        #region Follow
+        /// <summary>
+        /// Bir kullanıcının diğer bir kullanıcıyı takip etmesini sağlar.
+        /// </summary>
+        /// <param name="id">Takip edilecek kullanıcının idsi.</param>
+        /// <returns></returns>
+        [Authorize]
+        public ActionResult Follow(int? id)
+        {
+            if(id==null)
+            {
+                return new HttpStatusCodeResult( HttpStatusCode.BadRequest);
+            }
+            try
+            {
+                User user = GetUser();
+                _db.UserFollow.Add(new UserFollow { UserID = user.UserID, UserBeingFollowedUserID = (int)id, IsFollowing = true });
+                _db.SaveChanges();
+                return Json(new LoginResult(1),JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+                return Json(new LoginResult(0),JsonRequestBehavior.AllowGet);
+            }
+        }
+        /// <summary>
+        /// Kullanıcıya takip etmesi için öneri sunar Projenin asıl amacı çok geliştirilecek.
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        public List<UsersToFollow> FollowSuggest()
+        {
+            User user = GetUser();
+            if (user == null)
+            {
+                return null;
+            }
+            if (HttpContext.GetOwinContext().Authentication.User.Identity.Name != user.UserEmail)
+            {
+                return null;
+            }
+            List<User> allUsers = _db.Users.ToList();
+            allUsers.Remove(user);
+            foreach (var item in user.UserFollow)
+            {
+                allUsers.Remove(_db.Users.Find(item.UserBeingFollowedUserID));
+            }
+            List<UsersToFollow> usersToFollow = new List<UsersToFollow>();
+            foreach (var item in allUsers)
+            {
+                UsersToFollow temp = new UsersToFollow(item.UserID, item.UserName + " " + item.UserSurname);
+                usersToFollow.Add(temp);
+            }
+            return usersToFollow;
+        }
+        #endregion
+        #region Friends
+        /// <summary>
+        /// Kullanıcının takip ettiği kullanıcıları gösterir
+        /// </summary>
+        /// <returns>/users/friends</returns>
+        //id eklemem lazım buraya following için
+        [Authorize]
+        public ActionResult Friends(int? id)
+        {
+            User user = GetUser();
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            if (HttpContext.GetOwinContext().Authentication.User.Identity.Name != user.UserEmail)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            List<FollowingUsers> followList = user.UserFollow.Select(item => _db.Users.Find(item.UserBeingFollowedUserID)).Select(temp => new FollowingUsers(temp.UserID, temp.UserName + " " + temp.UserSurname)).ToList();
+            ViewBag.email = GetUser().UserEmail;
+            ViewBag.followSuggest = FollowSuggest();
+            return View(followList);
+        }
+        [Authorize]
+        public ActionResult StopFollow(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            User user = GetUser();
+            UserFollow removeFollow = _db.UserFollow.Where(e => e.UserID==user.UserID).FirstOrDefault(e => e.UserBeingFollowedUserID==id);
+            if (removeFollow == null)
+            {
+                return Json(new LoginResult(0), JsonRequestBehavior.AllowGet);
+            }
+            _db.UserFollow.Remove(removeFollow);
+            _db.SaveChanges();
+            return Json(new LoginResult(1),JsonRequestBehavior.AllowGet);
+        }
+        /// <summary>
+        /// Dinamik takipçi sayısı. Jquery get ile 5 saniyede 1 takipçi sayısını öğrenmek için istek gelir.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Authorize]
+        public int FollowerCount(int? id)
+        {
+            User user = id == null ? GetUser() : _db.Users.Find(id);
+            List<UserFollow> followerUsers = _db.UserFollow.Where(e => e.UserBeingFollowedUserID == user.UserID).ToList();
+            return followerUsers.Count;
+        }
+        /// <summary>
+        /// Right-side kısmından kullanıcı birini takip ettiğinde friends partial kısmını günceller sayfa yenilenmeden yeni takip edilen kişi alana eklenir.
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        public ActionResult FriendsPartial()
+        {
+            User user = GetUser();
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            if (HttpContext.GetOwinContext().Authentication.User.Identity.Name != user.UserEmail)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            List<FollowingUsers> followList = user.UserFollow.Select(item => _db.Users.Find(item.UserBeingFollowedUserID)).Select(temp => new FollowingUsers(temp.UserID, temp.UserName + " " + temp.UserSurname)).ToList();
+            ViewBag.followSuggest = FollowSuggest();
+            return PartialView("friendsLoop", followList);
+        }
+        #endregion
+        #region Followers
+        [Authorize]
+        public ActionResult Followers(int? id)
+        {
+            User currentUser = GetUser();
+            User user = id == null ? GetUser() : _db.Users.Find(id);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            List<FollowingUsers> followList = new List<FollowingUsers>();
+            List<UserFollow> followerUsers = _db.UserFollow.Where(e => e.UserBeingFollowedUserID == user.UserID).ToList();
+            foreach (var item in followerUsers)
+            {
+                if (item.UserID == currentUser.UserID)
+                {//Ben onu takip ediyorum o beni takip ediyor mu ?
+                    FollowingUsers temp = new FollowingUsers(item.UserID, item.User.UserName + " " + item.User.UserSurname, IsFollowingReverse(user));
+                    followList.Add(temp);
+                }
+                else
+                {//şu an ki kullanıcı kendisini takip eden kullanıcıyı takip ediyor mu?
+                    FollowingUsers temp = new FollowingUsers(item.UserID, item.User.UserName + " " + item.User.UserSurname, IsFollowing(item.User));
+                    followList.Add(temp);
+                }
+            }
+
+            ViewBag.email = currentUser.UserEmail;
+            ViewBag.userid = currentUser.UserID;
+            ViewBag.followSuggest = FollowSuggest();
+            return View(followList);
+        }
+        public ActionResult UsersFollowersPartial(int? id)
+        {
+            User currentUser = GetUser(); 
+            User user = id == null ? GetUser() : _db.Users.Find(id);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            List<FollowingUsers> followList = new List<FollowingUsers>();
+            List<UserFollow> followerUsers = _db.UserFollow.Where(e => e.UserBeingFollowedUserID == user.UserID).ToList();
+            foreach (var item in followerUsers)
+            {
+                if (item.UserID == currentUser.UserID)
+                {//Ben onu takip ediyorum o beni takip ediyor mu ?
+                    FollowingUsers temp = new FollowingUsers(item.UserID, item.User.UserName + " " + item.User.UserSurname, IsFollowingReverse(user));
+                    followList.Add(temp);
+                }
+                else
+                {//şu an ki kullanıcı kendisini takip eden kullanıcıyı takip ediyor mu?
+                    FollowingUsers temp = new FollowingUsers(item.UserID, item.User.UserName + " " + item.User.UserSurname, IsFollowing(item.User));
+                    followList.Add(temp);
+                }
+            }
+            
+            ViewBag.email = currentUser.UserEmail;
+            ViewBag.userid = currentUser.UserID;
+            ViewBag.followSuggest = FollowSuggest();
+            return PartialView("FollowersLoop",followList);
+        }
+        #endregion
+        public User GetUser()
+        {
+            var t = HttpContext.GetOwinContext().Authentication.User.Claims;
+            int id = (from item in t where item.Type.Contains("primarysid") select Convert.ToInt32(item.Value)).FirstOrDefault();
+            return _db.Users.Find(id);
         }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                _db.Dispose();
             }
             base.Dispose(disposing);
         }

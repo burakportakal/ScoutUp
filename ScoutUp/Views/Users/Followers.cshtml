@@ -1,0 +1,94 @@
+﻿@model  IEnumerable<ScoutUp.Classes.FollowingUsers>
+@Html.Partial("~/Views/Shared/header.cshtml")
+<!--Header End-->
+
+<div id="page-contents">
+    <div class="container">
+        <div class="row">
+
+            <!-- Newsfeed Common Side Bar Left -->
+
+            @Html.Partial("~/Views/Shared/leftside.cshtml")
+
+            <!-- Post Create Box
+            ================================================= -->
+            <div class="create-post">
+                <div class="row">
+                    <div class="col-md-7 col-sm-7">
+                        <div class="form-group">
+                            <img src="../../images/users/user-1.jpg" alt="" class="profile-photo-md" />
+                            <textarea name="texts" id="exampleTextarea" cols="30" rows="1" class="form-control" placeholder="Write what you wish"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-5 col-sm-5">
+                        <div class="tools">
+                            <ul class="publishing-tools list-inline">
+                                <li><a href="newsfeed-friends.html#"><i class="ion-compose"></i></a></li>
+                                <li><a href="newsfeed-friends.html#"><i class="ion-images"></i></a></li>
+                                <li><a href="newsfeed-friends.html#"><i class="ion-ios-videocam"></i></a></li>
+                                <li><a href="newsfeed-friends.html#"><i class="ion-map"></i></a></li>
+                            </ul>
+                            <button class="btn btn-primary pull-right">Publish</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Post Create Box End -->
+            <!-- Friend List
+            ================================================= -->
+            <div class="friend-list">
+                <div id="following_users" class="row">
+                    @Html.Partial("~/Views/Shared/followersloop.cshtml")
+                </div>
+            </div>
+        </div>
+
+        <!-- Newsfeed Common Side Bar Right
+        ================================================= -->
+        @Html.Partial("~/Views/Shared/rightside.cshtml")
+    </div>
+    <input type="hidden" id="userid" value="@ViewBag.userid" />
+</div>
+<!-- Footer
+================================================= -->
+@Html.Partial("~/Views/Shared/footer.cshtml")
+<script>
+       function refreshUsersFollowing() {
+           var url = "@(Html.Raw(Url.Action("usersFollowers", "Home")))";
+           $.get(url, function (e) {
+               $("#follower-count").text(e + " Takipçi")
+           });
+        setInterval(function () {
+            var url = "@(Html.Raw(Url.Action("usersFollowers", "Home")))";
+            $.get(url, function (e) {
+                $("#follower-count").text(e + " Takipçi")
+            });
+        }, 30000); //Refreshes every 30 seconds
+
+        $.ajaxSetup({ cache: false });  //Turn off caching
+       };
+    refreshUsersFollowing();
+    function refreshUsersFollower() {
+        var url = window.location;
+        var id = url.href.split("/")[5];
+        if (id == null) {
+            url = "/users/usersFollowersPartial";
+        }
+        else {
+            url = "/users/usersFollowersPartial/"+id;
+        }
+        $("#following_users").load(url);
+        setInterval(function () {
+           if (id == null) {
+            url = "/users/usersFollowersPartial";
+        }
+        else {
+            url = "/users/usersFollowersPartial/"+id;
+        }
+            $("#following_users").load(url);
+        }, 30000); //Refreshes every 30 seconds
+
+        $.ajaxSetup({ cache: false });  //Turn off caching
+    };
+    refreshUsersFollower();
+</script>
+<script src="../../js/follow.js"></script>

@@ -243,9 +243,28 @@
 
           <!-- Right side-->
             @Html.Partial("~/Views/Shared/rightside.cshtml")
+           
     		</div>
     	</div>
     </div>
 
    <!--Footer-->
     @Html.Partial("~/Views/Shared/footer.cshtml")
+
+    <script type="text/javascript" src="../../js/right-side.js"></script>
+<script>
+     function refreshUsersFollowing() {
+           var url = "@(Html.Raw(Url.Action("usersFollowers", "Home")))";
+           $.get(url, function (e) {
+               $("#follower-count").text(e + " Takipçi")
+           });
+        setInterval(function () {
+            var url = "@(Html.Raw(Url.Action("usersFollowers", "Home")))";
+            $.get(url, function (e) {
+                $("#follower-count").text(e + " Takipçi")
+            });
+        }, 30000); ///Refreshes every 30 seconds
+
+        $.ajaxSetup({ cache: false });  //Turn off caching
+     }; refreshUsersFollowing();
+</script>

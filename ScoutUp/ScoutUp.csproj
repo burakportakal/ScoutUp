@@ -172,6 +172,7 @@
     <Content Include="images\logo-black.png" />
     <Content Include="images\logo.png" />
     <Content Include="js\bootstrap.min.js" />
+    <Content Include="js\follow.js" />
     <Content Include="js\jquery-3.1.1.min.js" />
     <Content Include="js\jquery-ui.js" />
     <Content Include="js\jquery-ui.min.js" />
@@ -201,6 +202,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="js\right-side.js" />
     <Content Include="src\alert-circled.svg" />
     <Content Include="src\alert.svg" />
     <Content Include="src\android-add-circle.svg" />
@@ -934,6 +936,11 @@
     <Content Include="src\woman.svg" />
     <Content Include="src\wrench.svg" />
     <Content Include="src\xbox.svg" />
+    <Content Include="Views\Shared\TimeLineMenu.cshtml" />
+    <Content Include="Views\Shared\StickySideBar.cshtml" />
+    <Content Include="Views\Shared\PostCreateBox.cshtml" />
+    <Content Include="Views\Shared\friendsLoop.cshtml" />
+    <Content Include="Views\Shared\UsersFollowerCount.cshtml" />
     <None Include="Views\Users\editprofileinterests.cshtml" />
     <None Include="Views\Home\index.cshtml" />
     <None Include="Views\Home\newsfeed.cshtml" />
@@ -945,6 +952,11 @@
     <Content Include="Views\Shared\EditProfileMenu.cshtml" />
     <Content Include="Views\Shared\TimelineSidebar.cshtml" />
     <None Include="Views\Users\editprofilebasic.cshtml" />
+    <None Include="Views\Users\About.cshtml" />
+    <Content Include="Views\Users\Followers.cshtml" />
+    <Content Include="Views\Shared\FollowersLoop.cshtml" />
+    <None Include="Views\Users\friends.cshtml" />
+    <None Include="Views\Users\index.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -958,8 +970,10 @@
     <Compile Include="Classes\AppRole.cs" />
     <Compile Include="Classes\AppUser.cs" />
     <Compile Include="Classes\AppUserManager.cs" />
+    <Compile Include="Classes\FollowingUsers.cs" />
     <Compile Include="Classes\LoginResult.cs" />
     <Compile Include="Classes\StartupOwin.cs" />
+    <Compile Include="Classes\UsersToFollow.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="DAL\ScoutUpDB.cs" />
@@ -992,7 +1006,6 @@
     <Content Include="Views\Users\Delete.cshtml" />
     <Content Include="Views\Users\Details.cshtml" />
     <Content Include="Views\Users\Edit.cshtml" />
-    <Content Include="Views\Users\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

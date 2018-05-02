@@ -20,8 +20,10 @@ namespace ScoutUp
             );
             routes.MapRoute(
             name: "Hello",
-            url: "{controller}/{action}/{name}/{id}"
+            url: "{controller}/{action}/{id}/{count}",
+            defaults: new { controller = "Post", id = UrlParameter.Optional,count=5 }
         );
+            
         }
     }
 }

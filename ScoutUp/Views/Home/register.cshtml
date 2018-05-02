@@ -13,7 +13,8 @@
 		<link rel="stylesheet" href="../../css/bootstrap.min.css" />
 		<link rel="stylesheet" href="../../css/style.css" />
 		<link rel="stylesheet" href="../../css/ionicons.min.css" />
-    <link rel="stylesheet" href="../../css/font-awesome.min.css" />
+	    <link rel="stylesheet" href="../../css/font-awesome.min.css" />
+	    <link rel="stylesheet" href="../../css/parsley.css" />
     
     <!--Google Font-->
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,400i,700,700i" rel="stylesheet">
@@ -145,29 +146,34 @@
                     <div class="row">
                       <div class="form-group col-xs-6">
                         <label for="firstname" class="sr-only">First Name</label>
-                        <input class="form-control input-group-lg" type="text" id="UserName" name="UserName" title="Enter first name" placeholder="First name"/>
+                          <input class="form-control input-group-lg" type="text" id="UserName" name="UserName" title="Enter first name"
+                                 required data-errormessage-value-missing="Lütfen geçerli bir email adresi girin!" data-errormessage-type-mismatch="Invalid!" placeholder="First name"/>
                       </div>
                       <div class="form-group col-xs-6">
                         <label for="lastname" class="sr-only">Last Name</label>
-                        <input  class="form-control input-group-lg" type="text" id="UserSurname" name="UserSurname" title="Enter last name" placeholder="Last name"/>
+                          <input  class="form-control input-group-lg" type="text" id="UserSurname" name="UserSurname" title="Enter last name" 
+                                  required data-errormessage-value-missing="Lütfen geçerli bir email adresi girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Last name"/>
                       </div>
                     </div>
                     <div class="row">
                       <div class="form-group col-xs-12">
                         <label for="email" class="sr-only">Email</label>
-                        <input class="form-control input-group-lg" type="text"  id="UserEmail" name="UserEmail" title="Enter Email" placeholder="Your Email"/>
+                          <input class="form-control input-group-lg" type="email"  id="UserEmail" name="UserEmail" title="Enter Email" 
+                                 required data-errormessage-value-missing="Lütfen geçerli bir email adresi girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Your Email"/>
                       </div>
                     </div>
                     <div class="row">
                       <div class="form-group col-xs-12">
                         <label for="password" class="sr-only">Password</label>
-                        <input class="form-control input-group-lg" type="password" id="UserPassword" name="UserPassword" title="Enter password" placeholder="Password"/>
+                          <input class="form-control input-group-lg" type="password" id="UserPassword" name="UserPassword" title="Enter password"
+                                 required data-errormessage-value-missing="Lütfen geçerli bir email adresi girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Password"/>
                       </div>
                     </div>
                     <div class="row">
                       <p class="birth"><strong>Date of Birth</strong></p>
                       <div class="form-group col-sm-3 col-xs-6">
-                          <input type="datetime" class="form-control" id="UserBirthDate" name="UserBirthDate" placeholder="Enter your birthdate">
+                          <input type="datetime" class="form-control" id="UserBirthDate" name="UserBirthDate" 
+                                 required data-errormessage-value-missing="Lütfen geçerli bir email adresi girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Enter your birthdate">
                       </div>
                     </div>
                     <div class="form-group gender">
@@ -177,7 +183,8 @@
                     <div class="row">
                       <div class="form-group col-xs-6">
                         <label for="city" class="sr-only">City</label>
-                        <input class="form-control input-group-lg reg_name" type="text" id="UserCity" name="UserCity" title="Enter city" placeholder="Your city"/>
+                          <input class="form-control input-group-lg reg_name" type="text" id="UserCity" name="UserCity" title="Enter city"
+                                 required data-errormessage-value-missing="Lütfen geçerli bir email adresi girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Your city"/>
                       </div>
                       <div class="form-group col-xs-6">
                         <label for="country" class="sr-only"></label>
@@ -457,15 +464,18 @@
                      <div class="row">
                       <div class="form-group col-xs-12">
                         <label for="email" class="sr-only">Email</label>
-                        <input id="email" class="form-control input-group-lg" type="text" name="email" title="Enter Email" placeholder="Your Email"/>
+                          <input id="email" class="form-control input-group-lg" type="text" name="email" title="Enter Email"  
+                                 required data-errormessage-value-missing="Lütfen geçerli bir email adresi girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Email"/>
                       </div>
                     </div>
-                    <div class="row">
-                      <div class="form-group col-xs-12">
-                        <label for="password" class="sr-only">Password</label>
-                        <input id="password" class="form-control input-group-lg" type="password" name="password" title="Enter password" placeholder="Password"/>
+                      <div class="row">
+                          <div class="form-group col-xs-12">
+                              <label for="password" class="sr-only">Password</label>
+                              <input id="password" class="form-control input-group-lg" type="password" name="password" title="Enter password"  
+                                     required data-errormessage-value-missing="Lütfen geçerli bir şifre girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Şifre" />
+                          </div>
                       </div>
-                    </div>
+                      @Html.Hidden("returnUrl", @Request.QueryString)
                       <button class="btn btn-primary">Login Now</button>
                   </form><!--Login Form Ends--> 
                   <p><a href="index-register.html#">Forgot Password?</a></p>
@@ -504,49 +514,38 @@
     <script src="../../js/bootstrap.min.js"></script>
     <script src="../../js/jquery.appear.min.js"></script>
 	<script src="../../js/jquery.incremental-counter.js"></script>
-    <script src="../../js/script.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            $("#register_form").submit(function (evt) {
+	<script src="../../js/script.js"></script>
+	<script src="../../js/parsley.js"></script>
+	<script type="text/javascript">
+	    $('#register_form').parsley();
+	      $(function () {
+	          $("#register_form").submit(function (evt) {
+	              if($('#register_form').parsley().validationResult){
+	           evt.preventDefault();
+	          var url = $(this).attr('action');
+	           var postData = $(this).serialize();
 
-                evt.preventDefault();
-                var url = $(this).attr('action');
-                var postData = $(this).serialize();
+	        $.post(url, postData, function (o) {
 
-                $.post(url, postData, function (o) {
-
-                    if (o.Result == 1) {
-                        alert('kayıt başarılı');
-                        $("#register_pane").removeClass("active");
-                        $("#login_pane").addClass("active");
-                        $("#register").removeClass("active");
-                        $("#login").addClass("active");
-                    }
-                    else {
-                        alert('Kayıt başarısız');
-                    }
-                }, 'json');
-            });
-        });
-        $(function () {
-            $("#login_form").submit(function (evt) {
-
-                evt.preventDefault();
-                var url = $(this).attr('action');
-                var postData = $(this).serialize();
-
-                $.post(url, postData, function (o) {
-                    if (o.Result == 1) {
-                        alert('giriş başarılı');
-                        window.location.href = '@Url.Content("~/home/newsfeed")';
-                    }
-                    else {
-                        alert('invalid username or password');
-                    }
-                }, 'json');
-            });
-        });
-    </script>
+	             if (o.Result == 1) {
+	                  alert('kayıt başarılı');
+	                  $("#register_pane").removeClass("active");
+	                 $("#login_pane").addClass("active");
+	                  $("#register").removeClass("active");
+	                 $("#login").addClass("active");
+	              }
+	             else if (o.Result == 0) {
+	                 alert('Kayıt başarısız');
+	             } else {
+	                 $("#UserEmail").removeClass("parsley-success");
+	                 $("#UserEmail").addClass("parsley-error");
+	                 alert(o);
+	             }
+	         }, 'json');
+                      }
+	              });
+	     });
+	</script>
 	</body>
 
 </html>

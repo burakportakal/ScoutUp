@@ -9,7 +9,8 @@ namespace ScoutUp.Models
     {
         public int UserPhotosID { get; set; }
         public int UserID { get; set; }
-        public string UserPhotoLocation { get; set; }
+        public string UserPhotoSmall { get; set; }
+        public string UserPhotoBig { get; set; }
         public bool IsDeleted { get; set; }
         public virtual User User { get; set; }
     }

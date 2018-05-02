@@ -63,6 +63,14 @@
       <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.3\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.2.3\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
@@ -153,8 +161,10 @@
     <Content Include="css\jquery-ui.theme.min.css" />
     <Content Include="css\jquery.scrollbar.css" />
     <Content Include="css\jquery.tagit.css" />
+    <Content Include="css\parsley.css" />
     <Content Include="css\style.css" />
     <Content Include="css\tagit.ui-zendesk.css" />
+    <Content Include="css\turntable.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="fonts\ionicons.svg" />
     <Content Include="Global.asax" />
@@ -181,6 +191,8 @@
     <Content Include="js\jquery.scrollbar.min.js" />
     <Content Include="js\jquery.sticky-kit.min.js" />
     <Content Include="js\masonry.pkgd.min.js" />
+    <Content Include="js\parsley.js" />
+    <Content Include="js\photo-gallery.js" />
     <Content Include="js\script.js" />
     <Content Include="js\tagit.js" />
     <Content Include="js\tagit.min.js" />
@@ -193,10 +205,13 @@
     <Content Include="less\_ionicons-font.less" />
     <Content Include="less\_ionicons-icons.less" />
     <Content Include="less\_ionicons-variables.less" />
+    <Content Include="less\profile-picture.less" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.3.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.3.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
@@ -941,6 +956,9 @@
     <Content Include="Views\Shared\PostCreateBox.cshtml" />
     <Content Include="Views\Shared\friendsLoop.cshtml" />
     <Content Include="Views\Shared\UsersFollowerCount.cshtml" />
+    <Content Include="Views\Shared\userPosts.cshtml" />
+    <Content Include="Views\Shared\postComments.cshtml" />
+    <Content Include="Views\Shared\UserLikedPost.cshtml" />
     <None Include="Views\Users\editprofileinterests.cshtml" />
     <None Include="Views\Home\index.cshtml" />
     <None Include="Views\Home\newsfeed.cshtml" />
@@ -953,10 +971,10 @@
     <Content Include="Views\Shared\TimelineSidebar.cshtml" />
     <None Include="Views\Users\editprofilebasic.cshtml" />
     <None Include="Views\Users\About.cshtml" />
-    <Content Include="Views\Users\Followers.cshtml" />
-    <Content Include="Views\Shared\FollowersLoop.cshtml" />
     <None Include="Views\Users\friends.cshtml" />
     <None Include="Views\Users\index.cshtml" />
+    <None Include="Views\Users\Followers.cshtml" />
+    <None Include="Views\Users\album.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -971,10 +989,12 @@
     <Compile Include="Classes\AppUser.cs" />
     <Compile Include="Classes\AppUserManager.cs" />
     <Compile Include="Classes\FollowingUsers.cs" />
+    <Compile Include="Classes\ImageResize.cs" />
     <Compile Include="Classes\LoginResult.cs" />
     <Compile Include="Classes\StartupOwin.cs" />
     <Compile Include="Classes\UsersToFollow.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\PostController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="DAL\ScoutUpDB.cs" />
     <Compile Include="DAL\ScoutUpInitializer.cs" />
@@ -1020,6 +1040,7 @@
     <Folder Include="images\post-images\" />
     <Folder Include="images\users\" />
     <Folder Include="png\512\" />
+    <Folder Include="Views\Post\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

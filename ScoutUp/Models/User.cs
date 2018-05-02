@@ -17,6 +17,8 @@ namespace ScoutUp.Models
         public string UserAbout { get; set; }
         public DateTime UserBirthDate { get; set; }
         public bool UserGender { get; set; }
+        public string UserProfilePhoto { get; set; }
+        public virtual ICollection<Post> UserPosts { get; set; }
         public virtual ICollection<UserPhotos> UserPhotos { get; set; }
         public virtual ICollection<UserHobbies> UserHobbies { get; set; }
         public virtual ICollection<UserFollow> UserFollow { get; set; }

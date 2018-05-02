@@ -122,23 +122,26 @@
         ================================================= -->
                
         <div class="sign-up-form" id="sign-in-form">
-					<a href="index.html" class="logo"><img src="../../../../images/logo.png" alt="Friend Finder"/></a>
+					<a href="/" class="logo"><img src="../../images/logo.png" alt="Friend Finder"/></a>
 					<h2 class="text-white">Find My Friends</h2>
 					<div class="line-divider"></div>
 					<div class="form-wrapper">
 						<p class="signup-text">Signup now and meet awesome people around the world</p>
                        <form id="login_form" action='@Url.Content("~/users/login")' method="post">
 							<fieldset class="form-group">
-								<input type="email" name="email" class="form-control" id="example-email" placeholder="Enter email">
+							    <input type="email" name="email" class="form-control" id="example-email"
+							           required data-errormessage-value-missing="Lütfen geçerli bir email adresi girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Email"/>
 							</fieldset>
-							<fieldset class="form-group">
-								<input type="password" name="password" class="form-control" id="example-password" placeholder="Enter a password">
-							</fieldset>
+                           <fieldset class="form-group">
+                               <input type="password" name="password" class="form-control" id="example-password"
+                                      required data-errormessage-value-missing="Lütfen geçerli bir şifre girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Şifre"/>
+                           </fieldset>
+                           @Html.Hidden("returnUrl", @Request.QueryString)
 						<button class="btn-secondary" type="submit" >Login</button>
                         </form>
 					</div>
 					<button class="btn-secondary" id="register-btn" name="register-btn">Register!</button>
-					<img class="form-shadow" src="../../../../images/bottom-shadow.png" alt="" />
+					<img class="form-shadow" src="../../images/bottom-shadow.png" alt="" />
 				</div><!-- Sign in Form End -->
                 <div class="sign-up-form" id="sign-up-form" hidden="true">
                     <a href="index.html" class="logo"><img src="images/logo.png" alt="Friend Finder"></a>
@@ -437,24 +440,24 @@
                     window.location.href = '@Url.Content("~/home/register")';
                 });
             });
-	$(function(){
-	    $("#login_form").submit(function (evt) {
+	//$(function(){
+	 //   $("#login_form").submit(function (evt) {
 	        
-			evt.preventDefault();
-			var url = $(this).attr('action');
-			var postData=$(this).serialize();
+		//	evt.preventDefault();
+		//	var url = $(this).attr('action');
+		//	var postData=$(this).serialize();
 
-			$.post(url, postData, function (o) {
-			    if (o.Result == 1) {
-			        alert('giriş başarılı');
-				    window.location.href = '@Url.Content("~/home/newsfeed")';
-				}
-				else {
-					alert('invalid username or password');
-				}
-			},'json');
-		});
-	});
+		//	$.post(url, postData, function (o) {
+		//	    if (o.Result == 1) {
+		//	        alert('giriş başarılı');
+		//		    window.location.href = '@Url.Content("~/home/newsfeed")';
+	//			}
+	//			else {
+	//				alert('invalid username or password');
+			//	}
+	//		},'json');
+	//	});
+	//});
 
             $(function () {
                 $("#register_form").submit(function (evt) {

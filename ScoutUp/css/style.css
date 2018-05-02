@@ -1325,7 +1325,7 @@ ul.online-users li span.online-dot{
 
 .friend-list .friend-card .card-info img.profile-photo-lg{
   margin-top: -60px;
-  border: 7px solid #fff;
+  border: 2px solid #fff;
 }
 
 
@@ -1569,7 +1569,7 @@ ul.online-users li span.online-dot{
   height: 200px;
   width: 200px;
   border-radius: 50%;
-  border: 10px solid #fff;
+  border: 5px solid #fff;
 }
 
 .timeline-cover .timeline-nav-bar ul.profile-menu{

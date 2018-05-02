@@ -6,7 +6,7 @@
         @foreach (var item in ViewContext.Controller.ViewBag.followSuggest)
         {
         <div class="follow-user">
-            <img src="../../images/users/user-11.jpg" alt="" class="profile-photo-sm pull-left" />
+            <img src="@item.ImagePath" alt="" class="profile-photo-sm pull-left" />
             <div>
                 <h5><a href="/users/index/@item.id">@item.Name</a></h5>
                 <a class="follow" data-id="@item.id" href="/users/follow/@item.id">Takip Et</a>

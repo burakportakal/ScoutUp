@@ -1,0 +1,161 @@
+﻿@model ScoutUp.Models.User
+@Html.Partial("~/Views/Shared/header.cshtml")
+<link rel="stylesheet prefetch" href="../../css/turntable.css">
+<style>ul { list-style: none; }
+ #thumbnails { display: block; margin-bottom: 10px; width:960px;}
+ #thumbnails ul li { float: left; margin-right: 6px; margin-bottom: 12px; }</style>
+    <!--Header End-->
+
+    <div class="container">
+
+      <!-- Timeline
+      ================================================= -->
+        @Html.Partial("~/Views/Shared/TimeLineMenu.cshtml")
+        <!--Timeline Menu for Small Screens End-->
+
+        </div>
+        <div id="page-contents">
+          <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-7">
+
+                <!-- Photo Album
+                ================================================= -->
+                <div id="thumbnails" style="width: auto">
+                    <ul class="clearfix" style="padding-left: 0px">
+                        <!-- Başka kullanıcı profili inceleniyor-->
+                        @if (@ViewBag.targetUser)
+                        {
+                            foreach (var item in @Model.UserPhotos)
+                            {
+                                <li style="list-style-image: none">
+                                    <a href="@item.UserPhotoBig"><img src="@item.UserPhotoSmall" alt="turntable"></a>
+                                </li>
+                            }
+                        }
+                        else //Kendi profilini inceliyor
+                        {
+                            foreach (var item in @Model.UserPhotos)
+                            {
+                                <li style="list-style-image: none">
+                                    <div class="album-pic">
+                                        <a id="userPhoto" href="@item.UserPhotoBig"><img src="@item.UserPhotoSmall" alt="turntable"></a>
+                                        <a class="image-wrapper" id="deletePhoto" data-id="@item.UserPhotosID">
+                                            <form id="profilePictureForm" enctype="multipart/form-data">
+                                                <input class="hidden-input" id="deletePicture" type="file" />
+                                                <label class="edit glyphicon glyphicon-remove" for="deletePicture" type="file" title="Resmi sil"></label>
+                                            </form>
+                                        </a>
+                                        <a class="image-wrapper-edit" id="updateProfilePicture" data-id="@item.UserPhotosID">
+                                            <form id="profilePictureForm" enctype="multipart/form-data">
+                                                <input class="hidden-input" id="deletePicture" type="file" />
+                                                <label class="edit-edit glyphicon glyphicon-pencil" for="deletePicture" type="file" title="Profil resmi yap"></label>
+                                            </form>
+                                        </a>
+                                    </div>
+                                </li>
+                            }
+                        }
+                    </ul>
+                 </div>
+            </div>
+              @Html.Partial("~/Views/Shared/StickySideBar.cshtml")
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Footer
+    ================================================= -->
+@Html.Partial("~/Views/Shared/footer.cshtml")
+<script>
+    $("#album-link").addClass('active');
+    function displayNumbers() {
+        $.get({ url: "/users/followerCount/@Model.UserID", success: function (result) { $("#follower-count").text(result+" Takipçi"); } });
+    }
+    window.setInterval(function () {
+        displayNumbers();
+    }, 5000);
+</script>
+<script src="../../js/follow.js"></script>
+<script src="../../js/photo-gallery.js"></script>
+<script>
+    $(document).ready(function() {
+        var items = $(".image-wrapper");
+        for (var i = 0; i < items.length; i++) {
+           $ (items[i]).off('click');
+        };
+             items = $(".image-wrapper-edit");
+        for (var i = 0; i < items.length; i++) {
+            $(items[i]).off('click');
+        };
+    });
+
+    $("body").on('click',
+        '.image-wrapper',
+        function (e) {
+            e.preventDefault();
+            var self = $(this);
+            $('<div></div>').appendTo('body')
+                .html('<div><h6>Fotoğraf silinsin mi?</h6></div>')
+                .dialog({
+                    modal: true, title: 'Onay', zIndex: 10000, autoOpen: true,
+                    width: 'auto', resizable: false,
+                    buttons: {
+                        Evet: function () {
+                            var id = self.attr("data-id");
+                            $.get({
+                                url: "/users/deletePhoto/" + id, success: function (result) {
+                                    if (result == 1) {
+                                        location.reload();
+                                    } else {
+                                        alert("Hata! fotoğraf silinemedi");
+                                    }
+                                }
+                            });
+                            $(this).dialog("close");
+                        },
+                        Hayır: function () {
+                            $(this).dialog("close");
+                        }
+                    },
+                    close: function (event, ui) {
+                        $(this).remove();
+                    }
+                });
+        });
+    $("body").on('click',
+        '.image-wrapper-edit',
+        function (e) {
+            e.preventDefault();
+            var self = $(this);
+            $('<div></div>').appendTo('body')
+                .html('<div><h6>Profil resmi yapılsın mı?</h6></div>')
+                .dialog({
+                    modal: true, title: 'Onay', zIndex: 10000, autoOpen: true,
+                    width: 'auto', resizable: false,
+                    buttons: {
+                        Evet: function () {
+                            var id = self.attr("data-id");
+                            $.get({
+                                url: "/users/updateprofilephoto/" + id, success: function (result) {
+                                    if (result == 1) {
+                                        location.reload();
+                                    } else {
+                                        alert("Hata! fotoğraf güncellenemedi");
+                                    }
+                                }
+                            });
+                            $(this).dialog("close");
+                        },
+                        Hayır: function () {
+                            $(this).dialog("close");
+                        }
+                    },
+                    close: function (event, ui) {
+                        $(this).remove();
+                    }
+                });
+        });
+</script>

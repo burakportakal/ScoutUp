@@ -10,16 +10,19 @@ namespace ScoutUp.Classes
         public int id;
         public string Name;
         public bool UserFollowing;
+        public string ImagePath;
 
-        public FollowingUsers(int id, string name)
+        public FollowingUsers(int id, string name,string imagePath)
         {
             this.id = id;
             Name = name;
+            ImagePath = imagePath;
         }
-        public FollowingUsers(int id, string name,bool userFollowing)
+        public FollowingUsers(int id, string name,bool userFollowing, string imagePath)
         {
             this.id = id;
             Name = name;
+            ImagePath = imagePath;
             UserFollowing = userFollowing;
         }
     }

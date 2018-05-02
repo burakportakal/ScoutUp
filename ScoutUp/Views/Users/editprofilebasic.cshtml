@@ -25,7 +25,7 @@
                   <div class="line"></div>
                 </div>
                 <div class="edit-block">
-                  <form name="basic-info" id="basic-info" class="form-inline" method="post" action="@Url.Content("~/users/editprofilebasic/"+@ViewBag.id)">
+                  <form name="basic-info" id="basic-info" class="form-inline" method="post" action="@Url.Content("~/users/editprofilebasic/"+@ViewBag.id)" enctype="multipart/form-data">
                       @Html.AntiForgeryToken()
                       @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                       @Html.HiddenFor(model => model.UserID)
@@ -70,12 +70,18 @@
                         <label for="country">My country</label>
                       </div>
                     </div>
-                    <div class="row">
-                      <div class="form-group col-xs-12">
-                        <label for="UserAbout">About me</label>
-                        <textarea id="UserAbout" name="UserAbout" class="form-control" placeholder="Some texts about me" rows="4" cols="400">@Model.UserAbout</textarea>
+                      <div class="row">
+                          <div class="form-group col-xs-12">
+                              <label for="UserAbout">About me</label>
+                              <textarea id="UserAbout" name="UserAbout" class="form-control" placeholder="Some texts about me" rows="4" cols="400">@Model.UserAbout</textarea>
+                          </div>
                       </div>
-                    </div>
+                      <div class="row">
+                          <div class="form-group col-xs-12">
+                              <label for="UserProfilePhoto">Profil Fotoğrafı</label>
+                              <input id="UserProfilePhoto" name="UserProfilePhoto" class="form-control" type="file"/>
+                          </div>
+                      </div>
                     <button class="btn btn-primary">Save Changes</button>
                   </form>
                 </div>

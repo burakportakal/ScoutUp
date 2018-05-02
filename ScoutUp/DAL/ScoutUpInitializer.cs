@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using ScoutUp.Models;
 namespace ScoutUp.DAL
 {
-    public class ScoutUpInitializer: System.Data.Entity.DropCreateDatabaseAlways<ScoutUpDB>
+    public class ScoutUpInitializer: System.Data.Entity.DropCreateDatabaseIfModelChanges<ScoutUpDB>
     {
         protected override void Seed(ScoutUpDB context)
         {
             
             var users = new List<User> {
-                new User {UserName="Burak",UserSurname="Portakal",UserPassword="1111",UserEmail="b@h.com",UserCity="Izmir",UserAbout="Lorem ipsum",UserBirthDate=DateTime.Parse("1990-09-16") },
+                new User {UserName="Burak",UserSurname="Portakal",UserPassword="1111",UserEmail="b@h.com",UserCity="Izmir",UserAbout="Lorem ipsum",UserBirthDate=DateTime.Parse("1990-09-16")},
                 new User {UserName="Kadir",UserSurname="Kanmaz",UserPassword="1111",UserEmail="kadir@h.com",UserCity="Denizli",UserAbout="Lorem ipsum",UserBirthDate=DateTime.Parse("1990-09-16") },
                 new User {UserName="Onur",UserSurname="Sal",UserPassword="1111",UserEmail="onur@h.com",UserCity="Bursa",UserAbout="Lorem ipsum",UserBirthDate=DateTime.Parse("1990-09-16") },
                 new User {UserName="Tayfun",UserSurname="Erturul",UserPassword="1111",UserEmail="tayfun@h.com",UserCity="Istanbul",UserAbout="Lorem ipsum",UserBirthDate=DateTime.Parse("1990-09-16") },
@@ -87,6 +87,35 @@ namespace ScoutUp.DAL
 
             };
             userFollow.ForEach(s => context.UserFollow.Add(s));
+            var posts = new List<Post>
+            {
+                new Post {PostID = 1,UserID = 7,PostDatePosted = DateTime.Now,PostText = "post 1 text deneme"},
+                new Post {PostID = 2,UserID = 7,PostDatePosted = DateTime.Now,PostText = "post 2 text deneme"},
+                new Post {PostID = 3,UserID = 7,PostDatePosted = DateTime.Now,PostText = "post 3 text deneme"}
+            };
+            posts.ForEach(s => context.Posts.Add(s));
+            var comment1 =new List<PostComments>
+            {
+                new PostComments {PostComment = "deneme", PostID = 1, UserID = 1,PostCommentDate = DateTime.Now},
+                new PostComments {PostComment = "deneme", PostID = 1, UserID = 2,PostCommentDate = DateTime.Now},
+                new PostComments {PostComment = "deneme", PostID = 1, UserID = 3,PostCommentDate = DateTime.Now},
+                new PostComments {PostComment = "deneme", PostID = 1, UserID = 1,PostCommentDate = DateTime.Now},
+                new PostComments {PostComment = "deneme", PostID = 1, UserID = 3,PostCommentDate = DateTime.Now},
+            };
+            comment1.ForEach(s => context.PostComments.Add(s));
+            var comment2 = new List<PostComments>
+            {
+                new PostComments {PostComment = "deneme", PostID = 2, UserID = 4,PostCommentDate = DateTime.Now},
+                new PostComments {PostComment = "deneme", PostID = 2, UserID = 5,PostCommentDate = DateTime.Now},
+            };
+            comment2.ForEach(s => context.PostComments.Add(s));
+            var comment3 = new List<PostComments>
+            {
+                new PostComments {PostComment = "deneme", PostID = 3, UserID = 3,PostCommentDate = DateTime.Now},
+                new PostComments {PostComment = "deneme", PostID = 3, UserID = 2,PostCommentDate = DateTime.Now},
+            };
+            comment3.ForEach(s => context.PostComments.Add(s));
+           
             context.SaveChanges();
             context.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityRole { Name = "user" });
         }

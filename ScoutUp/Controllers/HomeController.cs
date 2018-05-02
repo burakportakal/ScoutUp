@@ -24,7 +24,7 @@ namespace ScoutUp.Controllers
             UsersController controller = getUserController();
             ViewBag.followSuggest = controller.FollowSuggest();
             ViewBag.followerCount = controller.FollowerCount(user.UserID);
-            return View();
+            return View(user);
         }
         public int usersFollowers()
         {

@@ -1,0 +1,21 @@
+﻿
+@for (int i = 0; i < @ViewBag.comments.Count; i++)
+  {
+      <div class="post-comment" style="border-radius: 18px;background-color: #eff1f3">
+          <img src="@ViewBag.users[i].UserProfilePhoto" alt="" class="profile-photo-sm"/>
+                  <a href="/users/index/@ViewBag.users[i].UserID" class="profile-link">@ViewBag.users[i].UserName @ViewBag.users[i].UserSurname</a> <i class="em em-laughing"> </i>
+          <span>@ViewBag.comments[i].PostComment</span>
+
+      </div>
+      <div>
+          <span style="font-size: 11px">Commented at @ViewBag.comments[i].PostCommentDate</span>
+      </div>
+  }
+@if (@ViewBag.remainingComment > 0)
+{
+    <a data-id="@ViewBag.postid" class="yorum" href="#">Daha fazla yorum göster @ViewBag.count/@ViewBag.commentCount</a>
+}
+else
+{
+    <p>Yorumların tamamı yüklendi</p>
+}

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -9,6 +11,7 @@ using ScoutUp.DAL;
 using ScoutUp.Models;
 using ScoutUp.Classes;
 using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 
@@ -18,62 +21,95 @@ namespace ScoutUp.Controllers
     {
         private readonly ScoutUpDB _db = new ScoutUpDB();
         #region timeline index about album followers
+        [Authorize]
         public ActionResult Index(int? id)
         {
-            User user;
-            var targetUser = true;
-            if (id == null)
-            {
-                targetUser = false;
-                user = GetUser();
-            }
-            else
-            {
-                user = _db.Users.Find(id);
-            }
+            var currentUser = GetUser();
+            User user = id == null || currentUser.UserID == id ?  GetUser() :  _db.Users.Find(id);
+            var targetUser = !(id == null || GetUser().UserID == id);
+
             if (user == null)
                 return HttpNotFound();
 
             if (targetUser)
-            {
                 ViewBag.Following = IsFollowing(user);
-            }
+
             ViewBag.followerCount = FollowerCount(id);
+            ViewBag.currentUserPhoto = currentUser.UserProfilePhoto;
+            ViewBag.targetUser = targetUser;
             return View(user);
         }
         [Authorize]
         public ActionResult About(int? id)
         {
-            User user;
-            bool targetUser = true;
-            if (id == null)
-            {
-                targetUser = false;
-                user = GetUser();
-            }
-            else
-            {
-                user = _db.Users.Find(id);
-            }
+            User user = id == null || GetUser().UserID == id ? GetUser() : _db.Users.Find(id);
+            var targetUser = !(id == null || GetUser().UserID == id);
             if (user == null)
                 return HttpNotFound();
+            if (targetUser)
+                ViewBag.Following = IsFollowing(user);
+            ViewBag.followerCount = FollowerCount(id);
+            return View(user);
+        }
+        [Authorize]
+        public ActionResult Followers(int? id)
+        {
+            var currentUser = GetUser();
+            User user = id == null || currentUser.UserID == id ? currentUser : _db.Users.Find(id);
+            var targetUser = !(id == null || currentUser.UserID == id);
+            if (user == null)
+                return HttpNotFound();
+
+            List<FollowingUsers> followList = new List<FollowingUsers>();
+            List<UserFollow> followerUsers = _db.UserFollow.Where(e => e.UserBeingFollowedUserID == user.UserID).ToList();
+            foreach (var item in followerUsers)
+            {
+                if (item.UserID == currentUser.UserID)
+                {//Ben onu takip ediyorum o beni takip ediyor mu ?
+                    FollowingUsers temp = new FollowingUsers(item.UserID, item.User.UserName + " " + item.User.UserSurname, IsFollowingReverse(user), item.User.UserProfilePhoto);
+                    followList.Add(temp);
+                }
+                else
+                {//şu an ki kullanıcı kendisini takip eden kullanıcıyı takip ediyor mu?
+                    FollowingUsers temp = new FollowingUsers(item.UserID, item.User.UserName + " " + item.User.UserSurname, IsFollowing(item.User), item.User.UserProfilePhoto);
+                    followList.Add(temp);
+                }
+            }
             if (targetUser)
             {
                 ViewBag.Following = IsFollowing(user);
             }
+            ViewBag.email = currentUser.UserEmail;
+            ViewBag.userid = currentUser.UserID;
+            ViewBag.followSuggest = FollowSuggest();
+            ViewBag.Model = followList;
+            return View(user);
+        }
+        [Authorize]
+        public ActionResult Album(int? id)
+        {
+            User user = id == null || GetUser().UserID == id ? GetUser() : _db.Users.Find(id);
+            var targetUser = !(id == null || GetUser().UserID == id);
+            if (user == null)
+                return HttpNotFound();
+            if (targetUser)
+                ViewBag.Following = IsFollowing(user);
             ViewBag.followerCount = FollowerCount(id);
+            ViewBag.targetUser = targetUser;
             return View(user);
         }
         private bool IsFollowing(User targetUser)
         {
             User user = GetUser();
-            int rowCount = _db.UserFollow.Where(e => e.UserID == user.UserID).Count(e => e.UserBeingFollowedUserID == targetUser.UserID);
+            int rowCount = _db.UserFollow.Where(e => e.UserID == user.UserID)
+                                         .Count(e => e.UserBeingFollowedUserID == targetUser.UserID);
             return rowCount == 1;
         }
         private bool IsFollowingReverse(User targetUser)
         {
             User user = GetUser();
-            int rowCount = _db.UserFollow.Where(e => e.UserID == targetUser.UserID).Count(e => e.UserBeingFollowedUserID == user.UserID);
+            int rowCount = _db.UserFollow.Where(e => e.UserID == targetUser.UserID)
+                                         .Count(e => e.UserBeingFollowedUserID == user.UserID);
             return rowCount == 1;
         }
         #endregion
@@ -85,12 +121,14 @@ namespace ScoutUp.Controllers
         /// <param name="password"></param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult Login(string email, string password)
+        public ActionResult Login(string email, string password,string returnUrl)
         {
-            if (email == null || password==null)
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
-                return Json(new LoginResult(0));
+                ViewBag.message = "Kullanıcı adı veya şifre boş bırakılamaz";
+                return RedirectToAction("Index","Home");
             }
+            
             User user = _db.Users.Where(e => e.UserEmail == email).FirstOrDefault(p => p.UserPassword == password);
             if (user != null)
             {
@@ -112,12 +150,25 @@ namespace ScoutUp.Controllers
                 
                    HttpContext.GetOwinContext().Authentication.SignIn(
                       new AuthenticationProperties { IsPersistent = true }, ident);
-                   return Json(new LoginResult(1));
+                string decodedUrl = "";
+                if (!string.IsNullOrEmpty(returnUrl))
+                    decodedUrl = Server.UrlDecode(returnUrl.Replace("ReturnUrl=",""));
+
+                if (Url.IsLocalUrl(decodedUrl))
+                    return Redirect(decodedUrl);
+                else
+                    return RedirectToAction("Newsfeed", "Home");
             }
            else 
             {
-                return Json(new LoginResult(0));
+                ViewBag.message = "Kullanıcı adı veya şifre boş bırakılamaz";
+                return RedirectToAction("Index", "Home");
             }
+        }
+
+        public ActionResult Edit()
+        {
+            return View();
         }
         public ActionResult Logout()
         {
@@ -141,6 +192,8 @@ namespace ScoutUp.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    var usedBefore = _db.Users.FirstOrDefault(e => e.UserEmail == user.UserEmail);
+                    if (usedBefore != null) return Json("Bu email daha önce kullanılmış");
                     _db.Users.Add(user);
                     _db.SaveChanges();
                     return Json(new LoginResult(1));
@@ -154,7 +207,7 @@ namespace ScoutUp.Controllers
             return Json(new LoginResult(0));
         }
         #endregion
-        #region edit profile hobbies
+        #region edit profile hobbies update photo
         /// <summary>
         /// Profil update edildilten sonra ve ilk girişte çalışır id parametresi verimediği zaman zaten giriş yapmış olması gerektiği için sessiondan id parametresi alınarak devam edilir.
         /// </summary>
@@ -179,20 +232,154 @@ namespace ScoutUp.Controllers
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditProfileBasic([Bind(Include = "UserID,UserName,UserSurname,UserEmail,UserCity,UserBirthDate,UserGender,UserAbout")]ScoutUp.Models.User user)
+        public ActionResult EditProfileBasic([Bind(Include = "UserID,UserName,UserSurname,UserEmail,UserCity,UserBirthDate,UserGender,UserAbout,UserProfilePhoto")]ScoutUp.Models.User user)
         {
-            if (!ModelState.IsValid) return Redirect("Home");
-            _db.Users.Attach(user);
-            var entry = _db.Entry(user);
+            if (!ModelState.IsValid) return new HttpStatusCodeResult(HttpStatusCode.BadRequest); ;
+            var databasePath = "";
+            var flag = false;
+            if (Request.Files.Count > 0)
+            {
+                var file = Request.Files[0];
 
-            entry.Property(e => e.UserName).IsModified = true;
-            entry.Property(e => e.UserSurname).IsModified = true;
-            entry.Property(e => e.UserBirthDate).IsModified = true;
-            entry.Property(e => e.UserCity).IsModified = true;
-            entry.Property(e => e.UserGender).IsModified = true;
-            entry.Property(e => e.UserAbout).IsModified = true;
-            _db.SaveChanges();
-            return View(user);
+                if (file != null && file.ContentLength > 0)
+                {
+                    var fileName = Path.GetFileName(file.FileName);
+                    var path = Path.Combine(Server.MapPath("~/images/post-images"), fileName);
+                    databasePath = "../../images/post-images/" + fileName;
+                    file.SaveAs(path);
+                    flag = true;
+                }
+            }
+            user.UserProfilePhoto = databasePath;
+            try
+            {
+                _db.Users.Attach(user);
+                var entry = _db.Entry(user);
+                entry.Property(e => e.UserName).IsModified = true;
+                entry.Property(e => e.UserSurname).IsModified = true;
+                entry.Property(e => e.UserBirthDate).IsModified = true;
+                entry.Property(e => e.UserCity).IsModified = true;
+                entry.Property(e => e.UserGender).IsModified = true;
+                entry.Property(e => e.UserAbout).IsModified = true;
+                entry.Property(e => e.UserProfilePhoto).IsModified = flag;
+                _db.SaveChanges();
+                return View(user);
+            }
+            catch (Exception)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+        }
+        /// <summary>
+        /// News feed ten profil fotoğrafı ekler aynı anda albüme de ekler.
+        /// Fotoğraf boyutlarını 190x190 ve 640x640 olarak /images/post-images içine kaydeler.
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Authorize]
+        public ActionResult UpdateProfilePhoto()
+        {
+            var user = GetUser();
+            var photo = new UserPhotos();
+            var databasePathSmall = "";
+            var databasePathBig = "";
+            var flag = false;
+            var resizer= new ImageResize();
+            if (Request.Files.Count > 0)
+            {
+                var file = Request.Files[0];
+
+                if (file != null && file.ContentLength > 0)
+                {
+                    Image imgSmall =resizer.RezizeImage(Image.FromStream(file.InputStream, true, true), 190, 190);
+                    Image imgBig = resizer.RezizeImage(Image.FromStream(file.InputStream, true, true), 640, 640);
+                    var fileName = Path.GetFileName(file.FileName);
+                    var fileNameSmall=fileName.Replace(".","-tumbnail.");
+                    var fileNameBig = fileName.Replace(".", "-big.");
+                    var pathSmall = Path.Combine(Server.MapPath("~/images/post-images"), fileNameSmall);
+                    var pathBig = Path.Combine(Server.MapPath("~/images/post-images"), fileNameBig);
+                    databasePathSmall = "../../images/post-images/" + fileNameSmall;
+                    databasePathBig = "../../images/post-images/" + fileNameBig;
+                    imgSmall.Save(pathSmall);
+                    imgBig.Save(pathBig);
+                    flag = true;
+                }
+            }
+            user.UserProfilePhoto = databasePathSmall;
+            _db.Users.Attach(user);
+            photo.UserID = user.UserID;
+            photo.IsDeleted = false;
+            photo.UserPhotoSmall = databasePathSmall;
+            photo.UserPhotoBig = databasePathBig;
+            _db.UserPhotos.Add(photo);
+            var entry = _db.Entry(user);
+            entry.Property(e => e.UserProfilePhoto).IsModified = flag;
+            try
+            {
+                _db.SaveChanges();
+                return Json(1);
+            }
+            catch (Exception)
+            {
+                return Json(0);
+            }
+        }
+        /// <summary>
+        /// Albümdeki bir fotoğrafı profil fotoğrafı yapar
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Authorize]
+        public ActionResult UpdateProfilePhoto(int? id)
+        {
+            if(id ==null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var user = GetUser();
+            var photo = user.UserPhotos.FirstOrDefault(e => e.UserPhotosID == id);
+            if (photo == null) { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
+            user.UserProfilePhoto = photo.UserPhotoSmall;
+            _db.Users.Attach(user);
+             var entry = _db.Entry(user);
+             entry.Property(e => e.UserProfilePhoto).IsModified = true;
+            try
+            {
+                _db.SaveChanges();
+                return Json(1, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(0, JsonRequestBehavior.AllowGet);
+            }
+        }
+        /// <summary>
+        /// Albümden fotoğrafı sil
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Authorize]
+        public ActionResult deletePhoto(int? id)
+        {
+            if(id ==null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            var user = GetUser();
+            var photo = user.UserPhotos.FirstOrDefault(e => e.UserPhotosID == id);
+            var isProfilePhoto = photo != null && user.UserProfilePhoto == photo.UserPhotoSmall;
+            if (isProfilePhoto)
+            {
+                user.UserProfilePhoto = "";
+                _db.Users.Attach(user);
+                var entry = _db.Entry(user);
+                entry.Property(e => e.UserProfilePhoto).IsModified = true;
+            }
+
+            if (photo != null) _db.UserPhotos.Remove(photo); else { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
+            try
+            {
+                _db.SaveChanges();
+                return Json(1,JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(0,JsonRequestBehavior.AllowGet);
+            }
         }
         /// <summary>
         /// Sayfa yüklenirken kullanıcının seçmediği hobbileri oto komplete gönderir
@@ -285,7 +472,7 @@ namespace ScoutUp.Controllers
             _db.SaveChanges();
             return RedirectToAction("EditProfileInterests");
         }
-        #endregion
+        #endregion update photo
         #region Follow
         /// <summary>
         /// Bir kullanıcının diğer bir kullanıcıyı takip etmesini sağlar.
@@ -336,7 +523,7 @@ namespace ScoutUp.Controllers
             List<UsersToFollow> usersToFollow = new List<UsersToFollow>();
             foreach (var item in allUsers)
             {
-                UsersToFollow temp = new UsersToFollow(item.UserID, item.UserName + " " + item.UserSurname);
+                UsersToFollow temp = new UsersToFollow(item.UserID, item.UserName + " " + item.UserSurname,item.UserProfilePhoto);
                 usersToFollow.Add(temp);
             }
             return usersToFollow;
@@ -360,10 +547,11 @@ namespace ScoutUp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            List<FollowingUsers> followList = user.UserFollow.Select(item => _db.Users.Find(item.UserBeingFollowedUserID)).Select(temp => new FollowingUsers(temp.UserID, temp.UserName + " " + temp.UserSurname)).ToList();
+            List<FollowingUsers> followList = user.UserFollow.Select(item => _db.Users.Find(item.UserBeingFollowedUserID)).Select(temp => new FollowingUsers(temp.UserID, temp.UserName + " " + temp.UserSurname,temp.UserProfilePhoto)).ToList();
             ViewBag.email = GetUser().UserEmail;
             ViewBag.followSuggest = FollowSuggest();
-            return View(followList);
+            ViewBag.followList = followList;
+            return View(user);
         }
         [Authorize]
         public ActionResult StopFollow(int? id)
@@ -375,9 +563,7 @@ namespace ScoutUp.Controllers
             User user = GetUser();
             UserFollow removeFollow = _db.UserFollow.Where(e => e.UserID==user.UserID).FirstOrDefault(e => e.UserBeingFollowedUserID==id);
             if (removeFollow == null)
-            {
                 return Json(new LoginResult(0), JsonRequestBehavior.AllowGet);
-            }
             _db.UserFollow.Remove(removeFollow);
             _db.SaveChanges();
             return Json(new LoginResult(1),JsonRequestBehavior.AllowGet);
@@ -410,76 +596,19 @@ namespace ScoutUp.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            List<FollowingUsers> followList = user.UserFollow.Select(item => _db.Users.Find(item.UserBeingFollowedUserID)).Select(temp => new FollowingUsers(temp.UserID, temp.UserName + " " + temp.UserSurname)).ToList();
+            List<FollowingUsers> followList = user.UserFollow.Select(item => _db.Users.Find(item.UserBeingFollowedUserID))
+                                                            .Select(temp => new FollowingUsers(temp.UserID, temp.UserName + " " + temp.UserSurname,temp.UserProfilePhoto))
+                                                            .ToList();
             ViewBag.followSuggest = FollowSuggest();
-            return PartialView("friendsLoop", followList);
-        }
-        #endregion
-        #region Followers
-        [Authorize]
-        public ActionResult Followers(int? id)
-        {
-            User currentUser = GetUser();
-            User user = id == null ? GetUser() : _db.Users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            List<FollowingUsers> followList = new List<FollowingUsers>();
-            List<UserFollow> followerUsers = _db.UserFollow.Where(e => e.UserBeingFollowedUserID == user.UserID).ToList();
-            foreach (var item in followerUsers)
-            {
-                if (item.UserID == currentUser.UserID)
-                {//Ben onu takip ediyorum o beni takip ediyor mu ?
-                    FollowingUsers temp = new FollowingUsers(item.UserID, item.User.UserName + " " + item.User.UserSurname, IsFollowingReverse(user));
-                    followList.Add(temp);
-                }
-                else
-                {//şu an ki kullanıcı kendisini takip eden kullanıcıyı takip ediyor mu?
-                    FollowingUsers temp = new FollowingUsers(item.UserID, item.User.UserName + " " + item.User.UserSurname, IsFollowing(item.User));
-                    followList.Add(temp);
-                }
-            }
-
-            ViewBag.email = currentUser.UserEmail;
-            ViewBag.userid = currentUser.UserID;
-            ViewBag.followSuggest = FollowSuggest();
-            return View(followList);
-        }
-        public ActionResult UsersFollowersPartial(int? id)
-        {
-            User currentUser = GetUser(); 
-            User user = id == null ? GetUser() : _db.Users.Find(id);
-            if (user == null)
-            {
-                return HttpNotFound();
-            }
-            List<FollowingUsers> followList = new List<FollowingUsers>();
-            List<UserFollow> followerUsers = _db.UserFollow.Where(e => e.UserBeingFollowedUserID == user.UserID).ToList();
-            foreach (var item in followerUsers)
-            {
-                if (item.UserID == currentUser.UserID)
-                {//Ben onu takip ediyorum o beni takip ediyor mu ?
-                    FollowingUsers temp = new FollowingUsers(item.UserID, item.User.UserName + " " + item.User.UserSurname, IsFollowingReverse(user));
-                    followList.Add(temp);
-                }
-                else
-                {//şu an ki kullanıcı kendisini takip eden kullanıcıyı takip ediyor mu?
-                    FollowingUsers temp = new FollowingUsers(item.UserID, item.User.UserName + " " + item.User.UserSurname, IsFollowing(item.User));
-                    followList.Add(temp);
-                }
-            }
-            
-            ViewBag.email = currentUser.UserEmail;
-            ViewBag.userid = currentUser.UserID;
-            ViewBag.followSuggest = FollowSuggest();
-            return PartialView("FollowersLoop",followList);
+            ViewBag.followList = followList;
+            return PartialView("friendsLoop", user);
         }
         #endregion
         public User GetUser()
         {
             var t = HttpContext.GetOwinContext().Authentication.User.Claims;
             int id = (from item in t where item.Type.Contains("primarysid") select Convert.ToInt32(item.Value)).FirstOrDefault();
+            
             return _db.Users.Find(id);
         }
         protected override void Dispose(bool disposing)

@@ -19,7 +19,6 @@ namespace ScoutUp.DAL
     public DbSet<PostComments> PostComments {get;set;}
     public DbSet<PostLikes> PostLikes {get;set;}
     public DbSet<PostPhotos> PostPhotos {get;set;}
-    public DbSet<PostPhotosLocation> PostPhotosLocation { get;set;}
     public DbSet<UserFollow> UserFollow {get;set;}
     public DbSet<UserHobbies> UserHobbies {get;set;}
     public DbSet<UserPhotos> UserPhotos {get;set;}

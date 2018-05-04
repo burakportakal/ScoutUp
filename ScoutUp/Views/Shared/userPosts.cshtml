@@ -10,10 +10,7 @@
         <!--Post Date End-->
         @foreach (var postPhoto in post.PostPhotos)
          {
-             foreach (var postPhotoLocationSmall in postPhoto.PostPhotosLocation)
-             {
-                 <img src="@postPhotoLocationSmall.PostPhotosLocateBig" alt="post-image" class="img-responsive post-image"/>
-             }
+             <img src="@postPhoto.PostPhotosLocateBig" alt="post-image" class="img-responsive post-image"/>
          }
             <div class="post-container">
                 <img src="@Model.UserProfilePhoto" alt="user" class="profile-photo-md pull-left"/>

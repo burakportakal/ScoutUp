@@ -14,7 +14,6 @@ namespace ScoutUp.Classes
         {
             return context.Posts.
                 Include(ph => ph.PostPhotos).
-                Include("PostPhotos.PostPhotosLocation").
                 Include(pl => pl.PostLikes).
                 Include(pc => pc.PostComments);
         }
@@ -30,7 +29,6 @@ namespace ScoutUp.Classes
                 Include(e => e.UserFollow).
                 Include(p => p.UserPosts).
                 Include("UserPosts.PostPhotos").
-                Include("UserPosts.PostPhotos.PostPhotosLocation").
                 Include("UserPosts.PostLikes").
                 Include("UserPosts.PostComments").
                 Include(h => h.UserHobbies).

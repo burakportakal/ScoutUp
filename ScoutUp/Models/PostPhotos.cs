@@ -9,7 +9,8 @@ namespace ScoutUp.Models
     {
         public int PostPhotosID { get; set; }
         public int PostID { get; set; }
+        public string PostPhotosLocateSmall { get; set; }
+        public string PostPhotosLocateBig { get; set; }
         public virtual Post Post { get; set; }
-        public virtual ICollection<PostPhotosLocation> PostPhotosLocation { get; set; }
     }
 }

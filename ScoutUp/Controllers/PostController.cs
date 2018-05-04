@@ -96,40 +96,21 @@ namespace ScoutUp.Controllers
             };
             try
             {
-                //yeni post kaydedilip id'si alınıyor
-                using (var context = new ScoutUpDB())
-                {
-                    context.Posts.Add(post);
-                    context.SaveChanges();
-                }
+                //yeni post kaydedilip id'si alınıyo
+                    _db.Posts.Add(post);
+                    _db.SaveChanges();
             }
             catch (Exception ex)
             {
                 return Json(new { success = false, error = true, message = ex.InnerException.ToString() });
             }
             var photo = new PostPhotos();
-            var postPhotoLocationList = new List<PostPhotosLocation>();
+            var postPhotoList = new List<PostPhotos>();
             var resizer = new ImageResize();
             if (Request.Files.Count > 0)
             {
-                photo.PostID = post.PostID;
+                
                 HttpFileCollectionBase files = Request.Files;
-
-                try
-                {
-                    //varsa resim kaydedilip id si alınıyor
-                    using (var context = new ScoutUpDB())
-                    {
-                        context.PostPhotos.Add(photo);
-                        context.SaveChanges();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _db.Posts.Remove(post);
-                    _db.SaveChanges();
-                    return Json(new { success = false, error = true, message = ex.InnerException.ToString() });
-                }
                 for (int i=0;i< files.Count;i++)
                 {
                     if (files[i] != null && files[i].ContentLength > 0)
@@ -141,25 +122,22 @@ namespace ScoutUp.Controllers
                         var databasePathBig = "../../images/post-images/" + fileNameBig;
                         imgBig.Save(pathBig);
                         //bir gönderiye birden fazla resim eklenebiliniyor.
-                        var postPhotoLocation = new PostPhotosLocation
+                        var postPhotoLocation = new PostPhotos()
                         {
-                            PostPhotosID = photo.PostPhotosID,
-                            PostPhotosLocateBig = databasePathBig
+                            PostID = post.PostID,
+                            PostPhotosLocateBig = databasePathBig,
                         };
-                        postPhotoLocationList.Add(postPhotoLocation);
+                        postPhotoList.Add(postPhotoLocation);
                     }
                 }
             }
 
             try
             {
-                using (var context = new ScoutUpDB())
-                {
                     //gönderinin resimlerinin sunucuda ki yerleri kaydediliyor
-                    context.PostPhotosLocation.AddRange(postPhotoLocationList);
-                    context.SaveChanges();
+                    _db.PostPhotos.AddRange(postPhotoList);
+                    _db.SaveChanges();
                     return Json(new { success = true });
-                }
             }
             catch (Exception ex)
             {
@@ -253,25 +231,6 @@ namespace ScoutUp.Controllers
                     posts.AddRange(temp.OrderByDescending(e => e.PostDatePosted).Skip(0 + count).Take(5 + count).ToList());
                 }
                 userPost=_db.CompletePosts().Where(u => u.UserID == user.UserID).ToList();
-
-            //List<Post> posts = new List<Post>();
-            //foreach (var u in users)
-            //{
-
-            //    try
-            //    {
-            //        var userPosts = u.UserPosts.OrderByDescending(e => e.PostDatePosted).Skip(0 + count).Take(5 + count).ToList();
-            //        foreach (var post in userPosts)
-            //        {
-            //            posts.Add(post);
-            //        }
-            //    }
-            //    catch (ArgumentNullException)
-            //    {
-            //        continue;
-            //    }
-                
-            //}
             try
             {
                 posts.AddRange(userPost.OrderByDescending(e => e.PostDatePosted).Skip(0 + count).Take(5 + count).ToList());

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using ScoutUp.Models;
 namespace ScoutUp.DAL
 {
-    public class ScoutUpInitializer: System.Data.Entity.DropCreateDatabaseIfModelChanges<ScoutUpDB>
+    public class ScoutUpInitializer: System.Data.Entity.DropCreateDatabaseAlways<ScoutUpDB>
     {
         protected override void Seed(ScoutUpDB context)
         {
-            context.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('User', RESEED, 1000000)");
-            context.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('Post', RESEED, 10000000)");
-            context.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('PostComments', RESEED, 100000000)");
-            context.SaveChanges();
+            //context.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('User', RESEED, 1000000)");
+            //context.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('Post', RESEED, 10000000)");
+            //context.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('PostComments', RESEED, 100000000)");
+            //context.SaveChanges();
         var users = new List<User> {
                 new User {UserName="Burak",UserSurname="Portakal",UserPassword="1111",UserEmail="b@h.com",UserCity="Izmir",UserAbout="Lorem ipsum",UserBirthDate=DateTime.Parse("1990-09-16")},
                 new User {UserName="Kadir",UserSurname="Kanmaz",UserPassword="1111",UserEmail="kadir@h.com",UserCity="Denizli",UserAbout="Lorem ipsum",UserBirthDate=DateTime.Parse("1990-09-16") },
@@ -31,20 +31,45 @@ namespace ScoutUp.DAL
             users.ForEach(s => context.Users.Add(s));
             context.SaveChanges();
             var hobbies = new List<Hobbies> {
-                new Hobbies { HobbiesName="Bilgisayar" },
-                new Hobbies {HobbiesName="Spor" },
-                new Hobbies { HobbiesName="Müzik" },
-                new Hobbies {HobbiesName="Futbol" },
-                new Hobbies { HobbiesName="Kodlama" },
-                new Hobbies {HobbiesName="Java" },
-                new Hobbies { HobbiesName="Asp" },
-                new Hobbies {HobbiesName="Gitar" },
-                new Hobbies { HobbiesName="Telefon" },
-                new Hobbies {HobbiesName="Sosyal" }
+                new Hobbies { HobbiesName="Bilgisayar" },//1
+                new Hobbies {HobbiesName="Spor" },//2
+                new Hobbies { HobbiesName="Müzik" },//3
+                new Hobbies {HobbiesName="Futbol" },//4
+                new Hobbies { HobbiesName="Kodlama" },//5
+                new Hobbies {HobbiesName="Java" },//6
+                new Hobbies { HobbiesName="Asp" },//7
+                new Hobbies {HobbiesName="Gitar" },//8
+                new Hobbies { HobbiesName="Telefon" },//9
+                new Hobbies {HobbiesName="Sosyal" }//10
 
             };
             hobbies.ForEach(s => context.Hobbies.Add(s));
             context.SaveChanges();
+            var userHobbies = new List<UserHobbies>
+            {
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 2},
+                new UserHobbies {HobbiesID = 1,UserID = 4},
+                new UserHobbies {HobbiesID = 1,UserID = 5},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+                new UserHobbies {HobbiesID = 1,UserID = 1},
+            };
             var userFollow = new List<UserFollow>
             {
                 new UserFollow {UserID=1,UserBeingFollowedUserID=2,IsFollowing=true },

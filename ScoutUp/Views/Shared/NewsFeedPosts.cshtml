@@ -8,10 +8,7 @@
                 <!--Fotoğraf kısımı-->
                 foreach (var postPhoto in post.PostPhotos)
                 {
-                    foreach (var postPhotoLocationSmall in postPhoto.PostPhotosLocation)
-                    {
-                        <img src="@postPhotoLocationSmall.PostPhotosLocateBig" alt="post-image" class="img-responsive post-image"/>
-                    }
+                        <img src="@postPhoto.PostPhotosLocateBig" alt="post-image" class="img-responsive post-image"/>
                 }
                 <!--Fotoğraf sonu-->
                 <div class="post-container">

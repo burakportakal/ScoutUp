@@ -1015,7 +1015,6 @@
     <Compile Include="Models\PostComments.cs" />
     <Compile Include="Models\PostLikes.cs" />
     <Compile Include="Models\PostPhotos.cs" />
-    <Compile Include="Models\PostPhotosLocation.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserFollow.cs" />
     <Compile Include="Models\UserHobbies.cs" />

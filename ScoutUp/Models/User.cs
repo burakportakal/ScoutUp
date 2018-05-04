@@ -22,5 +22,6 @@ namespace ScoutUp.Models
         public virtual ICollection<UserPhotos> UserPhotos { get; set; }
         public virtual ICollection<UserHobbies> UserHobbies { get; set; }
         public virtual ICollection<UserFollow> UserFollow { get; set; }
+        public virtual ICollection<UserNotifications> UserNotifications { get; set; }
     }
 }

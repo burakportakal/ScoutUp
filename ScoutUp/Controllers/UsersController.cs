@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -11,8 +12,10 @@ using ScoutUp.DAL;
 using ScoutUp.Models;
 using ScoutUp.Classes;
 using System.Security.Claims;
+using System.Security.Principal;
 using System.Text;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.SignalR.Infrastructure;
 using Microsoft.Owin.Security;
 
 namespace ScoutUp.Controllers
@@ -35,7 +38,7 @@ namespace ScoutUp.Controllers
                 ViewBag.Following = IsFollowing(user);
 
             ViewBag.followerCount = FollowerCount(id);
-            ViewBag.currentUserPhoto = currentUser.UserProfilePhoto;
+            ViewBag.currentUser= currentUser;
             ViewBag.targetUser = targetUser;
             return View(user);
         }
@@ -132,17 +135,19 @@ namespace ScoutUp.Controllers
             User user = _db.Users.Where(e => e.UserEmail == email).FirstOrDefault(p => p.UserPassword == password);
             if (user != null)
             {
+                PrincipalUserIdProvider asd= new PrincipalUserIdProvider();
+                ClaimsPrincipal pr = new ClaimsPrincipal();
+
                 HttpContext.GetOwinContext().Authentication.SignOut();
                 Session["id"] = user.UserID;
                    var ident = new ClaimsIdentity(
                  new[] { 
                  // adding following 2 claim just for supporting default antiforgery provider
-                 new Claim(ClaimTypes.NameIdentifier, email),
+                 new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString()),
                  new Claim("http://schemas.microsoft.com/accesscontrolservice/2010/07/claims/identityprovider", "ASP.NET Identity", "http://www.w3.org/2001/XMLSchema#string"),
 
                  new Claim(ClaimTypes.Name,email),
                   new Claim(ClaimTypes.PrimarySid,user.UserID.ToString()),
-
                  // optionally you could add roles if any
                  new Claim(ClaimTypes.Role, "User"),
                  },
@@ -217,6 +222,7 @@ namespace ScoutUp.Controllers
         public ActionResult EditProfileBasic()
         {
             Models.User user = GetUser();
+            
             if (user == null)
             {
                 return HttpNotFound();
@@ -608,8 +614,8 @@ namespace ScoutUp.Controllers
         {
             var t = HttpContext.GetOwinContext().Authentication.User.Claims;
             int id = (from item in t where item.Type.Contains("primarysid") select Convert.ToInt32(item.Value)).FirstOrDefault();
-            
-            return _db.Users.Find(id);
+                //Extensions classı kullanılıyor
+                return _db.UserById(id);
         }
         protected override void Dispose(bool disposing)
         {

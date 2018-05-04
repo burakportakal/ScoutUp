@@ -10,39 +10,43 @@
         <!--Timeline Menu for Small Screens End-->
 
         </div>
-        <div id="page-contents">
-          <div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-7">
-                @if (@ViewBag.targetUser == false)
-                {
-                    <!-- Post Create Box
-                    ================================================= -->
-                    @Html.Partial("~/Views/Shared/PostCreateBox.cshtml")
-                    <!-- Post Create Box End-->
-                }
-                else
-                {
-                    <div class="create-post">
-                        <div class="row">
-
-                        </div>
-                    </div>
-
-                }
-                <!-- Post Content
+<div id="page-contents">
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-7">
+            @if (@ViewBag.targetUser == false)
+            {
+                <!-- Post Create Box
                 ================================================= -->
-                <div id ="posts">
-                    @Html.Action("Posts","Post", new { userid = @Model.UserID})
+                @Html.Partial("~/Views/Shared/PostCreateBox.cshtml")
+                <!-- Post Create Box End-->
+            }
+            else
+            {
+                <div class="create-post">
+                    <div class="row">
+
+                    </div>
                 </div>
+
+            }
+            <!-- Post Content
+            ================================================= -->
+            <div id ="posts">
+                @Html.Action("Posts","Post", new { userid = @Model.UserID})
             </div>
-              @Html.Partial("~/Views/Shared/StickySideBar.cshtml")
-          </div>
         </div>
+        @Html.Partial("~/Views/Shared/StickySideBar.cshtml")
+    </div>
+</div>
+<div id="notifications"></div>
       </div>
     </div>
 
   @Html.Partial("~/Views/Shared/footer.cshtml")
+<script src="../../Scripts/jquery.signalR-2.2.3.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.3.min.js"></script>
+<script src="../../signalr/hubs"></script>
 <script>
     $("#profile-link").addClass('active');
     function displayNumbers() {
@@ -118,24 +122,85 @@
     });
 </script>
 <script>
-    $("body").on('click',
-        '.btn', function (evt) {
-        evt.preventDefault();
-        var self = $(this);
-        var postid = self.attr("data-id");
-            $.get("/post/likepost/" + postid,
-                function(e) {
-                    if (e.success) {
-                        if (e.liked) {
-                            self.removeClass("text-red");
-                            self.addClass("text-green");
-                            self.html('<i class="icon ion-thumbsup"></i> Beğen ' + e.likes);
-                        } else {
-                            self.html('<i class="icon ion-thumbsup"></i> Beğen ' + e.likes);
-                            self.removeClass("text-green");
-                            self.addClass("text-red");
-                        }
-                    }
-                });
+ $(function () {
+
+     if ($(".btn").length > 0) {
+         var postClient = $.connection.postHub;
+
+         postClient.client.updateLikeCount = function (post) {
+             var self = $("#" + post.PostId);
+             self.html('<i class="icon ion-thumbsup"></i> Beğen ' + post.LikeCount);
+         };
+
+         $("body").on("click", ".btn", function () {
+             var code = $(this).attr("data-id");
+             var self = $(this);
+             var clas = self.attr('class');
+             var isLiked = clas.endsWith('text-red');
+             if (isLiked) {
+                 self.removeClass('text-red');
+                 self.addClass('text-green');
+             } else {
+                 self.removeClass('text-green');
+                 self.addClass('text-red');
+             }
+             postClient.server.like(code, @ViewBag.currentUser.UserID);
+         });
+     }
+ });
+</script>
+<script>
+    $(function () {
+
+        // Reference the auto-generated proxy for the hub.  
+
+        var notification = $.connection.notificationHub;
+        var newNotificitaionsToUpdate = [];
+        // Client side method for receiving the list of notifications on the connected event from the server
+        notification.client.refreshNotification = function (data) {
+            for (var i = 0; i < data.length; i++) {
+                $("#bildirim").append("<li><a href='"+data[i].NotificationLink +"'>" + data[i].UserNotificationsMessage + "</a></li>");
+            }
+            if(data.length> 0){
+                 $("#bildirimler").html('Bildirimler '+ data.length +'<span><img src="../../images/down-arrow.png" alt="" /></span>');
+            }
+            $("body").on("click", ".dropdown-toggle", function () {
+                var self = $(this);
+                notification.server.updateNotification(data);
+                $("#bildirimler").html('Bildirimler<span><img src="../../images/down-arrow.png" alt="" /></span>');
+            });
+   
+        }
+     
+//Client side method which will be invoked from the Global.asax.cs file. 
+        notification.client.updateNotification = function (data) {
+            $("#bildirim").append("<li><a href='"+data.NotificationLink +"'>" + data.UserNotificationsMessage + "</a></li>");
+            newNotificitaionsToUpdate.push(data);
+            $("#bildirimler").html('Bildirimler '+ newNotificitaionsToUpdate.length +'<span><img src="../../images/down-arrow.png" alt="" /></span>');
+            $("body").on("click", ".dropdown-toggle", function () {
+                var self = $(this);
+                notification.server.updateNotification(newNotificitaionsToUpdate);
+                newNotificitaionsToUpdate = [];
+                $("#bildirimler").html('Bildirimler<span><img src="../../images/down-arrow.png" alt="" /></span>');
+            });
+        }
+
+        // Start the connection.
+        $.connection.hub.start().done(function () {
+
+            //When the send button is clicked get the text and user name and send it to server. 
+            $("body").on("click", ".btn", function () {
+                var self = $(this);
+                var userid = self.attr("data-id");
+                var postid = self.attr("id");
+                var clas = self.attr('class');
+                var isLiked = clas.endsWith('text-red');
+                if (!isLiked) {
+                    notification.server.sendNotification(userid," @Model.UserName"
+                        + " " +" @Model.UserSurname" +" gönderini beğendi","",postid);
+                }
+            });
+
         });
+    });
 </script>

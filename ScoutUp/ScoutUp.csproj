@@ -191,6 +191,7 @@
     <Content Include="js\jquery.scrollbar.min.js" />
     <Content Include="js\jquery.sticky-kit.min.js" />
     <Content Include="js\masonry.pkgd.min.js" />
+    <Content Include="js\newsfeed.js" />
     <Content Include="js\parsley.js" />
     <Content Include="js\photo-gallery.js" />
     <Content Include="js\script.js" />
@@ -216,6 +217,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\LikeButton.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="js\right-side.js" />
     <Content Include="src\alert-circled.svg" />
@@ -959,6 +961,7 @@
     <Content Include="Views\Shared\userPosts.cshtml" />
     <Content Include="Views\Shared\postComments.cshtml" />
     <Content Include="Views\Shared\UserLikedPost.cshtml" />
+    <Content Include="Views\Shared\NewsFeedPosts.cshtml" />
     <None Include="Views\Users\editprofileinterests.cshtml" />
     <None Include="Views\Home\index.cshtml" />
     <None Include="Views\Home\newsfeed.cshtml" />
@@ -988,9 +991,13 @@
     <Compile Include="Classes\AppRole.cs" />
     <Compile Include="Classes\AppUser.cs" />
     <Compile Include="Classes\AppUserManager.cs" />
+    <Compile Include="Classes\ConnectionMapping.cs" />
+    <Compile Include="Classes\CustomUserIdProvider.cs" />
+    <Compile Include="Classes\Extensions.cs" />
     <Compile Include="Classes\FollowingUsers.cs" />
     <Compile Include="Classes\ImageResize.cs" />
     <Compile Include="Classes\LoginResult.cs" />
+    <Compile Include="Classes\NewsFeedPosts.cs" />
     <Compile Include="Classes\StartupOwin.cs" />
     <Compile Include="Classes\UsersToFollow.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -1001,6 +1008,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\NotificationHub.cs" />
+    <Compile Include="Hubs\PostHub.cs" />
     <Compile Include="Models\Hobbies.cs" />
     <Compile Include="Models\Post.cs" />
     <Compile Include="Models\PostComments.cs" />
@@ -1010,8 +1019,10 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserFollow.cs" />
     <Compile Include="Models\UserHobbies.cs" />
+    <Compile Include="Models\UserNotifications.cs" />
     <Compile Include="Models\UserPhotos.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\NotificationRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />

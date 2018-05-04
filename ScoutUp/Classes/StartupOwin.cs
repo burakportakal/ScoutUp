@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.SignalR;
 
 [assembly: OwinStartup(typeof(ScoutUp.Classes.StartupOwin))]
 
@@ -27,6 +28,12 @@ namespace ScoutUp.Classes
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
                 LoginPath = new PathString("/Home/"),
             });
+            var hubConfiguration = new HubConfiguration
+            {
+                EnableDetailedErrors = true
+            };
+
+            app.MapSignalR("/signalr",hubConfiguration);
         }
     }
 }

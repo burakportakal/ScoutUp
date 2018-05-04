@@ -7,8 +7,11 @@ namespace ScoutUp.DAL
     {
         protected override void Seed(ScoutUpDB context)
         {
-            
-            var users = new List<User> {
+            context.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('User', RESEED, 1000000)");
+            context.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('Post', RESEED, 10000000)");
+            context.Database.ExecuteSqlCommand("DBCC CHECKIDENT ('PostComments', RESEED, 100000000)");
+            context.SaveChanges();
+        var users = new List<User> {
                 new User {UserName="Burak",UserSurname="Portakal",UserPassword="1111",UserEmail="b@h.com",UserCity="Izmir",UserAbout="Lorem ipsum",UserBirthDate=DateTime.Parse("1990-09-16")},
                 new User {UserName="Kadir",UserSurname="Kanmaz",UserPassword="1111",UserEmail="kadir@h.com",UserCity="Denizli",UserAbout="Lorem ipsum",UserBirthDate=DateTime.Parse("1990-09-16") },
                 new User {UserName="Onur",UserSurname="Sal",UserPassword="1111",UserEmail="onur@h.com",UserCity="Bursa",UserAbout="Lorem ipsum",UserBirthDate=DateTime.Parse("1990-09-16") },

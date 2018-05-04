@@ -11,6 +11,7 @@ using System.Web.Mvc;
 using ScoutUp.Classes;
 using ScoutUp.DAL;
 using ScoutUp.Models;
+using ScoutUp.Repository;
 
 namespace ScoutUp.Controllers
 {
@@ -27,10 +28,10 @@ namespace ScoutUp.Controllers
         public ActionResult Posts(int? userid)
         {
             var currentUser = GetUserModel();
-            var user =userid==null ? currentUser : _db.Users.Find(userid);
+            var user =userid==null ? currentUser : _db.UserById((int)userid);
             if(user==null) return HttpNotFound();
             user.UserPosts=  user.UserPosts.OrderByDescending(e => e.PostDatePosted).ToList();
-            ViewBag.currentUserPhoto = currentUser.UserProfilePhoto;
+            ViewBag.currentUser = currentUser;
             var posts = user.UserPosts;
             return PartialView("userPosts",user);
         }
@@ -38,34 +39,37 @@ namespace ScoutUp.Controllers
         public ActionResult PostComments(int? id,int count=5)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            var post = _db.Posts.Find(id);
+            Post post;
+                post = _db.PostById((int) id);
+
             var comments = new List<PostComments>();
-            var users = new List<User>();
-            var counter = 1;
-            var commentCount = post.PostComments.Count;
+                var users = new List<User>();
+                var counter = 1;
+                var commentCount = post.PostComments.Count;
                 foreach (var comment in post.PostComments.Reverse())
                 {
                     comments.Add(comment);
-                    users.Add(_db.Users.Find(comment.UserID));
-                    counter++;
+                        users.Add(_db.UserById(comment.UserID));
+                   counter++;
                     if (counter == count) break;
                 }
-            ViewBag.comments = comments;
-            ViewBag.users = users;
-            ViewBag.postid = id;
-            ViewBag.commentCount = commentCount;
-            ViewBag.remainingComment = commentCount - count;
-            ViewBag.count = count;
+                ViewBag.comments = comments;
+                ViewBag.users = users;
+                ViewBag.postid = id;
+                ViewBag.commentCount = commentCount;
+                ViewBag.remainingComment = commentCount - count;
+                ViewBag.count = count;
             return PartialView("postComments");
         }
         [HttpPost]
         public ActionResult AddCommentToPost(int? postid,string comment)
         {
             if (postid == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            var post = _db.Posts.Find(postid);
+            var post = _db.PostById((int)postid);
             if(post ==null ) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             var user = GetUserModel();
             var userComment = new PostComments { UserID = user.UserID,PostID = (int)postid,PostComment = comment,PostCommentDate = DateTime.Now};
+            
             _db.PostComments.Add(userComment);
             try
             {
@@ -170,22 +174,19 @@ namespace ScoutUp.Controllers
         public ActionResult LikePost(int? id)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            var post = _db.Posts.Find(id);
+            var post = _db.PostById((int)id);
             
             var user = GetUserModel();
             var isLiked = _db.PostLikes.Where(e => e.UserID == user.UserID).FirstOrDefault(e => e.PostID == id);
             if (isLiked != null)
             {
-                using (var context = new ScoutUpDB())
-                {
-                    _db.Dispose();
-                    
-                    context.PostLikes.Attach(isLiked);
-                    context.Entry(isLiked).State = EntityState.Deleted;
-                    context.SaveChanges();
-                    return Json(new { success = true,liked = false, likes = context.Posts.Find(id).PostLikes.Count }, JsonRequestBehavior.AllowGet);
+                    _db.PostLikes.Attach(isLiked);
+                    _db.Entry(isLiked).State = EntityState.Deleted;
+                    _db.SaveChanges();
+                    //NotificationRepository repo=new NotificationRepository();
+                    //repo.AddNotification(post.UserID,user.UserName+ " " + user.UserSurname +" gönderini beğendi");
+                    return Json(new { success = true,liked = false, likes = _db.PostById((int)id).PostLikes.Count }, JsonRequestBehavior.AllowGet);
                 }
-            }
             var postLike = new PostLikes
             {
                 UserID = user.UserID,
@@ -199,7 +200,7 @@ namespace ScoutUp.Controllers
                 {
                     context.PostLikes.Add(postLike);
                     context.SaveChanges();
-                    return Json(new { success = true,liked=true,likes =_db.Posts.Find(id).PostLikes.Count },JsonRequestBehavior.AllowGet);
+                    return Json(new { success = true,liked=true,likes =context.PostById((int)id).PostLikes.Count },JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception ex)
@@ -213,23 +214,76 @@ namespace ScoutUp.Controllers
         {
             if ( id ==null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             var user = GetUserModel();
-            var isLiked = _db.PostLikes.Where(e => e.UserID == user.UserID).FirstOrDefault(e => e.PostID == id);
+            PostLikes isLiked;
+
+            isLiked = _db.PostLikes.Where(e => e.UserID == user.UserID).FirstOrDefault(e => e.PostID == id);
+
             if (isLiked == null)
             {
                 ViewBag.isLiked = false;
                 ViewBag.postid = id;
-                ViewBag.postLikesCount = _db.Posts.Find(id).PostLikes.Count;
-                _db.Dispose();
+                ViewBag.postUserid = _db.Posts.FirstOrDefault(e => e.PostID == (int) id).UserID;
+                ViewBag.postLikesCount = _db.PostById((int)id).PostLikes.Count;
                 return PartialView("UserLikedPost");
             }
             else
             {
                 ViewBag.isLiked = true;
                 ViewBag.postid = id;
-                ViewBag.postLikesCount = _db.Posts.Find(id).PostLikes.Count;
-                _db.Dispose();
+                ViewBag.postUserid = _db.Posts.FirstOrDefault(e => e.PostID == (int)id).UserID;
+                ViewBag.postLikesCount = _db.PostById((int)id).PostLikes.Count;
                 return PartialView("UserLikedPost");
             }
+        }
+
+        public ActionResult NewsFeedPosts(int count=0)
+        {
+            var user = GetUserModel();
+            List<UserFollow> usersFollowing = user.UserFollow.ToList();
+            List<Post> posts= new List<Post>();
+            List<Post> userPost=new List<Post>();
+                foreach (var following in usersFollowing)
+                {
+                    // use extencions 
+                    //https://stackoverflow.com/questions/3356541/entity-framework-linq-query-include-multiple-children-entities
+
+                    var temp = _db.CompletePosts().Where(u => u.UserID == following.UserBeingFollowedUserID);
+                    var x = _db.Posts.SqlQuery("select * from post where UserID ="+following.UserBeingFollowedUserID).ToArray();
+                    
+                    posts.AddRange(temp.OrderByDescending(e => e.PostDatePosted).Skip(0 + count).Take(5 + count).ToList());
+                }
+                userPost=_db.CompletePosts().Where(u => u.UserID == user.UserID).ToList();
+
+            //List<Post> posts = new List<Post>();
+            //foreach (var u in users)
+            //{
+
+            //    try
+            //    {
+            //        var userPosts = u.UserPosts.OrderByDescending(e => e.PostDatePosted).Skip(0 + count).Take(5 + count).ToList();
+            //        foreach (var post in userPosts)
+            //        {
+            //            posts.Add(post);
+            //        }
+            //    }
+            //    catch (ArgumentNullException)
+            //    {
+            //        continue;
+            //    }
+                
+            //}
+            try
+            {
+                posts.AddRange(userPost.OrderByDescending(e => e.PostDatePosted).Skip(0 + count).Take(5 + count).ToList());
+                posts = posts.OrderByDescending(e => e.PostDatePosted).ToList();
+            }
+            catch
+            {
+                // ignored
+            }
+
+            ViewBag.posts = posts;
+            return PartialView("NewsFeedPosts",user);
         }
         
         private User GetUserModel()
@@ -243,4 +297,6 @@ namespace ScoutUp.Controllers
             return controller;
         }
     }
+
+   
 }

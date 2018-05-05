@@ -1,0 +1,6 @@
+﻿@model IEnumerable<ScoutUp.ViewModels.CategoryViewModel>
+    
+@foreach (var item in Model)
+{
+    <div id="@item.CategoryId">@item.CategoryName</div>
+}

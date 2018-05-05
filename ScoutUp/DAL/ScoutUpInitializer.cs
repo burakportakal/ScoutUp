@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ScoutUp.Models;
 namespace ScoutUp.DAL
 {
-    public class ScoutUpInitializer: System.Data.Entity.DropCreateDatabaseAlways<ScoutUpDB>
+    public class ScoutUpInitializer: System.Data.Entity.DropCreateDatabaseIfModelChanges<ScoutUpDB>
     {
         protected override void Seed(ScoutUpDB context)
         {
@@ -143,7 +143,131 @@ namespace ScoutUp.DAL
                 new PostComments {PostComment = "deneme", PostID = 3, UserID = 2,PostCommentDate = DateTime.Now},
             };
             comment3.ForEach(s => context.PostComments.Add(s));
-           
+
+            var categories = new List<Categories>
+            {
+                new Categories {CategoryName = "Bilgisayar" },//1
+                new Categories {CategoryName = "Müzik" },//2
+                new Categories {CategoryName = "Kitap" },//3
+                new Categories {CategoryName = "Film" },//4
+                new Categories {CategoryName = "Spor" },//5
+                new Categories {CategoryName = "Yemek" },//6
+                new Categories {CategoryName = "Dizi" },//7
+                new Categories {CategoryName = "Futbol" },//8
+            };
+            categories.ForEach(s => context.Categories.Add(s));
+
+            var categoryItems = new List<CategoryItems>
+            {
+                new CategoryItems {CategoryID = 1,CategoryItemName = "Asp .net"},//1
+                new CategoryItems {CategoryID = 1,CategoryItemName = "Java"},//2
+                new CategoryItems {CategoryID = 1,CategoryItemName = "C#"},//3
+                new CategoryItems {CategoryID = 1,CategoryItemName = "Android"},//4
+                new CategoryItems {CategoryID = 2,CategoryItemName = "Metallica"},//5
+                new CategoryItems {CategoryID = 2,CategoryItemName = "Megadeath"},//6
+                new CategoryItems {CategoryID = 2,CategoryItemName = "Sıla"},//7
+                new CategoryItems {CategoryID = 2,CategoryItemName = "Tarkan"},//8
+                new CategoryItems {CategoryID = 3,CategoryItemName = "Kavgam"},//9
+                new CategoryItems {CategoryID = 3,CategoryItemName = "Sherlock"},//10
+                new CategoryItems {CategoryID = 3,CategoryItemName = "Suç ve Ceza"},//11
+                new CategoryItems {CategoryID = 4,CategoryItemName = "The Matrix"},//12
+                new CategoryItems {CategoryID = 4,CategoryItemName = "Lord of The Rings"},//13
+                new CategoryItems {CategoryID = 4,CategoryItemName = "Avengers"},//14
+                new CategoryItems {CategoryID = 4,CategoryItemName = "Interstellar"},//15
+                new CategoryItems {CategoryID = 5,CategoryItemName = "Basketbol"},//16
+                new CategoryItems {CategoryID = 5,CategoryItemName = "Futbol"},//17
+                new CategoryItems {CategoryID = 5,CategoryItemName = "Tekvando"},//18
+                new CategoryItems {CategoryID = 5,CategoryItemName = "Salon"},//19
+                new CategoryItems {CategoryID = 6,CategoryItemName = "Pizza"},//20
+                new CategoryItems {CategoryID = 6,CategoryItemName = "Adana"},//21
+                new CategoryItems {CategoryID = 6,CategoryItemName = "Lahmacun"},//22
+                new CategoryItems {CategoryID = 6,CategoryItemName = "Döner"},//23
+                new CategoryItems {CategoryID = 7,CategoryItemName = "Kurtlar Vadisi"},//24
+                new CategoryItems {CategoryID = 7,CategoryItemName = "Gotham"},//25
+                new CategoryItems {CategoryID = 7,CategoryItemName = "Supernatural"},//26
+                new CategoryItems {CategoryID = 8,CategoryItemName = "Galatasaray"},//27
+                new CategoryItems {CategoryID = 8,CategoryItemName = "Göztepe"},//28
+                new CategoryItems {CategoryID = 8,CategoryItemName = "Karşıyaka"},//29
+                new CategoryItems {CategoryID = 8,CategoryItemName = "Bursaspor"},//30
+            };
+            categoryItems.ForEach(e => context.CategoryItems.Add(e));
+
+            var userRatings = new List<UserRatings>
+            {
+                new UserRatings { UserID = 1,CategoryItemID = 1,UserRating =4.5},
+                new UserRatings { UserID = 1,CategoryItemID = 2,UserRating =4},
+                new UserRatings { UserID = 1,CategoryItemID = 3,UserRating =1.5},
+                new UserRatings { UserID = 1,CategoryItemID = 4,UserRating =3.5},
+                new UserRatings { UserID = 1,CategoryItemID = 5,UserRating =2.5},
+                new UserRatings { UserID = 1,CategoryItemID = 6,UserRating =3.5},
+                new UserRatings { UserID = 2,CategoryItemID = 8,UserRating =4},
+                new UserRatings { UserID = 2,CategoryItemID = 1,UserRating =4.1},
+                new UserRatings { UserID = 2,CategoryItemID = 3,UserRating =3.1},
+                new UserRatings { UserID = 2,CategoryItemID = 5,UserRating =2.1},
+                new UserRatings { UserID = 2,CategoryItemID = 6,UserRating =3.5},
+                new UserRatings { UserID = 2,CategoryItemID = 7,UserRating =4},
+                new UserRatings { UserID = 2,CategoryItemID = 15,UserRating =4},
+                new UserRatings { UserID = 3,CategoryItemID = 3,UserRating =3.6},
+                new UserRatings { UserID = 3,CategoryItemID = 16,UserRating =2.6},
+                new UserRatings { UserID = 3,CategoryItemID = 18,UserRating =1.6},
+                new UserRatings { UserID = 3,CategoryItemID = 20,UserRating =4.6},
+                new UserRatings { UserID = 3,CategoryItemID = 12,UserRating =4},
+                new UserRatings { UserID = 3,CategoryItemID = 21,UserRating =4.2},
+                new UserRatings { UserID = 3,CategoryItemID = 30,UserRating =3},
+                new UserRatings { UserID = 3,CategoryItemID = 11,UserRating =2},
+                new UserRatings { UserID = 3,CategoryItemID = 2,UserRating =3.2},
+                new UserRatings { UserID = 3,CategoryItemID = 3,UserRating =4},
+
+                new UserRatings { UserID = 4,CategoryItemID = 1,UserRating =4.5},
+                new UserRatings { UserID = 4,CategoryItemID = 2,UserRating =4},
+                new UserRatings { UserID = 4,CategoryItemID = 3,UserRating =1.5},
+                new UserRatings { UserID = 4,CategoryItemID = 4,UserRating =3.5},
+                new UserRatings { UserID = 4,CategoryItemID = 5,UserRating =2.5},
+                new UserRatings { UserID = 4,CategoryItemID = 6,UserRating =3.5},
+                new UserRatings { UserID = 5,CategoryItemID = 8,UserRating =4},
+                new UserRatings { UserID = 5,CategoryItemID = 1,UserRating =4.1},
+                new UserRatings { UserID = 5,CategoryItemID = 3,UserRating =3.1},
+                new UserRatings { UserID = 5,CategoryItemID = 5,UserRating =2.1},
+                new UserRatings { UserID = 5,CategoryItemID = 6,UserRating =3.5},
+                new UserRatings { UserID = 6,CategoryItemID = 7,UserRating =4},
+                new UserRatings { UserID = 6,CategoryItemID = 15,UserRating =4},
+                new UserRatings { UserID = 6,CategoryItemID = 3,UserRating =3.6},
+                new UserRatings { UserID = 6,CategoryItemID = 16,UserRating =2.6},
+                new UserRatings { UserID = 6,CategoryItemID = 18,UserRating =1.6},
+                new UserRatings { UserID = 7,CategoryItemID = 20,UserRating =4.6},
+                new UserRatings { UserID = 7,CategoryItemID = 12,UserRating =4},
+                new UserRatings { UserID = 7,CategoryItemID = 21,UserRating =4.2},
+                new UserRatings { UserID = 7,CategoryItemID = 30,UserRating =3},
+                new UserRatings { UserID = 7,CategoryItemID = 11,UserRating =2},
+                new UserRatings { UserID = 8,CategoryItemID = 2,UserRating =3.2},
+                new UserRatings { UserID = 8,CategoryItemID = 3,UserRating =4},
+
+                new UserRatings { UserID = 8,CategoryItemID = 1,UserRating =4.5},
+                new UserRatings { UserID = 8,CategoryItemID = 2,UserRating =4},
+                new UserRatings { UserID = 8,CategoryItemID = 3,UserRating =1.5},
+                new UserRatings { UserID = 8,CategoryItemID = 4,UserRating =3.5},
+                new UserRatings { UserID = 9,CategoryItemID = 5,UserRating =2.5},
+                new UserRatings { UserID = 9,CategoryItemID = 6,UserRating =3.5},
+                new UserRatings { UserID = 9,CategoryItemID = 8,UserRating =4},
+                new UserRatings { UserID = 9,CategoryItemID = 1,UserRating =4.1},
+                new UserRatings { UserID = 9,CategoryItemID = 3,UserRating =3.1},
+                new UserRatings { UserID = 10,CategoryItemID = 5,UserRating =2.1},
+                new UserRatings { UserID = 10,CategoryItemID = 6,UserRating =3.5},
+                new UserRatings { UserID = 10,CategoryItemID = 7,UserRating =4},
+                new UserRatings { UserID = 11,CategoryItemID = 15,UserRating =4},
+                new UserRatings { UserID = 11,CategoryItemID = 3,UserRating =3.6},
+                new UserRatings { UserID = 11,CategoryItemID = 16,UserRating =2.6},
+                new UserRatings { UserID = 11,CategoryItemID = 18,UserRating =1.6},
+                new UserRatings { UserID = 12,CategoryItemID = 20,UserRating =4.6},
+                new UserRatings { UserID = 12,CategoryItemID = 12,UserRating =4},
+                new UserRatings { UserID = 13,CategoryItemID = 21,UserRating =4.2},
+                new UserRatings { UserID = 13,CategoryItemID = 30,UserRating =3},
+                new UserRatings { UserID = 14,CategoryItemID = 11,UserRating =2},
+                new UserRatings { UserID = 14,CategoryItemID = 2,UserRating =3.2},
+                new UserRatings { UserID = 14,CategoryItemID = 3,UserRating =4},
+
+            };
+            userRatings.ForEach(e => context.UserRatings.Add(e));
             context.SaveChanges();
             context.Roles.Add(new Microsoft.AspNet.Identity.EntityFramework.IdentityRole { Name = "user" });
         }

@@ -40,5 +40,10 @@ namespace ScoutUp.Classes
         {
             return CompleteUsers(context).FirstOrDefault(e => e.UserID == userId);
         }
+
+        public static IQueryable<User> GetAllUsers(this ScoutUpDB context)
+        {
+            return context.CompleteUsers();
+        }
     }
 }

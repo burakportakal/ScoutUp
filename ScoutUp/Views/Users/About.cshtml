@@ -24,14 +24,15 @@
                 </div>
                 <div class="edit-block">
                   <h4 class="grey"><i class="ion-ios-heart-outline icon-in-title"></i>Interests</h4>
-                  <ul class="list-inline interests">
-                      @foreach (var item in Model.UserHobbies)
-                      {
-                          <li>
-                             @Html.DisplayFor(modelItem => item.Hobbies.HobbiesName)
-                          </li>
-                      }
-                  </ul>
+                    <ul class="list-inline interests">
+                        @foreach (var item in Model.UserHobbies)
+                        {
+                            <li>
+                                @Html.DisplayFor(modelItem => item.Hobbies.HobbiesName)
+                            </li>
+                        }
+                    </ul>
+                    @Html.Action("Categories","Category")
                 </div>
               </div>
             </div>

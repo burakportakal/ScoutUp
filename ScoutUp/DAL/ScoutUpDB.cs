@@ -22,6 +22,10 @@ namespace ScoutUp.DAL
     public DbSet<UserFollow> UserFollow {get;set;}
     public DbSet<UserHobbies> UserHobbies {get;set;}
     public DbSet<UserPhotos> UserPhotos {get;set;}
+    public DbSet<UserRatings> UserRatings { get;set;}
+    public DbSet<Categories> Categories {get;set;}
+    public DbSet<CategoryItems> CategoryItems {get;set;}
+
         public DbSet<UserNotifications> UserNotifications { get; set; }
        
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

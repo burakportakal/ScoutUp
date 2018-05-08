@@ -18,7 +18,7 @@ namespace ScoutUp.Hubs
         public Task Like(int? postId,int userid)
         {
             var likePost = SaveLike(postId,userid);
-            
+            var _connections = NotificationHub._connections;
             return Clients.All.updateLikeCount(likePost);
         }
 

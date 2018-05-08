@@ -15,7 +15,7 @@ namespace ScoutUp.Hubs
     [HubName("notificationHub")]
     public class NotificationHub : Hub
     {
-        private static readonly ConnectionMapping<string> _connections =
+        public static readonly ConnectionMapping<string> _connections =
             new ConnectionMapping<string>();
         /// <summary>
         /// Kullancının gönderisi başka bir kullanıcı tarafından beğenildiğine bildirim gönderir.

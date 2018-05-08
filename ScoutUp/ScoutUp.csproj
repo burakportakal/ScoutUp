@@ -207,6 +207,7 @@
     <Content Include="less\_ionicons-icons.less" />
     <Content Include="less\_ionicons-variables.less" />
     <Content Include="less\profile-picture.less" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -963,6 +964,11 @@
     <Content Include="Views\Shared\UserLikedPost.cshtml" />
     <Content Include="Views\Shared\NewsFeedPosts.cshtml" />
     <Content Include="Views\Shared\Categories.cshtml" />
+    <Content Include="Views\CategoryItems\Create.cshtml" />
+    <Content Include="Views\CategoryItems\Delete.cshtml" />
+    <Content Include="Views\CategoryItems\Details.cshtml" />
+    <Content Include="Views\CategoryItems\Edit.cshtml" />
+    <Content Include="Views\CategoryItems\Index.cshtml" />
     <None Include="Views\Users\editprofileinterests.cshtml" />
     <None Include="Views\Home\index.cshtml" />
     <None Include="Views\Home\newsfeed.cshtml" />
@@ -989,7 +995,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Classes\Suggest.cs" />
     <Compile Include="Controllers\CategoryController.cs" />
+    <Compile Include="Controllers\CategoryItemsController.cs" />
     <Compile Include="Models\Categories.cs" />
     <Compile Include="Models\CategoryItems.cs" />
     <Compile Include="Models\UserRatings.cs" />
@@ -1059,6 +1067,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="images\album\" />
+    <Folder Include="images\category-item-photos\" />
     <Folder Include="images\covers\" />
     <Folder Include="images\post-images\" />
     <Folder Include="images\users\" />

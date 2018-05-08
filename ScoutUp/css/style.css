@@ -2718,3 +2718,18 @@ ul.contact li i{
   top: 50%;
   transform: translateY(-50%);
 }
+.ratings { margin:10px 10px 0 10px }
+
+.rate {
+    margin:0 5px;
+    font-size:32px;
+    color:lightgray;
+}
+
+.rate.rated {
+    color:orange;
+}
+.sidebyside li {
+    float: left;
+    display: inline;
+}

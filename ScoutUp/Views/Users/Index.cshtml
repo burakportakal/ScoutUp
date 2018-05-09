@@ -133,7 +133,7 @@
          };
 
          $("body").on("click", ".btn", function () {
-             var code = $(this).attr("data-id");
+             var code = $(this).attr("id");
              var self = $(this);
              var clas = self.attr('class');
              var isLiked = clas.endsWith('text-red');
@@ -152,7 +152,7 @@
 <script>
     $(function () {
 
-        // Reference the auto-generated proxy for the hub.  
+        // Reference the auto-generated proxy for the hub.
 
         var notification = $.connection.notificationHub;
         var newNotificitaionsToUpdate = [];
@@ -169,10 +169,10 @@
                 notification.server.updateNotification(data);
                 $("#bildirimler").html('Bildirimler<span><img src="../../images/down-arrow.png" alt="" /></span>');
             });
-   
+
         }
-     
-//Client side method which will be invoked from the Global.asax.cs file. 
+
+//Client side method which will be invoked from the Global.asax.cs file.
         notification.client.updateNotification = function (data) {
             $("#bildirim").append("<li><a href='"+data.NotificationLink +"'>" + data.UserNotificationsMessage + "</a></li>");
             newNotificitaionsToUpdate.push(data);
@@ -188,7 +188,7 @@
         // Start the connection.
         $.connection.hub.start().done(function () {
 
-            //When the send button is clicked get the text and user name and send it to server. 
+            //When the send button is clicked get the text and user name and send it to server.
             $("body").on("click", ".btn", function () {
                 var self = $(this);
                 var userid = self.attr("data-id");
@@ -196,9 +196,15 @@
                 var clas = self.attr('class');
                 var isLiked = clas.endsWith('text-red');
                 if (!isLiked) {
-                    notification.server.sendNotification(userid," @Model.UserName"
-                        + " " +" @Model.UserSurname" +" gönderini beğendi","",postid);
+                    notification.server.sendNotification(userid,"  @ViewBag.currentUser.UserName"
+                        + " " +"  @ViewBag.currentUser.UserSurname" +" gönderini beğendi","","/users/index/#"+postid);
                 }
+            });
+            $("body").on("click",'#follow', function () {
+                var self = $(this);
+                var userid = self.attr("data-id");
+                    notification.server.sendNotification(userid," @ViewBag.currentUser.UserName"
+                        + " " +" @ViewBag.currentUser.UserSurname" +" seni takip etmeye başladı.","","/users/index/"+ @ViewBag.currentUser.UserID);
             });
 
         });

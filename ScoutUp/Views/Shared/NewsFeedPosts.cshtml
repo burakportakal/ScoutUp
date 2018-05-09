@@ -1,38 +1,39 @@
-﻿<div class="post-content">
+﻿@model List<ScoutUp.ViewModels.NewsFeedPostsViewModel>
+<div class="post-content">
    
-        @foreach (var post in ViewBag.posts)
+        @foreach (var post in Model)
         {
-            <div id ="@string.Concat("post",@post.PostID)">
+            <div id ="@string.Concat("post",@post.PostId)">
             @try
             {
                 <!--Fotoğraf kısımı-->
-                foreach (var postPhoto in post.PostPhotos)
+                foreach (var postPhoto in post.PostPhotos.PostPhotos)
                 {
-                        <img src="@postPhoto.PostPhotosLocateBig" alt="post-image" class="img-responsive post-image"/>
+                        <img src="@postPhoto.PostPhotoLocateBig" alt="post-image" class="img-responsive post-image"/>
                 }
                 <!--Fotoğraf sonu-->
                 <div class="post-container">
-                    <img src="@post.User.UserProfilePhoto" alt="user" class="profile-photo-md pull-left"/>
+                    <img src="@post.PostOwnerPhoto" alt="user" class="profile-photo-md pull-left"/>
                     <div class="post-detail">
                         <div class="user-info">
-                            <h5><a href="/users/index/@post.UserID" class="profile-link">@post.User.UserName @post.User.UserSurname</a>
-                                <a href="/users/stopfollow/@post.UserID"></a><span class="following">Takip Ediliyor</span></h5>
+                            <h5><a href="/users/index/@post.UserId" class="profile-link">@post.UserName @post.UserSurname</a>
+                                <a href="/users/stopfollow/@post.UserId"></a><span class="following">Takip Ediliyor</span></h5>
                             <p class="text-muted">@post.PostDatePosted</p>
                         </div>
                         <div class="reaction">
-                            @Html.Action("UserLikedPost", "Post", new { id = @post.PostID })
+                            @Html.Action("UserLikedPost", "Post", new { id = @post.PostId })
                         </div>
                         <div class="line-divider"></div>
                         <div class="post-text">
                             <p>@post.PostText</p>
                         </div>
                         <div class="line-divider"></div>
-                        <div id="@string.Concat("yorum",post.PostID)">
-                            @Html.Action("PostComments", "Post", new { id = @post.PostID })
+                        <div id="@string.Concat("yorum",post.PostId)">
+                            @Html.Action("PostComments", "Post", new { id = @post.PostId })
                         </div>
                         <div class="post-comment">
-                            <img src="@Model.UserProfilePhoto" alt="" class="profile-photo-sm"/>
-                            <input id="userPost" data-id="@post.PostID" type="text" class="form-control" placeholder="Bir yorum yaz!">
+                            <img src="@post.CurrentUserPhoto" alt="" class="profile-photo-sm"/>
+                            <input id="userPost" data-id="@post.PostId" type="text" class="form-control" placeholder="Bir yorum yaz!">
                         </div>
                     </div>
                 </div>
@@ -45,3 +46,4 @@
         }
    
 </div>
+

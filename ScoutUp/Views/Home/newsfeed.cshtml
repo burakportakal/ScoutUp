@@ -19,8 +19,8 @@
 		        </div>
                 </div>
           <!-- Right side-->
-            @Html.Partial("~/Views/Shared/rightside.cshtml")
-    		</div>
+	        @Html.Action("FollowSuggest","Users")
+	    </div>
     	</div>
     </div>
 
@@ -186,8 +186,16 @@
                 var isLiked = clas.endsWith('text-red');
                 if (!isLiked) {
                     notification.server.sendNotification(userid," @Model.UserName"
-                        + " " +" @Model.UserSurname" +" gönderini beğendi","",postid);
+                        + " " +" @Model.UserSurname" +" gönderini beğendi","","/users/index/#"+postid);
                 }
+            });
+            $("body").on("click", ".follow", function () {
+                var self = $(this);
+                var userid = self.attr("data-id");
+                var currentUserId = @Model.UserID;
+                var clas = self.attr('class');
+                    notification.server.sendNotification(userid," @Model.UserName"
+                        + " " +" @Model.UserSurname" +" seni takip etmeye başladı.","","/users/index/"+currentUserId);
             });
 
         });

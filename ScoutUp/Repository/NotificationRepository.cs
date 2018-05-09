@@ -11,7 +11,7 @@ namespace ScoutUp.Repository
     public class NotificationRepository
     {
 
-        public UserNotifications AddNotification(int userid, string message,string notifiyDirection,string dataid)
+        public UserNotifications AddNotification(int userid, string message,string notifiyDirection,string notifyLink)
         {
             var notify = new UserNotifications()
             {
@@ -19,7 +19,7 @@ namespace ScoutUp.Repository
                 UserNotificationsMessage = message,
                 UserNotificationsDate = DateTime.Now,
                 UserNotificationsRead = false,
-                NotificationLink = "/users/index/#post"+dataid
+                NotificationLink = notifyLink
             };
             using (var context = new ScoutUpDB())
             {

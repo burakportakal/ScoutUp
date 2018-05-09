@@ -12,6 +12,7 @@ using ScoutUp.Classes;
 using ScoutUp.DAL;
 using ScoutUp.Models;
 using ScoutUp.Repository;
+using ScoutUp.ViewModels;
 
 namespace ScoutUp.Controllers
 {
@@ -213,38 +214,26 @@ namespace ScoutUp.Controllers
                 return PartialView("UserLikedPost");
             }
         }
-
-        public ActionResult NewsFeedPosts(int count=0)
+        public ActionResult NewsFeedPosts(int count = 0)
         {
             var user = GetUserModel();
-            List<UserFollow> usersFollowing = user.UserFollow.ToList();
-            List<Post> posts= new List<Post>();
-            List<Post> userPost=new List<Post>();
-                foreach (var following in usersFollowing)
+            var followingUsers = user.UserFollow.Select(e => e.UserBeingFollowedUserID).ToArray();
+            var followingUsersPosts = _db.Posts.Where(e => followingUsers.Contains(e.UserID) || e.UserID==user.UserID).
+                Select(e => new NewsFeedPostsViewModel
                 {
-                    // use extencions 
-                    //https://stackoverflow.com/questions/3356541/entity-framework-linq-query-include-multiple-children-entities
-
-                    var temp = _db.CompletePosts().Where(u => u.UserID == following.UserBeingFollowedUserID);
-                    var x = _db.Posts.SqlQuery("select * from post where UserID ="+following.UserBeingFollowedUserID).ToArray();
-                    
-                    posts.AddRange(temp.OrderByDescending(e => e.PostDatePosted).Skip(0 + count).Take(5 + count).ToList());
-                }
-                userPost=_db.CompletePosts().Where(u => u.UserID == user.UserID).ToList();
-            try
-            {
-                posts.AddRange(userPost.OrderByDescending(e => e.PostDatePosted).Skip(0 + count).Take(5 + count).ToList());
-                posts = posts.OrderByDescending(e => e.PostDatePosted).ToList();
-            }
-            catch
-            {
-                // ignored
-            }
-
-            ViewBag.posts = posts;
-            return PartialView("NewsFeedPosts",user);
+                    CurrentUserPhoto = user.UserProfilePhoto,PostDatePosted = e.PostDatePosted,PostId = e.PostID,PostOwnerPhoto = e.User.UserProfilePhoto,
+                    PostPhotos = new PostPhotoViewModel
+                    {
+                        PostPhotos = e.PostPhotos.Where(p => p.PostID== e.PostID).Select(ph => new PostPhotosModel
+                        {
+                            PostPhotoLocateBig = ph.PostPhotosLocateBig
+                        }).ToList()
+                    },
+                    PostText = e.PostText,UserId = e.UserID,UserName = e.User.UserName,UserSurname = e.User.UserSurname
+                }).ToList();
+            var orderedPosts = followingUsersPosts.OrderByDescending(e => e.PostDatePosted).ToList();
+            return PartialView("NewsFeedPosts", orderedPosts);
         }
-        
         private User GetUserModel()
         {
             return GetUserController().GetUser();

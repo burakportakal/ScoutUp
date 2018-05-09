@@ -22,7 +22,7 @@
                     <ul class="follow-me list-inline">
                         <li id="follower-count">@ViewBag.followerCount Takipçi</li>
 
-                        <li><a id="follow" href="/users/follow/@Model.UserID" class="btn-primary">Takip Et</a></li>
+                        <li><a id="follow" href="/users/follow/@Model.UserID" data-id="@Model.UserID" class="btn-primary">Takip Et</a></li>
                     </ul>
                      }
                      else if (ViewBag.Following == true)

@@ -23,10 +23,10 @@ namespace ScoutUp.Hubs
         /// <param name="userid">Bildirim gönderilecek kullanıcının unique id si.</param>
         /// <param name="message">Bildirim gönderen kullanıcın adı soyadı varsa mesajı</param>
         /// <returns></returns>
-        public Task SendNotification(int userid,string message,string notifyDirection,string dataid)
+        public Task SendNotification(int userid,string message,string notifyDirection,string notifyLink)
         {
             var objRepository = new NotificationRepository();
-            var notification = objRepository.AddNotification(userid,message, notifyDirection,dataid);
+            var notification = objRepository.AddNotification(userid,message, notifyDirection, notifyLink);
             string name = Context.User.Identity.GetUserId();
             dynamic client = null;
             foreach (var connectionId in _connections.GetConnections(userid.ToString()))

@@ -1,0 +1,56 @@
+﻿@model List<ScoutUp.ViewModels.MessageViewModel>
+@foreach (var tabUser in Model)
+{
+    if (ViewBag.tabActive || ViewBag.targetId!=0)
+    {
+        if (ViewBag.targetId == tabUser.UserId)
+        {
+            <li id="@String.Concat("list-", @tabUser.UserId)" class="left-tab active">
+                <a href="/users/index/@tabUser.UserId" data-toggle="tab">
+                    <div class="contact">
+                        <img src="@tabUser.UserProfilePhoto" alt="" class="profile-photo-sm pull-left"/>
+                        <div class="msg-preview">
+                            <h6>@tabUser.UserName @tabUser.UserSurname</h6>
+                            <p class="text-muted"></p>
+                            <small class="text-muted"></small>
+                            <div id="@String.Concat("chat-alert-", @tabUser.UserId)" class="chat-alert"></div>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        }
+        else
+        {
+            <li id="@String.Concat("list-", @tabUser.UserId)" class="left-tab">
+                <a href="/users/index/@tabUser.UserId" data-toggle="tab">
+                    <div class="contact">
+                        <img src="@tabUser.UserProfilePhoto" alt="" class="profile-photo-sm pull-left"/>
+                        <div class="msg-preview">
+                            <h6>@tabUser.UserName @tabUser.UserSurname</h6>
+                            <p class="text-muted"></p>
+                            <small class="text-muted"></small>
+                            <div id="@String.Concat("chat-alert-", @tabUser.UserId)" class="chat-alert"></div>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        }
+    }
+    else
+    {
+        <li id="@String.Concat("list-", @tabUser.UserId)" class="left-tab">
+            <a href="/users/index/@tabUser.UserId" data-toggle="tab">
+                <div class="contact">
+                    <img src="@tabUser.UserProfilePhoto" alt="" class="profile-photo-sm pull-left" />
+                    <div class="msg-preview">
+                        <h6>@tabUser.UserName @tabUser.UserSurname</h6>
+                        <p class="text-muted"></p>
+                        <small class="text-muted"></small>
+                        <div id="@String.Concat("chat-alert-", @tabUser.UserId)" class="chat-alert"></div>
+                    </div>
+                </div>
+            </a>
+        </li>
+    }
+}
+

@@ -969,6 +969,12 @@
     <Content Include="Views\CategoryItems\Details.cshtml" />
     <Content Include="Views\CategoryItems\Edit.cshtml" />
     <Content Include="Views\CategoryItems\Index.cshtml" />
+    <Content Include="Views\Shared\MessageTab.cshtml" />
+    <Content Include="Views\Shared\MessageTabPane.cshtml" />
+    <Content Include="Views\Shared\MessageSender.cshtml" />
+    <Content Include="Views\Shared\MessageReciever.cshtml" />
+    <Content Include="Views\Shared\OnlineUsers.cshtml" />
+    <Content Include="Views\Shared\MessageLoader.cshtml" />
     <None Include="Views\Users\editprofileinterests.cshtml" />
     <None Include="Views\Home\index.cshtml" />
     <None Include="Views\Home\newsfeed.cshtml" />
@@ -985,6 +991,7 @@
     <None Include="Views\Users\index.cshtml" />
     <None Include="Views\Users\Followers.cshtml" />
     <None Include="Views\Users\album.cshtml" />
+    <None Include="Views\Users\Messages.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -998,9 +1005,14 @@
     <Compile Include="Classes\Suggest.cs" />
     <Compile Include="Controllers\CategoryController.cs" />
     <Compile Include="Controllers\CategoryItemsController.cs" />
+    <Compile Include="Controllers\MessageController.cs" />
+    <Compile Include="Hubs\MessageHub.cs" />
     <Compile Include="Models\Categories.cs" />
     <Compile Include="Models\CategoryItems.cs" />
+    <Compile Include="Models\Chat.cs" />
+    <Compile Include="Models\ChatMessages.cs" />
     <Compile Include="Models\UserRatings.cs" />
+    <Compile Include="Repository\ChatMessageRepository.cs" />
     <Compile Include="Search\Algorithms.cs" />
     <Compile Include="Search\Graph.cs" />
     <Compile Include="Classes\AppRole.cs" />
@@ -1044,6 +1056,7 @@
     <Compile Include="Repository\NotificationRepository.cs" />
     <Compile Include="ViewModels\CategoryViewModel.cs" />
     <Compile Include="ViewModels\FollowSuggestViewModel.cs" />
+    <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\NewsFeedPostsViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1075,6 +1088,7 @@
     <Folder Include="images\users\" />
     <Folder Include="png\512\" />
     <Folder Include="Views\Category\" />
+    <Folder Include="Views\Message\" />
     <Folder Include="Views\Post\" />
   </ItemGroup>
   <PropertyGroup>

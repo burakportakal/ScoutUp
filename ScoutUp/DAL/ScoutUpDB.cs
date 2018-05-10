@@ -25,6 +25,8 @@ namespace ScoutUp.DAL
     public DbSet<UserRatings> UserRatings { get;set;}
     public DbSet<Categories> Categories {get;set;}
     public DbSet<CategoryItems> CategoryItems {get;set;}
+    public DbSet<ChatMessages> ChatMessages { get; set; }
+        public DbSet<Chat> Chat { get; set; }
 
         public DbSet<UserNotifications> UserNotifications { get; set; }
        

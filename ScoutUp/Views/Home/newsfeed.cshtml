@@ -111,32 +111,76 @@
     });
 </script>
 <script>
- $(function () {
+    $(function () {
 
-     if ($(".btn").length > 0) {
-         var postClient = $.connection.postHub;
+        if ($(".btn").length > 0) {
+            var postClient = $.connection.postHub;
 
-         postClient.client.updateLikeCount = function (post) {
-             var self = $("#" + post.PostId);
-             self.html('<i class="icon ion-thumbsup"></i> Beğen ' + post.LikeCount);
-         };
+            postClient.client.updateLikeCount = function (post) {
+                var self = $("#" + post.PostId);
+                self.html('<i class="icon ion-thumbsup"></i> Beğen ' + post.LikeCount);
+            };
 
-         $("body").on("click", ".btn", function () {
-             var code = $(this).attr("id");
-             var self = $(this);
-             var clas = self.attr('class');
-             var isLiked = clas.endsWith('text-red');
-             if (isLiked) {
-                 self.removeClass('text-red');
-                 self.addClass('text-green');
-             } else {
-                 self.removeClass('text-green');
-                 self.addClass('text-red');
-             }
-             postClient.server.like(code, @Model.UserID);
-         });
-     }
- });
+            $("body").on("click", ".btn", function () {
+                var code = $(this).attr("id");
+                var self = $(this);
+                var clas = self.attr('class');
+                var isLiked = clas.endsWith('text-red');
+                if (isLiked) {
+                    self.removeClass('text-red');
+                    self.addClass('text-green');
+                } else {
+                    self.removeClass('text-green');
+                    self.addClass('text-red');
+                }
+                postClient.server.like(code, @Model.UserID);
+            });
+        }
+    });
+</script>
+<script>
+    $(function() {
+
+        var messageHub = $.connection.messageHub;
+        //ilk girişte online kullanıcıları çeker
+        messageHub.client.onlineUsers = function(data) {
+            for (var i = 0; i < data.length; i++) {
+                var html =
+                    '<li id="online-user-' +
+                        data[i].UserId +
+                        '"><a href="/users/messages/' +data[i].UserId + '" class="chat" data-id="' +
+                        data[i].UserId +
+                        '" title="' +
+                        data[i].UserName +
+                        '"><img src="' +
+                        data[i].UserProfilePhoto +
+                        '" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>';
+                $('#online-users').append(html);
+            }
+        };
+        //bağlantım olan bir kullanıcı pencere açıkken online olduğunda onu online listesine ekler
+        messageHub.client.updateOnlineUsers = function(data) {
+            var isListed = $('#online-user-' + data.UserId).attr('id') == null;
+            if (isListed) {
+                var html =
+                    '<li id="online-user-' +
+                        data.UserId +
+                        '"><a href="/users/messages/' +data.UserId + '" class="chat" data-id="' +
+                        data.UserId +
+                        '" title="' +
+                        data.UserName +
+                        '"><img src="' +
+                        data.UserProfilePhoto +
+                        '" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>';
+                $('#online-users').append(html);
+            }
+        };
+        //kullanıcının tüm penceleri kapandıysa bir bağlantısı kalmadıysa diğer kullanıcılara 10 saniye sonra offline olur.
+        messageHub.client.updateUserOffline = function(data) {
+            var self = $('#online-user-' + data.UserId);
+            self.remove();
+        }
+    });
 </script>
 <script>
     $(function () {

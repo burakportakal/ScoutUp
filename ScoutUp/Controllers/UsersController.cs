@@ -641,7 +641,17 @@ namespace ScoutUp.Controllers
            
         }
         #endregion
-        //Normal Pearson Korelasyonu
+
+        public ActionResult Messages(int? id)
+        {
+            if (id != null) ViewBag.targetUserId = id;
+            var user = GetUser();
+            List<FollowingUsers> followList = user.UserFollow.Select(item => _db.Users.Find(item.UserBeingFollowedUserID)).Select(temp => new FollowingUsers(temp.UserID, temp.UserName + " " + temp.UserSurname, temp.UserProfilePhoto)).ToList();
+            ViewBag.email = GetUser().UserEmail;
+            ViewBag.followList = followList;
+            ViewBag.currentUser = user;
+            return View(user);
+        }
         public User GetUser()
         {
             var t = HttpContext.GetOwinContext().Authentication.User.Claims;

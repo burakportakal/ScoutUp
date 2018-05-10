@@ -24,5 +24,6 @@ namespace ScoutUp.Models
         public virtual ICollection<UserFollow> UserFollow { get; set; }
         public virtual ICollection<UserNotifications> UserNotifications { get; set; }
         public virtual ICollection<UserRatings> UserRatings { get; set; }
+        public virtual ICollection<Chat> Chat { get; set; }
     }
 }

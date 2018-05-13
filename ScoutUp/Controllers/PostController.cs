@@ -40,27 +40,29 @@ namespace ScoutUp.Controllers
         public ActionResult PostComments(int? id,int count=5)
         {
             if (id == null) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            Post post;
-                post = _db.PostById((int) id);
-
-            var comments = new List<PostComments>();
-                var users = new List<User>();
-                var counter = 1;
-                var commentCount = post.PostComments.Count;
-                foreach (var comment in post.PostComments.Reverse())
-                {
-                    comments.Add(comment);
-                        users.Add(_db.UserById(comment.UserID));
-                   counter++;
-                    if (counter == count) break;
-                }
-                ViewBag.comments = comments;
-                ViewBag.users = users;
-                ViewBag.postid = id;
-                ViewBag.commentCount = commentCount;
-                ViewBag.remainingComment = commentCount - count;
-                ViewBag.count = count;
-            return PartialView("postComments");
+            var skip = count - 5;
+            var postCommentCount = _db.PostComments.Where(e => e.PostID == id).ToList().Count;
+            var postCommentsList = (from t1 in _db.Users
+                     join t2 in _db.PostComments on t1.UserID equals t2.UserID
+                     where t2.PostID==id
+                     select new PostCommentModel
+                    {
+                         PostComment = t2.PostComment,
+                         PostCommentDate = t2.PostCommentDate,
+                         UserName = t1.UserName,
+                         UserSurname = t1.UserSurname,
+                         UserProfilePhoto = t1.UserProfilePhoto,
+                         UserId = t1.UserID
+                    }).OrderByDescending(e => e.PostCommentDate).Skip(skip).Take(5).ToList();
+            var postCommentViewModel = new PostCommentViewModel
+            {
+                Count = count,
+                CommentCount = postCommentCount,
+                RemainingCommentCount = postCommentCount - count,
+                PostId = (int)id,
+                PostCommentModel = postCommentsList
+            };
+            return PartialView("postComments",postCommentViewModel);
         }
         [HttpPost]
         public ActionResult AddCommentToPost(int? postid,string comment)
@@ -70,7 +72,7 @@ namespace ScoutUp.Controllers
             if(post ==null ) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             var user = GetUserModel();
             var userComment = new PostComments { UserID = user.UserID,PostID = (int)postid,PostComment = comment,PostCommentDate = DateTime.Now};
-            
+            _db.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserID = user.UserID, UsersLastMoveText =" bir gönderiye yorum yaptı.",UsersMoveLink = "/users/index/"+post.UserID+"#post"+post.PostID});
             _db.PostComments.Add(userComment);
             try
             {
@@ -98,8 +100,9 @@ namespace ScoutUp.Controllers
             try
             {
                 //yeni post kaydedilip id'si alınıyo
-                    _db.Posts.Add(post);
-                    _db.SaveChanges();
+                _db.Posts.Add(post);
+                _db.SaveChanges();
+                _db.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserID = user.UserID, UsersLastMoveText =" bir gönderi paylaştı.", UsersMoveLink = "/users/index/" + post.UserID + "#post" + post.PostID });
             }
             catch (Exception ex)
             {
@@ -137,6 +140,7 @@ namespace ScoutUp.Controllers
             {
                     //gönderinin resimlerinin sunucuda ki yerleri kaydediliyor
                     _db.PostPhotos.AddRange(postPhotoList);
+
                     _db.SaveChanges();
                     return Json(new { success = true });
             }
@@ -178,6 +182,7 @@ namespace ScoutUp.Controllers
                 using (var context = new ScoutUpDB())
                 {
                     context.PostLikes.Add(postLike);
+                    context.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserID = user.UserID, UsersLastMoveText =" bir gönderiyi beğendi.", UsersMoveLink = "/users/index/" + post.UserID + "#post" + post.PostID });
                     context.SaveChanges();
                     return Json(new { success = true,liked=true,likes =context.PostById((int)id).PostLikes.Count },JsonRequestBehavior.AllowGet);
                 }
@@ -214,9 +219,10 @@ namespace ScoutUp.Controllers
                 return PartialView("UserLikedPost");
             }
         }
-        public ActionResult NewsFeedPosts(int count = 0)
+        public ActionResult NewsFeedPosts(int count = 5,int take =5)
         {
             var user = GetUserModel();
+            var skip = count - 5;
             var followingUsers = user.UserFollow.Select(e => e.UserBeingFollowedUserID).ToArray();
             var followingUsersPosts = _db.Posts.Where(e => followingUsers.Contains(e.UserID) || e.UserID==user.UserID).
                 Select(e => new NewsFeedPostsViewModel
@@ -230,9 +236,11 @@ namespace ScoutUp.Controllers
                         }).ToList()
                     },
                     PostText = e.PostText,UserId = e.UserID,UserName = e.User.UserName,UserSurname = e.User.UserSurname
-                }).ToList();
-            var orderedPosts = followingUsersPosts.OrderByDescending(e => e.PostDatePosted).ToList();
-            return PartialView("NewsFeedPosts", orderedPosts);
+                }).OrderByDescending(e=> e.PostDatePosted).Skip(skip).Take(take).ToList();
+            if (followingUsersPosts.Count > 0)
+                return PartialView("NewsFeedPosts", followingUsersPosts);
+            else
+                return null;
         }
         private User GetUserModel()
         {

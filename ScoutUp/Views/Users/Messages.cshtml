@@ -99,33 +99,39 @@
     refreshUsersFollowing();
 </script>  
 <script>
-    $(function () {
+    $(function() {
         //sol alt listeden online user a basıldığında çalışır
         //yeni bir chat penceresi açılacaksa açılacak pencereyi aktif hale getirir .Basılan kullanıcıyla chat tabı açıksa onu aktif hale getirir diğerlerini deaktif hale getirir.
-        $('body').on('click', '.chat', function() {
-            var self = $(this);
-            var targetUserId = self.attr('data-id');
-            var tab = $('#list-'+targetUserId);
-            if(tab.attr('id')==null){
-                 $('li').removeClass('active');
-                 $('div').removeClass('active');
-                $.get('/message/messagetabId/' + targetUserId,function(e) {
-                        var leftContactList = $('#left-contact-list');
-                        leftContactList.append(e);
-                    });
-                $.get('/message/messagetabpaneId/'+targetUserId,function(e) {
-                        var tabPane = $('#tab-pane');
-                        tabPane.append(e);
-                    });
-            }else{
-                $('li').removeClass('active');
-                $('div').removeClass('active');
-                var listTab = $('#list-' + targetUserId);
-                listTab.addClass('active');
-                $('#contact-' + targetUserId).addClass('active');
-                $('#chat-alert-' + targetUserId).text("");
-            }
-        });
+        $('body').on('click',
+            '.chat',
+            function() {
+                var self = $(this);
+                var targetUserId = self.attr('data-id');
+                var tab = $('#list-' + targetUserId);
+                if (tab.attr('id') == null) {
+                    $('li').removeClass('active');
+                    $('div').removeClass('active');
+                    $.get('/message/messagetabId/' + targetUserId,
+                        function(e) {
+                            var leftContactList = $('#left-contact-list');
+                            leftContactList.append(e);
+                        });
+                    $.get('/message/messagetabpaneId/' + targetUserId,
+                        function(e) {
+                            var tabPane = $('#tab-pane');
+                            tabPane.append(e);
+                        });
+                } else {
+                    $('li').removeClass('active');
+                    $('div').removeClass('active');
+                    var listTab = $('#list-' + targetUserId);
+                    listTab.addClass('active');
+                    $('#contact-' + targetUserId).addClass('active');
+                    $('#chat-alert-' + targetUserId).text("");
+                }
+                var x = document.getElementById('tab-pane');
+                x.scrollTop = x.scrollHeight;
+            });
         //basılan chat tabını ve konuşma tablarını aktif hale getirir
         $('body').on('click',
             '.left-tab',
@@ -133,173 +139,16 @@
                 var self = $(this);
                 $('li').removeClass('active');
                 $('div').removeClass('active');
-                var id = self.attr('id').replace('list-','');
+                var id = self.attr('id').replace('list-', '');
                 id = 'contact-' + id;
                 $('#' + id).addClass('active');
                 self.addClass('active');
+                var x = document.getElementById('tab-pane');
+                x.scrollTop = x.scrollHeight;
             });
-
-        var messageHub = $.connection.messageHub;
-        //ilk girişte online kullanıcıları çeker
-        messageHub.client.onlineUsers = function(data) {
-            for (var i = 0; i < data.length; i++) {
-                var html =
-                    '<li id="online-user-'+data[i].UserId +'"><a href="#" class="chat" data-id="'+data[i].UserId+'" title="' + data[i].UserName +'"><img src="'+data[i].UserProfilePhoto +'" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>';
-                $('#online-users').append(html);
-            }
-        };
-        //bağlantım olan bir kullanıcı pencere açıkken online olduğunda onu online listesine ekler
-        messageHub.client.updateOnlineUsers = function(data) {
-            var isListed = $('#online-user-' + data.UserId).attr('id')==null;
-            if(isListed){
-                var html =
-                    '<li id="online-user-'+data.UserId +'"><a href="#" class="chat" data-id="'+data.UserId+'" title="' + data.UserName +'"><img src="'+data.UserProfilePhoto +'" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>';
-                $('#online-users').append(html);
-                }
-        };
-        //kullanıcının tüm penceleri kapandıysa bir bağlantısı kalmadıysa diğer kullanıcılara 10 saniye sonra offline olur.
-        messageHub.client.updateUserOffline = function(data) {
-            var self = $('#online-user-' + data.UserId);
-            self.remove();
-        }
-        //bir kullanıcı şu an ki kullanıcıya mesaj gönderdiğinde çalışacak
-        messageHub.client.recieveMessage = function (data) {
-            var self = $('#list-'+data.UserId);
-            //zaten tab var mı ?
-            if (self.attr('id') == null) {
-                //tab yok yeni tab oluşaçak
-                //messageController bu tab açma olaylarını hallediyor
-                var g1 = $.get('/message/MessageTabReciever/',
-                    data,
-                    function(e) {
-                        var leftContactList = $('#left-contact-list');
-                        leftContactList.append(e);
-                        self = $('#list-' + data.UserId);
-                        self.removeClass('active');
-                    });
-                var g2 = $.get('/message/messagetabpane/' + data.UserId,
-                    function(e) {
-                        var tabPane = $('#tab-pane');
-                        tabPane.append(e);
-                        id = 'contact-' + data.UserId;
-                        $('#' + id).removeClass('active');
-
-                    });
-                //soltaki tab ve ona bağlı mesaj tabları açıldığında çalışır. $.when olmasa çok hızlı çalışıp geçiyor çalışmıyor.
-                $.when(g1, g2).done(function() {
-                    $.get('/message/MessageReciever/',
-                        data,
-                        function(e) {
-                            $('#contact-' +  data.UserId).children().children().append(e);
-                            $('#chat-alert-' + data.UserId).text("1");
-                        });
-                });
-            } else { // zaten bir tab açık yenisine gerek yok açık olan tab a sadece mesajları gönderelim
-                $.get('/message/MessageReciever/',
-                    data,
-                    function(e) {
-                        $('#contact-' +  data.UserId).children().children().append(e);
-                        var newMessageCount= $('#chat-alert-' + data.UserId).text();
-                        if($('#list-'+data.UserId).hasClass("active")==false){
-                             if (newMessageCount == "") {
-                                   newMessageCount=1;
-                             } else {
-                                  newMessageCount++;
-                             }
-                              $('#chat-alert-' + data.UserId).text(newMessageCount);
-                       }
-                    });
-            }
-          //tab a tıklandığında bildirimi siler
-            $('body').on('click',
-                '.left-tab',
-                function() {
-                    var self = $(this);
-                    $('li').removeClass('active');
-                    $('div').removeClass('active');
-                    var id = self.attr('id').replace('list-','');
-                    $('#contact-' + id).addClass('active');
-                    self.addClass('active');
-                    $('#chat-alert-' + id).text("");
-                });
-
-        }
-        //mesaj gönderme kısmı
-            $("body").on("click",'#buton', function () {
-                var self = $(this);
-                var userid = @Model.UserID;
-                var message = $('.input-group').children().val();
-                var targetUser = $(".left-tab.active").attr('id').replace("list-", "");
-                var data = { UserId: userid,MessageText:message,RecieverUserId:targetUser};
-                $.get('/message/MessageSender/',
-                    data,
-                    function(e) {
-                        $('#contact-' + targetUser).children().children().append(e);
-                    });
-                //sunucuda ki fonksiyonu ateşler.o da client fonksiyonunu ateşler.
-                messageHub.server.sendMessage(userid,targetUser,message);
-            });
-
-        });
-</script>
-<script>
-    $(function () {
-
-        // Reference the auto-generated proxy for the hub.
-
-        var notification = $.connection.notificationHub;
-        var newNotificitaionsToUpdate = [];
-        // Client side method for receiving the list of notifications on the connected event from the server
-        notification.client.refreshNotification = function (data) {
-            for (var i = 0; i < data.length; i++) {
-                $("#bildirim").append("<li><a href='"+data[i].NotificationLink +"'>" + data[i].UserNotificationsMessage + "</a></li>");
-            }
-            if(data.length> 0){
-                 $("#bildirimler").html('Bildirimler '+ data.length +'<span><img src="../../images/down-arrow.png" alt="" /></span>');
-            }
-            $("body").on("click", ".dropdown-toggle", function () {
-                var self = $(this);
-                notification.server.updateNotification(data);
-                $("#bildirimler").html('Bildirimler<span><img src="../../images/down-arrow.png" alt="" /></span>');
-            });
-
-        }
-
-//Client side method which will be invoked from the Global.asax.cs file.
-        notification.client.updateNotification = function (data) {
-            $("#bildirim").append("<li><a href='"+data.NotificationLink +"'>" + data.UserNotificationsMessage + "</a></li>");
-            newNotificitaionsToUpdate.push(data);
-            $("#bildirimler").html('Bildirimler '+ newNotificitaionsToUpdate.length +'<span><img src="../../images/down-arrow.png" alt="" /></span>');
-            $("body").on("click", ".dropdown-toggle", function () {
-                var self = $(this);
-                notification.server.updateNotification(newNotificitaionsToUpdate);
-                newNotificitaionsToUpdate = [];
-                $("#bildirimler").html('Bildirimler<span><img src="../../images/down-arrow.png" alt="" /></span>');
-            });
-        }
-
-        // Start the connection.
-        $.connection.hub.start().done(function () {
-
-            //When the send button is clicked get the text and user name and send it to server.
-            $("body").on("click", ".btn", function () {
-                var self = $(this);
-                var userid = self.attr("data-id");
-                var postid = self.attr("id");
-                var clas = self.attr('class');
-                var isLiked = clas.endsWith('text-red');
-                if (!isLiked) {
-                    notification.server.sendNotification(userid,"  @ViewBag.currentUser.UserName"
-                        + " " +"  @ViewBag.currentUser.UserSurname" +" gönderini beğendi","","/users/index/#"+postid);
-                }
-            });
-            $("body").on("click",'#follow', function () {
-                var self = $(this);
-                var userid = self.attr("data-id");
-                    notification.server.sendNotification(userid," @ViewBag.currentUser.UserName"
-                        + " " +" @ViewBag.currentUser.UserSurname" +" seni takip etmeye başladı.","","/users/index/"+ @ViewBag.currentUser.UserID);
-            });
-
+        $(document).ready(function() {
+            var x = document.getElementById('tab-pane');
+            x.scrollTop = x.scrollHeight;
         });
     });
 </script>

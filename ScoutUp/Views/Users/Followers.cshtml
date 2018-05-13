@@ -64,7 +64,7 @@
                   </div>
               </div>
             </div>
-              @Html.Partial("~/Views/Shared/StickySideBar.cshtml")
+              @Html.Action("UsersLastMoves", "Users",new {id = @Model.UserID})
           </div>
         </div>
       </div>

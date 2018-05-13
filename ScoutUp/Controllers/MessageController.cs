@@ -38,7 +38,8 @@ namespace ScoutUp.Controllers
                     UserProfilePhoto = user.UserProfilePhoto,
                     DateSend = DateTime.Now
                 };
-                ViewBag.tabPaneActive = true;
+                ViewBag.tabActive = true;
+                ViewBag.targetId = id;
                 return PartialView("MessageTab", new List<MessageViewModel> {model});
             }
 
@@ -102,6 +103,7 @@ namespace ScoutUp.Controllers
                 };
                 var list = new List<MessageViewModel> {temp};
                 ViewBag.tabPaneActive = true;
+                ViewBag.targetId = id;
                 return PartialView("MessageTabPane", list);
             }
 

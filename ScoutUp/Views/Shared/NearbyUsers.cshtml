@@ -1,0 +1,17 @@
+﻿@model List<ScoutUp.ViewModels.FollowSuggestViewModel>
+@foreach (var item in Model)
+{
+    <div class="col-md-6 col-sm-6">
+        <div class="friend-card">
+            <img src="../../images/covers/1.jpg" alt="profile-cover" class="img-responsive" />
+            <div class="card-info">
+                <img src="@item.ImagePath" alt="user" class="profile-photo-lg" />
+                <div class="friend-info">
+                    <a class="follow" href="@Url.Content("~/users/follow/")@item.UserId" class="pull-right text-green">Takip Et</a>
+                    <h5><a href='@Url.Content("~/users/index/")@item.UserId' class="profile-link">@item.Name </a></h5>
+                    <p>@String.Concat(@item.UserCity,"'de yaşıyor")</p>
+                </div>
+            </div>
+        </div>
+    </div>
+}

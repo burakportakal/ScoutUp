@@ -1,48 +1,34 @@
 ﻿@model ScoutUp.Models.User
 @Html.Partial("~/Views/Shared/header.cshtml")
-    <!--Header End-->
+<!--Header End-->
 
-    <div class="container">
+<div class="container">
 
-      <!-- Timeline
-      ================================================= -->
-        @Html.Partial("~/Views/Shared/TimeLineMenu.cshtml")
-     <!--Timeline Menu for Small Screens End-->
+    <!-- Timeline
+    ================================================= -->
+    @Html.Partial("~/Views/Shared/TimeLineMenu.cshtml")
+    <!--Timeline Menu for Small Screens End-->
 
-        </div>
-        <div id="page-contents">
-          <div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-7">
+</div>
+<div id="page-contents">
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-7">
 
-              <!-- About
-              ================================================= -->
-              <div class="about-profile">
-                <div class="about-content-block">
-                  <h4 class="grey"><i class="ion-ios-information-outline icon-in-title"></i>Personal Information</h4>
-                    <p>@Model.UserAbout</p>
+            <!-- About
+            ================================================= -->
+            <div class="about-profile">
+                    @Html.Action("CategoriesLiked", "Category",new {id = @Model.UserID})
                 </div>
-                <div class="edit-block">
-                  <h4 class="grey"><i class="ion-ios-heart-outline icon-in-title"></i>Interests</h4>
-                    <ul class="list-inline interests">
-                        @foreach (var item in Model.UserHobbies)
-                        {
-                            <li>
-                                @Html.DisplayFor(modelItem => item.Hobbies.HobbiesName)
-                            </li>
-                        }
-                    </ul>
-                    @Html.Action("Categories","Category")
-                </div>
-              </div>
             </div>
-              @Html.Action("UsersLastMoves", "Users",new {id = @Model.UserID})
-          </div>
         </div>
+    @Html.Action("UsersLastMoves", "Users",new {id = @Model.UserID})
+    </div>
+</div>
 
 @Html.Partial("~/Views/Shared/footer.cshtml")
 <script>
-    $("#about-link").addClass('active');
+    $("#interests-link").addClass('active');
     function displayNumbers() {
         $.get({ url: "/users/followerCount/@Model.UserID", success: function (result) { $("#follower-count").text(result+" Takipçi"); } });
     }
@@ -89,7 +75,7 @@
         //        alert("puan eklendi");
         //    },
         //    error: function (data) {
-        //        //if fails     
+        //        //if fails
         //        alert("puan eklenemedi");
         //    }
         //});

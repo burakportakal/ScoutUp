@@ -58,6 +58,7 @@ namespace ScoutUp.Hubs
                 using (var context = new ScoutUpDB())
                 {
                     context.PostLikes.Add(postLike);
+                    context.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserID = user.UserID, UsersLastMoveText = " bir gönderiyi beğendi.", UsersMoveLink = "/users/index/" + post.UserID + "#post" + post.PostID });
                     context.SaveChanges();
                     return new LikePost
                     {

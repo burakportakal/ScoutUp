@@ -36,6 +36,20 @@ namespace ScoutUp.Hubs
 
             return client.updateNotification(notification);
         }
+        public Task SendCommentNotification(int postid, string message, string notifyDirection, string notifyLink)
+        {
+            var objRepository = new NotificationRepository();
+            var user =objRepository.GetUserFromPostId(postid);
+            var notification = objRepository.AddNotification(user.UserId, message, notifyDirection, notifyLink);
+            string name = Context.User.Identity.GetUserId();
+            dynamic client = null;
+            foreach (var connectionId in _connections.GetConnections(user.UserId.ToString()))
+            {
+                client = Clients.Client(connectionId);
+            }
+
+            return client.updateNotification(notification);
+        }
         public void UpdateNotification(List<UserNotifications> notifications)
         {
             var objRepository = new NotificationRepository();

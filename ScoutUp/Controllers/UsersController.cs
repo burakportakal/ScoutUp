@@ -16,6 +16,7 @@ using ScoutUp.Classes;
 using System.Security.Claims;
 using System.Security.Principal;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.SignalR.Infrastructure;
 using Microsoft.Owin.Security;
@@ -26,7 +27,7 @@ namespace ScoutUp.Controllers
     public class UsersController : Controller
     {
         private readonly ScoutUpDB _db = new ScoutUpDB();
-        #region timeline index about album followers
+        #region timeline index about album followers interests
         [Authorize]
         public ActionResult Index(int? id)
         {
@@ -99,6 +100,19 @@ namespace ScoutUp.Controllers
         }
         [Authorize]
         public ActionResult Album(int? id)
+        {
+            User user = id == null || GetUser().UserID == id ? GetUser() : _db.Users.Find(id);
+            var targetUser = !(id == null || GetUser().UserID == id);
+            if (user == null)
+                return HttpNotFound();
+            if (targetUser)
+                ViewBag.Following = IsFollowing(user);
+            ViewBag.followerCount = FollowerCount(id);
+            ViewBag.targetUser = targetUser;
+            return View(user);
+        }
+
+        public ActionResult Interests(int? id)
         {
             User user = id == null || GetUser().UserID == id ? GetUser() : _db.Users.Find(id);
             var targetUser = !(id == null || GetUser().UserID == id);
@@ -327,6 +341,7 @@ namespace ScoutUp.Controllers
             photo.UserPhotoSmall = databasePathSmall;
             photo.UserPhotoBig = databasePathBig;
             _db.UserPhotos.Add(photo);
+            _db.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserID = user.UserID, UsersLastMoveText =" profil fotoğrafını güncelledi.", UsersMoveLink = "/users/album/" + user.UserID });
             var entry = _db.Entry(user);
             entry.Property(e => e.UserProfilePhoto).IsModified = flag;
             try
@@ -352,6 +367,7 @@ namespace ScoutUp.Controllers
             var photo = user.UserPhotos.FirstOrDefault(e => e.UserPhotosID == id);
             if (photo == null) { return new HttpStatusCodeResult(HttpStatusCode.BadRequest); }
             user.UserProfilePhoto = photo.UserPhotoSmall;
+            _db.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserID = user.UserID, UsersLastMoveText =" profil fotoğrafını güncelledi.", UsersMoveLink = "/users/album/" + user.UserID });
             _db.Users.Attach(user);
              var entry = _db.Entry(user);
              entry.Property(e => e.UserProfilePhoto).IsModified = true;
@@ -504,7 +520,9 @@ namespace ScoutUp.Controllers
             try
             {
                 User user = GetUser();
+                User otherUser = _db.Users.Find(id);
                 _db.UserFollow.Add(new UserFollow { UserID = user.UserID, UserBeingFollowedUserID = (int)id, IsFollowing = true });
+                _db.UsersLastMoves.Add(new UsersLastMoves {MoveDate = DateTime.Now,UserID = user.UserID,UsersLastMoveText =" "+ otherUser.UserName+" "+otherUser.UserSurname+"'i takip etti.",UsersMoveLink = "/users/index/"+otherUser.UserID});
                 _db.SaveChanges();
                 return Json(new LoginResult(1),JsonRequestBehavior.AllowGet);
             }
@@ -566,6 +584,38 @@ namespace ScoutUp.Controllers
             ViewBag.email = GetUser().UserEmail;
             ViewBag.followList = followList;
             return View(user);
+        }
+        [Authorize]
+        public ActionResult Nearby(int? id)
+        {
+            User user = GetUser();
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            if (HttpContext.GetOwinContext().Authentication.User.Identity.Name != user.UserEmail)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var suggest =new Suggest();
+            var list = suggest.FollowSuggest(user.UserID, _db, true);
+            return View(user);
+        }
+        [Authorize]
+        public ActionResult NearbyUsers(int? id)
+        {
+            User user = GetUser();
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+            if (HttpContext.GetOwinContext().Authentication.User.Identity.Name != user.UserEmail)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var suggest = new Suggest();
+            var list = suggest.FollowSuggest(user.UserID, _db, true);
+            return PartialView("NearbyUsers",list);
         }
         [Authorize]
         public ActionResult StopFollow(int? id)
@@ -631,6 +681,7 @@ namespace ScoutUp.Controllers
             try
             {
                 _db.UserRatings.Add(userRating);
+                _db.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserID = userRating.UserID, UsersLastMoveText = " bir öğeyi değerlendirdi.", UsersMoveLink = "/users/interests/" + userRating.UserID });
                 _db.SaveChanges();
                 return Json(new {success = true});
             }
@@ -642,6 +693,13 @@ namespace ScoutUp.Controllers
         }
         #endregion
 
+        public ActionResult UsersLastMoves(int? id)
+        {
+            User user = id == null || GetUser().UserID == id ? GetUser() : _db.Users.Find(id);
+            ViewBag.userName = user.UserName;
+            var userMoveViewModels = _db.UsersLastMoves.Where(e => e.UserID == user.UserID).Select(e => new UserMoveViewModel {MoveDate = e.MoveDate,UsersLastMoveText = e.UsersLastMoveText,UsersMoveLink = e.UsersMoveLink}).OrderByDescending(e=> e.MoveDate).Take(5).ToList();
+            return PartialView("StickySideBar", userMoveViewModels);
+        }
         public ActionResult Messages(int? id)
         {
             if (id != null) ViewBag.targetUserId = id;

@@ -27,6 +27,7 @@ namespace ScoutUp.DAL
     public DbSet<CategoryItems> CategoryItems {get;set;}
     public DbSet<ChatMessages> ChatMessages { get; set; }
         public DbSet<Chat> Chat { get; set; }
+        public DbSet<UsersLastMoves> UsersLastMoves { get; set; }
 
         public DbSet<UserNotifications> UserNotifications { get; set; }
        

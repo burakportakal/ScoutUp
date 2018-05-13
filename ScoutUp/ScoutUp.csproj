@@ -104,6 +104,11 @@
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -113,6 +118,14 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -181,9 +194,12 @@
     <Content Include="images\iPhone.png" />
     <Content Include="images\logo-black.png" />
     <Content Include="images\logo.png" />
+    <Content Include="images\new-logo.png" />
     <Content Include="js\bootstrap.min.js" />
     <Content Include="js\follow.js" />
+    <Content Include="js\hub-connections.js" />
     <Content Include="js\jquery-3.1.1.min.js" />
+    <Content Include="js\jquery-migrate-3.0.0.min.js" />
     <Content Include="js\jquery-ui.js" />
     <Content Include="js\jquery-ui.min.js" />
     <Content Include="js\jquery.appear.min.js" />
@@ -975,11 +991,13 @@
     <Content Include="Views\Shared\MessageReciever.cshtml" />
     <Content Include="Views\Shared\OnlineUsers.cshtml" />
     <Content Include="Views\Shared\MessageLoader.cshtml" />
+    <Content Include="Views\Shared\ChatBox.cshtml" />
+    <Content Include="Views\Shared\NearbyUsers.cshtml" />
     <None Include="Views\Users\editprofileinterests.cshtml" />
     <None Include="Views\Home\index.cshtml" />
     <None Include="Views\Home\newsfeed.cshtml" />
     <None Include="Views\Home\register.cshtml" />
-    <Content Include="Views\Shared\header.cshtml" />
+    <None Include="Views\Shared\header.cshtml" />
     <Content Include="Views\Shared\footer.cshtml" />
     <Content Include="Views\Shared\leftside.cshtml" />
     <Content Include="Views\Shared\rightside.cshtml" />
@@ -991,6 +1009,7 @@
     <None Include="Views\Users\index.cshtml" />
     <None Include="Views\Users\Followers.cshtml" />
     <None Include="Views\Users\album.cshtml" />
+    <Content Include="Views\Users\Interests.cshtml" />
     <None Include="Views\Users\Messages.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -1012,6 +1031,7 @@
     <Compile Include="Models\Chat.cs" />
     <Compile Include="Models\ChatMessages.cs" />
     <Compile Include="Models\UserRatings.cs" />
+    <Compile Include="Models\UsersLastMoves.cs" />
     <Compile Include="Repository\ChatMessageRepository.cs" />
     <Compile Include="Search\Algorithms.cs" />
     <Compile Include="Search\Graph.cs" />
@@ -1058,6 +1078,7 @@
     <Compile Include="ViewModels\FollowSuggestViewModel.cs" />
     <Compile Include="ViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\NewsFeedPostsViewModel.cs" />
+    <Compile Include="ViewModels\UserMoveViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />
@@ -1072,6 +1093,7 @@
     <Content Include="Views\Users\Delete.cshtml" />
     <Content Include="Views\Users\Details.cshtml" />
     <Content Include="Views\Users\Edit.cshtml" />
+    <Content Include="Views\Users\Nearby.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

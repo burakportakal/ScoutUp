@@ -26,4 +26,25 @@ namespace ScoutUp.ViewModels
     {
         public string PostPhotoLocateBig { get; set; }
     }
+
+    public class PostCommentViewModel
+    {
+        public int PostId { get; set; }
+        public int CommentCount { get; set; }
+        public int Count { get; set; }
+        public int RemainingCommentCount { get; set; }
+
+        public List<PostCommentModel> PostCommentModel { get; set; }
+
+
+    }
+    public class PostCommentModel
+    {
+        public string PostComment { get; set; }
+        public DateTime PostCommentDate { get; set; }
+        public string UserName { get; set; }
+        public string UserSurname { get; set; }
+        public string UserProfilePhoto { get; set; }
+        public int UserId { get; set; }
+    }
 }

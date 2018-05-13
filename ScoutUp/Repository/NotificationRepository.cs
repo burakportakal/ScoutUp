@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using ScoutUp.DAL;
 using ScoutUp.Models;
+using ScoutUp.ViewModels;
 
 namespace ScoutUp.Repository
 {
@@ -52,7 +53,6 @@ namespace ScoutUp.Repository
 
             return notifications2;
         }
-
         public void UpdateNotification(List<UserNotifications> notifyList)
         {
             using (var context = new ScoutUpDB())
@@ -64,6 +64,21 @@ namespace ScoutUp.Repository
                 }
                 context.SaveChanges();
             }
+        }
+
+        public OnlineUsersViewModel GetUserFromPostId(int postid)
+        {
+            var model = new OnlineUsersViewModel();
+            using (var context = new ScoutUpDB())
+            {
+                model =context.Posts.Where(e=> e.PostID==postid).Select(e=> new OnlineUsersViewModel
+                {
+                    UserId = e.UserID
+                    ,UserProfilePhoto = e.User.UserProfilePhoto
+                }).FirstOrDefault();
+            }
+
+            return model;
         }
     }
 }

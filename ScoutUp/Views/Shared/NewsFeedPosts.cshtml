@@ -1,9 +1,8 @@
 ﻿@model List<ScoutUp.ViewModels.NewsFeedPostsViewModel>
-<div class="post-content">
-   
+
         @foreach (var post in Model)
         {
-            <div id ="@string.Concat("post",@post.PostId)">
+            <div class="post" id ="@string.Concat("post",@post.PostId)">
             @try
             {
                 <!--Fotoğraf kısımı-->
@@ -44,6 +43,5 @@
             }
         </div>
         }
-   
-</div>
+  
 

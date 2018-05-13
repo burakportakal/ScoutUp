@@ -10,5 +10,7 @@ namespace ScoutUp.ViewModels
         public int UserId { get; set; }
         public string Name { get; set; }
         public string ImagePath { get; set; }
+        public double Similarity { get; set; }
+        public string UserCity { get; set; }
     }
 }

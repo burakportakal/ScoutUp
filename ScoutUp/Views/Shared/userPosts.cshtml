@@ -1,7 +1,7 @@
 ﻿<div class="post-content">
     @foreach (var post in @Model.UserPosts)
     {
-        <div id ="@string.Concat("post",@post.PostID)">
+        <div class="post" id ="@string.Concat("post",@post.PostID)">
         <!--Post Date-->
         <div class="post-date hidden-xs hidden-sm">
             <h5>@Model.UserName</h5>
@@ -27,7 +27,7 @@
                         <p>@post.PostText</p>
                     </div>
                     <div class="line-divider"></div>
-                    <div id="@post.PostID">
+                    <div id="@string.Concat("yorum",post.PostID)">
                         @Html.Action("PostComments", "Post", new { id = @post.PostID })
                     </div>
                     <div class="post-comment">

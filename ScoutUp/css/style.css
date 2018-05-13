@@ -81,13 +81,13 @@ h1.grey, h2.grey, h3.grey, h4.grey, h5.grey, h6.grey{
 
 .text-white:hover{color: #fff;}
 
-.text-green{color: #8dc63f;}
+.text-green{color: rgb(33, 183, 10);}
 
-.text-green:hover{color: #39b54a;}
+.text-green:hover{color: rgb(28, 143, 11);}
 
-.text-red{color: #ef4136;}
+.text-red{color: rgb(12, 169, 195);}
 
-.text-red:hover{color: #d6100b;}
+    .text-red:hover { color: rgb(5, 118, 137); }
 
 .profile-link{font-weight: 600;}
 
@@ -2732,4 +2732,19 @@ ul.contact li i{
 .sidebyside li {
     float: left;
     display: inline;
+}
+.navbar-brand {
+    padding: 8px 100px;
+}
+.navbar-brand img {
+    width: 50px;
+    height: 50px;
+}
+.menu {
+    background: #4d40a5;
+}
+.post {
+    padding-bottom: 20px;
+    border-bottom: solid 20px;
+    border-color: white;
 }

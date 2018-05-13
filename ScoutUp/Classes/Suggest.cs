@@ -9,8 +9,9 @@ namespace ScoutUp.Classes
 {
     public class Suggest
     {
-        public List<FollowSuggestViewModel> FollowSuggest(int userId,ScoutUpDB _db)
+        public List<FollowSuggestViewModel> FollowSuggest(int userId,ScoutUpDB _db,bool nearby=false)
         {
+            var user = _db.Users.Find(userId);
             //benzerlik listesi
             List<Similarity> similarties = new List<Similarity>();
             //Geri dönecek takip listesi
@@ -25,8 +26,19 @@ namespace ScoutUp.Classes
             //Kullanıcın zaten takip ettikleriyle işimiz yok.
             var followlist = _db.UserFollow.Where(e => e.UserID == userId).Select(e => e.UserBeingFollowedUserID)
                 .ToArray();
+            IQueryable<int> allUserIds;
             // followlananlar hariç tüm kullanıcıları çekiyoruz
-            var allUserIds = _db.Users.Where(e => e.UserID != userId).Where(e => !followlist.Contains(e.UserID)).Select(e => e.UserID);
+            if (nearby)
+            {
+                 allUserIds = _db.Users.Where(e => e.UserID != userId).Where(e => !followlist.Contains(e.UserID)).Where(e=> e.UserCity==user.UserCity)
+                    .Select(e => e.UserID);
+            }
+            else
+            {
+                 allUserIds = _db.Users.Where(e => e.UserID != userId).Where(e => !followlist.Contains(e.UserID))
+                    .Select(e => e.UserID);
+            }
+
             //tüm öğelerin ayrı ayrı rating ortalamasını hesaplar Up olarak geçiyor formülde
             var allRatingsDictionary = new Dictionary<int, float>();
             foreach (var itemId in usersRatedItems)
@@ -106,7 +118,8 @@ namespace ScoutUp.Classes
             foreach (var similarity in similartiesOrdered)
             {
                 var tempUser = _db.Users.Find(similarity.OtherUserID);
-                var temp = new FollowSuggestViewModel {UserId = similarity.OtherUserID, Name = tempUser.UserName + " " + tempUser.UserSurname,ImagePath = tempUser.UserProfilePhoto};
+                var temp = new FollowSuggestViewModel {UserId = similarity.OtherUserID, Name = tempUser.UserName + " " + tempUser.UserSurname,ImagePath = tempUser.UserProfilePhoto,
+                    Similarity =Math.Round((1000* similarity.UsersSimilarity),2),UserCity = tempUser.UserCity};
                 usersToFollow.Add(temp);
             }
 

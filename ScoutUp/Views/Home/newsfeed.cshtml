@@ -1,43 +1,69 @@
 ﻿@model ScoutUp.Models.User
 @Html.Partial("~/Views/Shared/header.cshtml")
     <div id="page-contents">
-    	<div class="container">
-    		<div class="row">
+        <div class="container">
+            <div class="row">
 
-         <!--Left Side-->
+                <!--Left Side-->
                 @Html.Partial("~/Views/Shared/leftside.cshtml")
 
-		        <!-- Post Create Box
-		        ================================================= -->
-		        @Html.Partial("~/Views/Shared/PostCreateBox.cshtml")
-            <!-- Post Create Box End-->
+                <!-- Post Create Box
+                ================================================= -->
+                @Html.Partial("~/Views/Shared/PostCreateBox.cshtml")
+                <!-- Post Create Box End-->
 
-            <!-- Post Content
-            ================================================= -->
-		        <div id ="posts">
-		            @Html.Action("NewsFeedPosts","Post")
-		        </div>
+                <!-- Post Content
+                ================================================= -->
+                <div id="posts">
+                    <div class="post-content">
+                        @Html.Action("NewsFeedPosts", "Post")
+                    </div>
                 </div>
-          <!-- Right side-->
-	        @Html.Action("FollowSuggest","Users")
-	    </div>
+            </div>
+            <!-- Right side-->
+            @Html.Action("FollowSuggest","Users")
+        </div>
+        
+ 
     	</div>
     </div>
 
-   <!--Footer-->
+<!--Footer-->
+
     @Html.Partial("~/Views/Shared/footer.cshtml")
 <script src="../../Scripts/jquery.signalR-2.2.3.js"></script>
 <script src="../../Scripts/jquery.signalR-2.2.3.min.js"></script>
 <script src="../../signalr/hubs"></script>
     <script type="text/javascript" src="../../js/right-side.js"></script>
 <script>
-    function refreshUsersFollowing() {
-        var url = "@(Html.Raw(Url.Action("usersFollowers", "Home")))";
-        $.get(url, function (e) {
-            $("#follower-count").text(e + " Takipçi")
+    $("body").on('click',
+        ".chat-top",
+        function() {
+            var self = $(".chat-box");
+            var chat = $(".chat-box");
+            if (!self.hasClass("kapali")) {
+                
+                chat.animate({
+                        bottom: "-410px"
+                    },
+                    1000);
+                self.addClass("kapali");
+            } else {
+                chat.animate({
+                        bottom: "0px"
+                    },
+                    1000);
+                self.removeClass("kapali");
+            }
         });
-        setInterval(function () {
-            var url = "@(Html.Raw(Url.Action("usersFollowers", "Home")))";
+            function refreshUsersFollowing() {
+                var url = "@(Html.Raw(Url.Action("usersFollowers", "Home")))";
+                $.get(url,
+                    function(e) {
+                        $("#follower-count").text(e + " Takipçi")
+                    });
+                setInterval(function() {
+                    var url = "@(Html.Raw(Url.Action("usersFollowers", "Home")))";
             $.get(url, function (e) {
                 $("#follower-count").text(e + " Takipçi")
             });
@@ -47,38 +73,60 @@
     }; refreshUsersFollowing();
 </script>
 <script>
-    $(".form-control").keypress(function(e) {
-        if (e.which == 13) {
-            var self = $(this);
-            var commen = self.val();
-            var id = self.attr('data-id');
-            var url = "/post/addcommenttopost";
-            $.post(url,
-                { postid: id, comment: commen },
-                function(o) {
-                    if (o == 1) {
-                        var url = "/post/postcomments/"+id;
-                        $("#yorum" + id).load(url);
-                        self.val("");
-                    } else {
-                        alert("Yorumu gönderirken bir sorun oluştu.");
-                    }
+    var loaded = 5;
+    addComment();
+    $(window).scroll(function() {
+        if($(window).scrollTop() == $(document).height() - $(window).height()) {
+            loaded = loaded + 5;
+            var url = "/post/newsfeedposts?count="+loaded;
+            $.get(url,
+                function(html) {
+                    $(".post-content").append(html);
+                    $('.form-control').off();
+                    addComment();
                 });
         }
     });
+    function addComment(){
+        $(".form-control").keypress(function(e) {
+            if (e.which == 13) {
+                var self = $(this);
+                var commen = self.val();
+                var id = self.attr('data-id');
+                var url = "/post/addcommenttopost";
+                $.post(url,
+                    { postid: id, comment: commen },
+                    function(o) {
+                        if (o == 1) {
+                            var url = "/post/postcomments/"+id;
+                            $("#yorum" + id).load(url);
+                            self.val("");
+                        } else {
+                            alert("Yorumu gönderirken bir sorun oluştu.");
+                        }
+                    });
+            }
+        });
+    }
     $("body").on('click',
         '.yorum',
         function (e) {
             e.preventDefault();
             var self = $(this);
             var id = self.attr("data-id");
-            var x = $("#" + id);
+            var x = $("#yorum" + id);
             var commentCount = (x[0].children.length-1)/2;
             var url = "/post/postcomments/" + id +"/"+ (commentCount + 5);
-            $("#" + id).load(url);
+            $.get(url, function(html) {
+                var y = $("#yorum" + id).children();
+                var x = $(html);
+                $(".yorum").remove();
+                for (i = x.length-1; i >=0; i--) {
+                    y.get(y.length - 2).after(x[i]);
+                }
+                
+            });
         });
-</script>
-<script>
     $('#userPost').submit(function (evt) {
         evt.preventDefault();
         var $file = document.getElementById('postImage'),
@@ -99,7 +147,15 @@
             contentType: false,
             complete: function(response) {
                 if (response.responseJSON.success) {
-                    $("#posts").load("@Html.Raw(Url.Action("Posts", "Post", new {userid = @Model.UserID}))");
+                    var x = $(".post-content");
+                    var y = $.get("/post/newsfeedposts?count=5&take=1");
+                    $.when(y).done(function() {
+                        x.prepend($(y.responseText).hide().fadeIn('slow'));
+                        $('.form-control').off();
+                        addComment();
+                        $('#postImage').val("");
+                        $('#postText').val("");
+                    });
                 } else {
                     alert("Bir hata oluştu" + response["message"]);
                 }
@@ -107,141 +163,6 @@
             error: function($data) {
                 alert("Bir hata oluştu" + $data["message"]);
             }
-        });
-    });
-</script>
-<script>
-    $(function () {
-
-        if ($(".btn").length > 0) {
-            var postClient = $.connection.postHub;
-
-            postClient.client.updateLikeCount = function (post) {
-                var self = $("#" + post.PostId);
-                self.html('<i class="icon ion-thumbsup"></i> Beğen ' + post.LikeCount);
-            };
-
-            $("body").on("click", ".btn", function () {
-                var code = $(this).attr("id");
-                var self = $(this);
-                var clas = self.attr('class');
-                var isLiked = clas.endsWith('text-red');
-                if (isLiked) {
-                    self.removeClass('text-red');
-                    self.addClass('text-green');
-                } else {
-                    self.removeClass('text-green');
-                    self.addClass('text-red');
-                }
-                postClient.server.like(code, @Model.UserID);
-            });
-        }
-    });
-</script>
-<script>
-    $(function() {
-
-        var messageHub = $.connection.messageHub;
-        //ilk girişte online kullanıcıları çeker
-        messageHub.client.onlineUsers = function(data) {
-            for (var i = 0; i < data.length; i++) {
-                var html =
-                    '<li id="online-user-' +
-                        data[i].UserId +
-                        '"><a href="/users/messages/' +data[i].UserId + '" class="chat" data-id="' +
-                        data[i].UserId +
-                        '" title="' +
-                        data[i].UserName +
-                        '"><img src="' +
-                        data[i].UserProfilePhoto +
-                        '" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>';
-                $('#online-users').append(html);
-            }
-        };
-        //bağlantım olan bir kullanıcı pencere açıkken online olduğunda onu online listesine ekler
-        messageHub.client.updateOnlineUsers = function(data) {
-            var isListed = $('#online-user-' + data.UserId).attr('id') == null;
-            if (isListed) {
-                var html =
-                    '<li id="online-user-' +
-                        data.UserId +
-                        '"><a href="/users/messages/' +data.UserId + '" class="chat" data-id="' +
-                        data.UserId +
-                        '" title="' +
-                        data.UserName +
-                        '"><img src="' +
-                        data.UserProfilePhoto +
-                        '" alt="user" class="img-responsive profile-photo" /><span class="online-dot"></span></a></li>';
-                $('#online-users').append(html);
-            }
-        };
-        //kullanıcının tüm penceleri kapandıysa bir bağlantısı kalmadıysa diğer kullanıcılara 10 saniye sonra offline olur.
-        messageHub.client.updateUserOffline = function(data) {
-            var self = $('#online-user-' + data.UserId);
-            self.remove();
-        }
-    });
-</script>
-<script>
-    $(function () {
-
-        // Reference the auto-generated proxy for the hub.
-
-        var notification = $.connection.notificationHub;
-        var newNotificitaionsToUpdate = [];
-        // Client side method for receiving the list of notifications on the connected event from the server
-        notification.client.refreshNotification = function (data) {
-            for (var i = 0; i < data.length; i++) {
-                $("#bildirim").append("<li><a href='"+data[i].NotificationLink +"'>" + data[i].UserNotificationsMessage + "</a></li>");
-            }
-            if(data.length> 0){
-                 $("#bildirimler").html('Bildirimler '+ data.length +'<span><img src="../../images/down-arrow.png" alt="" /></span>');
-            }
-            $("body").on("click", ".dropdown-toggle", function () {
-                var self = $(this);
-                notification.server.updateNotification(data);
-                $("#bildirimler").html('Bildirimler<span><img src="../../images/down-arrow.png" alt="" /></span>');
-            });
-
-        }
-
-//Client side method which will be invoked from the Global.asax.cs file.
-        notification.client.updateNotification = function (data) {
-            $("#bildirim").append("<li><a href='"+data.NotificationLink +"'>" + data.UserNotificationsMessage + "</a></li>");
-            newNotificitaionsToUpdate.push(data);
-            $("#bildirimler").html('Bildirimler '+ newNotificitaionsToUpdate.length +'<span><img src="../../images/down-arrow.png" alt="" /></span>');
-            $("body").on("click", ".dropdown-toggle", function () {
-                var self = $(this);
-                notification.server.updateNotification(newNotificitaionsToUpdate);
-                newNotificitaionsToUpdate = [];
-                $("#bildirimler").html('Bildirimler<span><img src="../../images/down-arrow.png" alt="" /></span>');
-            });
-        }
-
-        // Start the connection.
-        $.connection.hub.start().done(function () {
-
-            //When the send button is clicked get the text and user name and send it to server.
-            $("body").on("click", ".btn", function () {
-                var self = $(this);
-                var userid = self.attr("data-id");
-                var postid = self.attr("id");
-                var clas = self.attr('class');
-                var isLiked = clas.endsWith('text-red');
-                if (!isLiked) {
-                    notification.server.sendNotification(userid," @Model.UserName"
-                        + " " +" @Model.UserSurname" +" gönderini beğendi","","/users/index/#"+postid);
-                }
-            });
-            $("body").on("click", ".follow", function () {
-                var self = $(this);
-                var userid = self.attr("data-id");
-                var currentUserId = @Model.UserID;
-                var clas = self.attr('class');
-                    notification.server.sendNotification(userid," @Model.UserName"
-                        + " " +" @Model.UserSurname" +" seni takip etmeye başladı.","","/users/index/"+currentUserId);
-            });
-
         });
     });
 </script>

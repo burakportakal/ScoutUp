@@ -1,29 +1,15 @@
-﻿<div class="col-md-2 static">
+﻿@model List<ScoutUp.ViewModels.UserMoveViewModel>
+<div class="col-md-2 static">
     <div id="sticky-sidebar">
-        <h4 class="grey">Sarah's activity</h4>
-        <div class="feed-item">
-            <div class="live-activity">
-                <p><a href="timeline-about.html#" class="profile-link">Sarah</a> Commended on a Photo</p>
-                <p class="text-muted">5 mins ago</p>
+        <h4 class="grey">@ViewBag.userName 'in hareketleri</h4>
+        @foreach (var item in Model)
+        {
+            <div class="feed-item">
+                <div class="live-activity">
+                    <p><a href="@item.UsersMoveLink" class="profile-link">@ViewBag.userName</a> <a href="@item.UsersMoveLink"> @item.UsersLastMoveText</a></p>
+                    <p class="text-muted">@item.MoveDate</p>
+                </div>
             </div>
-        </div>
-        <div class="feed-item">
-            <div class="live-activity">
-                <p><a href="timeline-about.html#" class="profile-link">Sarah</a> Has posted a photo</p>
-                <p class="text-muted">an hour ago</p>
-            </div>
-        </div>
-        <div class="feed-item">
-            <div class="live-activity">
-                <p><a href="timeline-about.html#" class="profile-link">Sarah</a> Liked her friend's post</p>
-                <p class="text-muted">4 hours ago</p>
-            </div>
-        </div>
-        <div class="feed-item">
-            <div class="live-activity">
-                <p><a href="timeline-about.html#" class="profile-link">Sarah</a> has shared an album</p>
-                <p class="text-muted">a day ago</p>
-            </div>
-        </div>
+        }
     </div>
 </div>

@@ -1,19 +1,21 @@
-﻿
-@for (int i = 0; i < @ViewBag.comments.Count; i++)
-  {
-      <div class="post-comment" style="border-radius: 18px;background-color: #eff1f3">
-          <img src="@ViewBag.users[i].UserProfilePhoto" alt="" class="profile-photo-sm"/>
-                  <a href="/users/index/@ViewBag.users[i].UserID" class="profile-link">@ViewBag.users[i].UserName @ViewBag.users[i].UserSurname</a> <i class="em em-laughing"> </i>
-          <span>@ViewBag.comments[i].PostComment</span>
+﻿@model ScoutUp.ViewModels.PostCommentViewModel
 
-      </div>
-      <div>
-          <span style="font-size: 11px">Commented at @ViewBag.comments[i].PostCommentDate</span>
-      </div>
-  }
-@if (@ViewBag.remainingComment > 0)
+@foreach (var item in Model.PostCommentModel)
 {
-    <a data-id="@ViewBag.postid" class="yorum" href="#">Daha fazla yorum göster @ViewBag.count/@ViewBag.commentCount</a>
+    <div class="post-comment" style="border-radius: 18px;background-color: #eff1f3">
+        <img src="@item.UserProfilePhoto" alt="" class="profile-photo-sm"/>
+        <a href="/users/index/@item.UserId" class="profile-link">@item.UserName @item.UserSurname</a> <i class="em em-laughing"> </i>
+        <span>@item.PostComment</span>
+
+    </div>
+    <div>
+        <span style="font-size: 11px">Commented at @item.PostCommentDate</span>
+    </div>
+}
+
+@if (@Model.RemainingCommentCount > 0)
+{
+    <a data-id="@Model.PostId" class="yorum" href="#">Daha fazla yorum göster @Model.Count/@Model.CommentCount</a>
 }
 else
 {

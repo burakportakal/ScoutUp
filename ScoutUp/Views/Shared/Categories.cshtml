@@ -12,11 +12,55 @@
                 <img width="140" height="160"src="@categories.CategoryItemPhoto" />
                 <div>
                     <div class="ratings">
-                        <a href="#" data-id="@categories.CategoryItemId" title="1"><i class="rate fa fa-star"></i></a>
-                        <a href="#" data-id="@categories.CategoryItemId" title="2"><i class="rate fa fa-star"></i></a>
+                        @if (categories.UserRating == 1)
+                        {
+                            <a href="#" data-id="@categories.CategoryItemId" title="1"><i class="rate fa fa-star rated"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="2"><i class="rate fa fa-star"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="3"><i class="rate fa fa-star"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="4"><i class="rate fa fa-star"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="5"><i class="rate fa fa-star"></i></a>
+                        }
+                        else if (categories.UserRating == 2)
+                        {
+                        <a href="#" data-id="@categories.CategoryItemId" title="1"><i class="rate fa fa-star rated"></i></a>
+                        <a href="#" data-id="@categories.CategoryItemId" title="2"><i class="rate fa fa-star rated"></i></a>
                         <a href="#" data-id="@categories.CategoryItemId" title="3"><i class="rate fa fa-star"></i></a>
                         <a href="#" data-id="@categories.CategoryItemId" title="4"><i class="rate fa fa-star"></i></a>
                         <a href="#" data-id="@categories.CategoryItemId" title="5"><i class="rate fa fa-star"></i></a>
+                        }
+                        else if (categories.UserRating == 3)
+                        {
+                            <a href="#" data-id="@categories.CategoryItemId" title="1"><i class="rate fa fa-star rated"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="2"><i class="rate fa fa-star rated"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="3"><i class="rate fa fa-star rated"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="4"><i class="rate fa fa-star"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="5"><i class="rate fa fa-star"></i></a>
+                        }
+                        else if (categories.UserRating == 4)
+                        {
+                            <a href="#" data-id="@categories.CategoryItemId" title="1"><i class="rate fa fa-star rated"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="2"><i class="rate fa fa-star rated"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="3"><i class="rate fa fa-star rated"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="4"><i class="rate fa fa-star rated"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="5"><i class="rate fa fa-star"></i></a>
+                        }
+                        else if (categories.UserRating == 5)
+                        {
+                            <a href="#" data-id="@categories.CategoryItemId" title="1"><i class="rate fa fa-star rated"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="2"><i class="rate fa fa-star rated"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="3"><i class="rate fa fa-star rated"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="4"><i class="rate fa fa-star rated"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="5"><i class="rate fa fa-star rated"></i></a>
+                        }
+                        else
+                        {
+                            <a href="#" data-id="@categories.CategoryItemId" title="1"><i class="rate fa fa-star"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="2"><i class="rate fa fa-star"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="3"><i class="rate fa fa-star"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="4"><i class="rate fa fa-star"></i></a>
+                            <a href="#" data-id="@categories.CategoryItemId" title="5"><i class="rate fa fa-star"></i></a>
+                        }
+
                     </div>
                 </div>
             </div>

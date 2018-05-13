@@ -1,45 +1,14 @@
 ﻿@model ScoutUp.Models.User
 @Html.Partial("~/Views/Shared/header.cshtml")
-<!--Header End-->
-
 <div class="container">
-
-    <!-- Timeline
-    ================================================= -->
-    @Html.Partial("~/Views/Shared/TimeLineMenu.cshtml")
-    <!--Timeline Menu for Small Screens End-->
-
+    @Html.Action("Categories", "Category")
+    <button type="submit" class="btn btn-primary pull-right">Devam Et</button>
 </div>
-<div id="page-contents">
-    <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-7">
-
-            <!-- About
-            ================================================= -->
-            <div class="about-profile">
-                    @Html.Action("CategoriesLiked", "Category",new {id = @Model.UserID})
-                </div>
-            </div>
-        </div>
-    @Html.Action("UsersLastMoves", "Users",new {id = @Model.UserID})
-    </div>
-</div>
-
 @Html.Partial("~/Views/Shared/footer.cshtml")
+<script src="../../js/follow.js"></script>
 <script src="../../Scripts/jquery.signalR-2.2.3.js"></script>
 <script src="../../Scripts/jquery.signalR-2.2.3.min.js"></script>
 <script src="../../signalr/hubs"></script>
-<script>
-    $("#interests-link").addClass('active');
-    function displayNumbers() {
-        $.get({ url: "/users/followerCount/@Model.UserID", success: function (result) { $("#follower-count").text(result+" Takipçi"); } });
-    }
-    window.setInterval(function () {
-        displayNumbers();
-    }, 30000);
-</script>
-<script src="../../js/follow.js"></script>
 <script>
     $(".rate").parent().mouseover(function () {
         var self = $(this);
@@ -63,7 +32,6 @@
         var RatingViewModel = { ItemId: itemid, Rating: rating };
         $.post("/users/addrating", RatingViewModel, function(e) {
             if (e.success) {
-                alert("Puanınız kaydedildi.");
             } else {
                 alert("Puanınız kaydedilirken bir hata oluştu.");
             }
@@ -82,5 +50,8 @@
         //        alert("puan eklenemedi");
         //    }
         //});
+    });
+    $('body').on('click', ".btn", function() {
+        window.location.href = "/home/newsfeed";
     });
 </script>

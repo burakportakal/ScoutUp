@@ -12,9 +12,9 @@
                     <div class="row">
                        @Html.Partial("~/Views/Shared/EditProfileMenu.cshtml")
                         <div class="col-md-7">
-
+                            <!--
                             <!-- Edit Interests
-                            ================================================= -->
+                            =================================================
                             <div class="edit-profile-container">
                                 <div class="block-title">
                                     <h4 class="grey"><i class="icon ion-ios-heart-outline"></i>My Interests</h4>
@@ -23,7 +23,7 @@
                                     <div class="line"></div>
                                 </div>
                                 <div class="edit-block">
-                                    <!-- Hobiler listeleniyor üzerine gelince çarpı işaret çıkması lazım daha sonra ilgilen-->
+                                    <!-- Hobiler listeleniyor üzerine gelince çarpı işaret çıkması lazım daha sonra ilgilen
                                     <ul class="list-inline interests">
                                         @foreach (var item in Model.UserHobbies) {
                                         <li>
@@ -34,23 +34,26 @@
                                     </ul>
                                     <div class="line"></div>
                                     <div class="row">
-                                        <p class="custom-label"><strong>Add interests</strong></p>
-                                        <!-- Hobi ekleme yeri-->
-                                        <form id="interest-form" method="post" action='@Url.Content("~/users/EditProfileInterests/")'>
-                                            <div class="form-group col-sm-8">
-                                                <input id="HobbiesName" class="form-control input-group-lg" type="text" name="HobbiesName" title="Choose Interest" placeholder="Interests. For example, photography" />
-                                            </div>
-                                            <div class="form-group col-sm-4">
-                                                <button class="btn btn-primary">Add</button>
-                                            </div>
-                                        </form>
+                                    <p class="custom-label"><strong>Add interests</strong></p>
+                                    <!-- Hobi ekleme yeri
+                                    <form id="interest-form" method="post" action='@Url.Content("~/users/EditProfileInterests/")'>
+                                        <div class="form-group col-sm-8">
+                                            <input id="HobbiesName" class="form-control input-group-lg" type="text" name="HobbiesName" title="Choose Interest" placeholder="Interests. For example, photography" />
+                                        </div>
+                                        <div class="form-group col-sm-4">
+                                            <button class="btn btn-primary">Add</button>
+                                        </div>
+                                    </form>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-2 static">
+                                    </div>
+                                    </div>
+                                    </div>-->
+                            @Html.Action("Categories","Category")
+                                    <div class="col-md-2 static">
 
-                            <!--Sticky Timeline Activity Sidebar-->
+                                    Sticky Timeline Activity Sidebar
+                          
+
                             @Html.Partial("~/Views/Shared/TimelineSidebar.cshtml")
                         </div>
                     </div>
@@ -60,6 +63,9 @@
         <!-- Scripts
         ================================================= -->
        @Html.Partial("~/Views/Shared/footer.cshtml")
+<script src="../../Scripts/jquery.signalR-2.2.3.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.3.min.js"></script>
+<script src="../../signalr/hubs"></script>
         <script type="text/javascript">
             $(function () {
                 var availableTag = [];
@@ -86,3 +92,59 @@
     $("#interests").addClass('active');
 </script>
 <script src="../../js/follow.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.3.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.3.min.js"></script>
+<script src="../../signalr/hubs"></script>
+<script>
+    function displayNumbers() {
+        $.get({ url: "/users/followerCount/@Model.UserID", success: function (result) { $("#follower-count").text(result+" Takipçi"); } });
+    }
+    window.setInterval(function () {
+        displayNumbers();
+    }, 30000);
+</script>
+<script src="../../js/follow.js"></script>
+<script>
+    $(".rate").parent().mouseover(function () {
+        var self = $(this);
+        if(!self.hasClass("rated")){
+        $(this).children().css("color", "orange");
+        $(this).prevAll().children().css("color", "orange");
+            }
+    });
+    $(".rate").mouseout(function () {
+        $('.rate').removeAttr('style');
+    });
+
+    $("body").on("click", ".rate", function (e) {
+        e.preventDefault();
+        var self = $(this);
+        self.parent().nextAll().children().removeClass('rated');
+        self.parent().prevAll().children().addClass('rated');
+        self.addClass('rated');
+        var itemid= self.parent().attr('data-id');
+        var rating = self.parent().attr('title');
+        var RatingViewModel = { ItemId: itemid, Rating: rating };
+        $.post("/users/addrating", RatingViewModel, function(e) {
+            if (e.success) {
+                alert("Puanınız kaydedildi.");
+            } else {
+                alert("Puanınız kaydedilirken bir hata oluştu.");
+            }
+        });
+        //$.ajax({
+        //    url: "/users/addrating",
+        //    type: "POST",
+        //    data: RatingViewModel,
+        //    processData: false,
+        //    contentType: false,
+        //    success: function (data) {
+        //        alert("puan eklendi");
+        //    },
+        //    error: function (data) {
+        //        //if fails
+        //        alert("puan eklenemedi");
+        //    }
+        //});
+    });
+</script>

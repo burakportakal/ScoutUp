@@ -32,7 +32,7 @@
                             </li>
                         }
                     </ul>
-                    @Html.Action("Categories","Category")
+                   
                 </div>
               </div>
             </div>
@@ -41,57 +41,3 @@
         </div>
 
 @Html.Partial("~/Views/Shared/footer.cshtml")
-<script>
-    $("#about-link").addClass('active');
-    function displayNumbers() {
-        $.get({ url: "/users/followerCount/@Model.UserID", success: function (result) { $("#follower-count").text(result+" Takipçi"); } });
-    }
-    window.setInterval(function () {
-        displayNumbers();
-    }, 30000);
-</script>
-<script src="../../js/follow.js"></script>
-<script>
-    $(".rate").parent().mouseover(function () {
-        var self = $(this);
-        if(!self.hasClass("rated")){
-        $(this).children().css("color", "orange");
-        $(this).prevAll().children().css("color", "orange");
-            }
-    });
-    $(".rate").mouseout(function () {
-        $('.rate').removeAttr('style');
-    });
-
-    $("body").on("click", ".rate", function (e) {
-        e.preventDefault();
-        var self = $(this);
-        self.parent().nextAll().children().removeClass('rated');
-        self.parent().prevAll().children().addClass('rated');
-        self.addClass('rated');
-        var itemid= self.parent().attr('data-id');
-        var rating = self.parent().attr('title');
-        var RatingViewModel = { ItemId: itemid, Rating: rating };
-        $.post("/users/addrating", RatingViewModel, function(e) {
-            if (e.success) {
-                alert("Puanınız kaydedildi.");
-            } else {
-                alert("Puanınız kaydedilirken bir hata oluştu.");
-            }
-        });
-        //$.ajax({
-        //    url: "/users/addrating",
-        //    type: "POST",
-        //    data: RatingViewModel,
-        //    processData: false,
-        //    contentType: false,
-        //    success: function (data) {
-        //        alert("puan eklendi");
-        //    },
-        //    error: function (data) {
-        //        //if fails     
-        //        alert("puan eklenemedi");
-        //    }
-        //});
-    });
-</script>

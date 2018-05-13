@@ -181,7 +181,15 @@ namespace ScoutUp.Controllers
                 string decodedUrl = "";
                 if (!string.IsNullOrEmpty(returnUrl))
                     decodedUrl = Server.UrlDecode(returnUrl.Replace("ReturnUrl=",""));
-
+                if (user.IsFirstLogin)
+                {
+                    _db.Users.Attach(user);
+                    user.IsFirstLogin = false;
+                    _db.Entry(user).Property(e => e.IsFirstLogin).IsModified = true;
+               
+                    _db.SaveChanges();
+                    return RedirectToAction("InterestCategories", "Users");
+                }
                 if (Url.IsLocalUrl(decodedUrl))
                     return Redirect(decodedUrl);
                 else
@@ -194,6 +202,11 @@ namespace ScoutUp.Controllers
             }
         }
 
+        public ActionResult InterestCategories()
+        {
+            User user = GetUser();
+            return View(user);
+        }
         public ActionResult Edit()
         {
             return View();
@@ -222,6 +235,7 @@ namespace ScoutUp.Controllers
                 {
                     var usedBefore = _db.Users.FirstOrDefault(e => e.UserEmail == user.UserEmail);
                     if (usedBefore != null) return Json("Bu email daha önce kullanılmış");
+                    user.IsFirstLogin = true;
                     _db.Users.Add(user);
                     _db.SaveChanges();
                     return Json(new LoginResult(1));

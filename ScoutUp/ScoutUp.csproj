@@ -224,6 +224,8 @@
     <Content Include="less\_ionicons-variables.less" />
     <Content Include="less\profile-picture.less" />
     <Content Include="fonts\fontawesome-webfont.woff" />
+    <None Include="Properties\PublishProfiles\scoutup - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\scoutup - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -993,10 +995,10 @@
     <Content Include="Views\Shared\MessageLoader.cshtml" />
     <Content Include="Views\Shared\ChatBox.cshtml" />
     <Content Include="Views\Shared\NearbyUsers.cshtml" />
+    <Content Include="Views\Home\register.cshtml" />
     <None Include="Views\Users\editprofileinterests.cshtml" />
     <None Include="Views\Home\index.cshtml" />
     <None Include="Views\Home\newsfeed.cshtml" />
-    <None Include="Views\Home\register.cshtml" />
     <None Include="Views\Shared\header.cshtml" />
     <Content Include="Views\Shared\footer.cshtml" />
     <Content Include="Views\Shared\leftside.cshtml" />
@@ -1010,6 +1012,7 @@
     <None Include="Views\Users\Followers.cshtml" />
     <None Include="Views\Users\album.cshtml" />
     <Content Include="Views\Users\Interests.cshtml" />
+    <Content Include="Views\Users\InterestCategories.cshtml" />
     <None Include="Views\Users\Messages.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -1089,10 +1092,6 @@
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <Content Include="Views\Users\Create.cshtml" />
-    <Content Include="Views\Users\Delete.cshtml" />
-    <Content Include="Views\Users\Details.cshtml" />
-    <Content Include="Views\Users\Edit.cshtml" />
     <Content Include="Views\Users\Nearby.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -1112,6 +1111,9 @@
     <Folder Include="Views\Category\" />
     <Folder Include="Views\Message\" />
     <Folder Include="Views\Post\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -6,6 +6,11 @@ using System.Web;
 
 namespace ScoutUp.Models
 {
+    public enum UserGender
+    {
+        Erkek,
+        Kadın
+    }
     public class User
     {
         public int UserID { get; set; }
@@ -16,8 +21,9 @@ namespace ScoutUp.Models
         public string UserCity { get; set; }
         public string UserAbout { get; set; }
         public DateTime UserBirthDate { get; set; }
-        public bool UserGender { get; set; }
+        public UserGender UserGender{ get; set; }
         public string UserProfilePhoto { get; set; }
+        public bool IsFirstLogin { get; set; }
         public virtual ICollection<Post> UserPosts { get; set; }
         public virtual ICollection<UserPhotos> UserPhotos { get; set; }
         public virtual ICollection<UserHobbies> UserHobbies { get; set; }

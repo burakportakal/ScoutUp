@@ -1,0 +1,8 @@
+﻿@if (@ViewBag.isLiked == true)
+{
+    <a id="@ViewBag.postid" data-id="@ViewBag.postUserid" class="btn text-green"><i class="icon ion-thumbsup"></i>Beğen @ViewBag.postLikesCount </a>
+}
+else
+{
+    <a id="@ViewBag.postid" data-id="@ViewBag.postUserid" class="btn text-red"><i class="icon ion-thumbsup"></i>Beğen @ViewBag.postLikesCount </a>
+}

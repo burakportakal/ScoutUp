@@ -1,0 +1,8 @@
+﻿@model ScoutUp.ViewModels.MessageViewModel
+<li class="left">
+    <img src="@Model.UserProfilePhoto" alt="" class="profile-photo-sm pull-left">
+    <div class="chat-item">
+        <div class="chat-item-header"><h5>@Model.UserName @Model.UserSurname</h5><small class="text-muted">@Model.DateSend</small></div>
+        <p>@Model.MessageText</p>
+    </div>
+</li>

@@ -1,0 +1,25 @@
+﻿@model List<ScoutUp.ViewModels.MessageViewModel>
+
+@foreach (var message in Model)
+{
+    if (message.UserId==ViewBag.currentUserId)
+     {
+         <li class="right">
+             <img src="@message.UserProfilePhoto" alt="" class="profile-photo-sm pull-left">
+             <div class="chat-item">
+                 <div class="chat-item-header"><h5>@message.UserName @message.UserSurname</h5><small class="text-muted">@message.DateSend</small></div>
+                 <p>@message.MessageText</p>
+             </div>
+         </li>
+    }
+     else
+     {
+         <li class="left">
+             <img src="@message.UserProfilePhoto" alt="" class="profile-photo-sm pull-left">
+             <div class="chat-item">
+                 <div class="chat-item-header"><h5>@message.UserName @message.UserSurname</h5><small class="text-muted">@message.DateSend</small></div>
+                 <p>@message.MessageText</p>
+             </div>
+         </li>
+     }
+}

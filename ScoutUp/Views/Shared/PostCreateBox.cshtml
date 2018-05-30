@@ -1,0 +1,23 @@
+﻿<div class="create-post">
+    <div class="row">
+        <form id="userPost" method="post" action="/post/addpost" enctype="multipart/form-data">
+            <div class="col-md-7 col-sm-7">
+                <div class="form-group">
+                    <img src="@Model.UserProfilePhoto" alt="" class="profile-photo-md" />
+                    <textarea name="postText" id="postText" cols="30" rows="1" class="form-control" placeholder="Write what you wish"></textarea>
+                </div>
+            </div>
+            <div class="col-md-5 col-sm-5">
+                <div class="tools">
+                    <ul class="publishing-tools list-inline">
+                        <li>
+                            <input id="postImage" name="postImage" class="form-control" style="display: none" type="file"/>
+                            <a><label class="ion-images" for="postImage" type="file"></label></a>
+                        </li>
+                    </ul>
+                    <button type="submit" class="btn btn-primary pull-right">Publish</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

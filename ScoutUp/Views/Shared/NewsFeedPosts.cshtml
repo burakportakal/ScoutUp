@@ -1,0 +1,47 @@
+﻿@model List<ScoutUp.ViewModels.NewsFeedPostsViewModel>
+
+        @foreach (var post in Model)
+        {
+            <div class="post" id ="@string.Concat("post",@post.PostId)">
+            @try
+            {
+                <!--Fotoğraf kısımı-->
+                foreach (var postPhoto in post.PostPhotos.PostPhotos)
+                {
+                        <img src="@postPhoto.PostPhotoLocateBig" alt="post-image" class="img-responsive post-image"/>
+                }
+                <!--Fotoğraf sonu-->
+                <div class="post-container">
+                    <img src="@post.PostOwnerPhoto" alt="user" class="profile-photo-md pull-left"/>
+                    <div class="post-detail">
+                        <div class="user-info">
+                            <h5><a href="/users/index/@post.UserId" class="profile-link">@post.UserName @post.UserSurname</a>
+                                <a href="/users/stopfollow/@post.UserId"></a><span class="following">Takip Ediliyor</span></h5>
+                            <p class="text-muted">@post.PostDatePosted</p>
+                        </div>
+                        <div class="reaction">
+                            @Html.Action("UserLikedPost", "Post", new { id = @post.PostId })
+                        </div>
+                        <div class="line-divider"></div>
+                        <div class="post-text">
+                            <p>@post.PostText</p>
+                        </div>
+                        <div class="line-divider"></div>
+                        <div id="@string.Concat("yorum",post.PostId)">
+                            @Html.Action("PostComments", "Post", new { id = @post.PostId })
+                        </div>
+                        <div class="post-comment">
+                            <img src="@post.CurrentUserPhoto" alt="" class="profile-photo-sm"/>
+                            <input id="userPost" data-id="@post.PostId" type="text" class="form-control" placeholder="Bir yorum yaz!">
+                        </div>
+                    </div>
+                </div>
+            }
+            catch
+            {
+                continue;
+            }
+        </div>
+        }
+  
+

@@ -1,0 +1,109 @@
+﻿<div class="timeline">
+    <div class="timeline-cover">
+
+        <!--Timeline Menu for Large Screens-->
+        <div class="timeline-nav-bar hidden-sm hidden-xs">
+                <div class="col-md-3" style="height: 50px;width: auto">
+                    <div class="profile-info" style="margin-top: -54px; position: unset; top: 0px;padding: 0 0px">
+                        <img src="@Model.UserProfilePhoto" alt="" class="img-responsive profile-photo" />
+                        <h3>@Model.UserName @Model.UserSurname</h3>
+                        <p class="text-muted">Creative Director</p>
+                    </div>
+                </div>
+                <div class="col-md-9">
+                     @if (ViewBag.Following == false)
+                     {
+                    <ul class="list-inline profile-menu">
+                        <li><a id="profile-link" href="/users/index/@Model.UserID">Profil</a></li>
+                        <li><a id ="about-link" href="/users/about/@Model.UserID">Hakkında</a></li>
+                        <li><a id="album-link" href="/users/album/@Model.UserID">Albüm</a></li>
+                        <li><a id ="follower-link" href="/users/followers/@Model.UserID">Takipçiler</a></li>
+                        <li><a id ="interests-link" href="/users/interests/@Model.UserID">İlgi Alanları</a></li>
+                    </ul>
+                    <ul class="follow-me list-inline">
+                        <li id="follower-count">@ViewBag.followerCount Takipçi</li>
+
+                        <li><a id="follow" href="/users/follow/@Model.UserID" data-id="@Model.UserID" class="btn-primary">Takip Et</a></li>
+                    </ul>
+                     }
+                     else if (ViewBag.Following == true)
+                     {
+                        <ul class="list-inline profile-menu">
+                            <li><a id="profile-link"  href="/users/index/@Model.UserID">Profil</a></li>
+                            <li><a id="about-link"    href="/users/about/@Model.UserID">Hakkında</a></li>
+                            <li><a id="album-link"    href="/users/album/@Model.UserID">Albüm</a></li>
+                            <li><a id="follower-link" href="/users/followers/@Model.UserID">Takipçiler</a></li> 
+                            <li><a id="interests-link" href="/users/interests/@Model.UserID">İlgi Alanları</a></li>
+                        </ul>
+                        <ul class="follow-me list-inline">
+                            <li id="follower-count">@ViewBag.followerCount Takipçi</li>
+                            <li><a id="stopfollow" href="/users/stopfollow/@Model.UserID" class="btn-primary">Takip Ediliyor</a></li>
+                        </ul>
+                     }
+                     else
+                     {
+                        <ul class="list-inline profile-menu">
+                            <li><a id="profile-link" href="/users/index">Profil</a></li>
+                            <li><a id="about-link"   href="/users/about">Hakkında</a></li>
+                            <li><a id="album-link"   href="/users/album">Albüm</a></li>
+                            <li><a id="follower-link" href="/users/followers">Takipçiler</a></li>
+                            <li><a id="interests-link" href="/users/interests/@Model.UserID">İlgi Alanları</a></li>
+                        </ul>
+                        <ul class="follow-me list-inline">
+                            <li id="follower-count">@ViewBag.followerCount Takipçi</li>
+                        </ul>
+                      }
+            </div>
+        </div><!--Timeline Menu for Large Screens End-->
+        <!--Timeline Menu for Small Screens-->
+        <div class="navbar-mobile hidden-lg hidden-md">
+            <div class="profile-info">
+                <img src="@Model.UserProfilePhoto" alt="" class="img-responsive profile-photo" />
+                <h4>@Model.UserName @Model.UserSurname</h4>
+                <p class="text-muted">Creative Director</p>
+            </div>
+            <div class="mobile-menu">
+                @if (ViewBag.Following == false)
+                {
+                    <ul class="list-inline">
+                        <li><a id="profile-link" href="/users/index/@Model.UserID">Profil</a></li>
+                        <li><a id="about-link"  href="/users/about/@Model.UserID">Hakkında</a></li>
+                        <li><a id="album-link"  href="/users/album/@Model.UserID">Albüm</a></li>
+                        <li><a id="follower-link" href="/users/followers/@Model.UserID">Takipçiler</a></li>
+                        <li><a id="interests-link" href="/users/interests/@Model.UserID">İlgi Alanları</a></li>
+                    </ul>
+                    <ul class="follow-me list-inline">
+                        <li id="follower-count">@ViewBag.followerCount Takipçi</li>
+                        <li><a  id="follow" href="/users/follow/@Model.UserID" class="btn-primary">Takip Et</a></li>
+                    </ul>
+                }
+                else if (ViewBag.Following == true)
+                {
+                    <ul class="list-inline">
+                        <li><a id="profile-link"href="/users/index/@Model.UserID">Profil</a></li>
+                        <li><a id="about-link"  href="/users/about/@Model.UserID">Hakkında</a></li>
+                        <li><a id="album-link"  href="/users/album/@Model.UserID">Albüm</a></li>
+                        <li><a id="follower-link" href="/users/followers/@Model.UserID">Takipçiler</a></li>
+                        <li><a id="interests-link" href="/users/interests/@Model.UserID">İlgi Alanları</a></li>
+                    </ul>
+                        <ul class="follow-me list-inline">
+                            <li id="follower-count" >@ViewBag.followerCount Takipçi</li>
+                            <li><a  id="stopfollow" href="/users/stopfollow/@Model.UserID" class="btn-primary">Takip Ediliyor</a></li>
+                        </ul>
+                }
+                else
+                {
+                    <ul class="list-inline">
+                        <li><a id="profile-link" href="/users/index">Profil</a></li>
+                        <li><a id="about-link"  href="/users/about">Hakkında</a></li>
+                        <li><a id="album-link"  href="/users/album">Albüm</a></li>
+                        <li><a id="follower-link" href="/users/followers">Takipçiler</a></li>
+                        <li><a id="interests-link" href="/users/interests/@Model.UserID">İlgi Alanları</a></li>
+                    </ul>
+                        <ul class="follow-me list-inline">
+                            <li id="follower-count">@ViewBag.followerCount Takipçi</li>
+                        </ul>
+                }
+            </div>
+        </div>
+       

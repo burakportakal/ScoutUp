@@ -1,0 +1,18 @@
+﻿@model List<ScoutUp.ViewModels.FollowSuggestViewModel>
+<!-- Newsfeed Common Side Bar Right
+          ================================================= -->
+<div class="col-md-2 static">
+    <div class="suggestions" id="sticky-sidebar">
+        <h4 class="grey">Who to Follow</h4>
+        @foreach (var item in Model)
+        {
+        <div class="follow-user">
+            <img src="@item.ImagePath" alt="" class="profile-photo-sm pull-left" />
+            <div>
+                <h5><a href="/users/index/@item.UserId">@item.Name</a></h5>
+                <a class="follow" data-id="@item.UserId" href="/users/follow/@item.UserId">Takip Et   @item.Similarity %</a>
+            </div>
+        </div>
+        }
+    </div>
+</div>

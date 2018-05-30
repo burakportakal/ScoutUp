@@ -1,0 +1,168 @@
+﻿@model ScoutUp.Models.User
+@Html.Partial("~/Views/Shared/header.cshtml")
+    <div id="page-contents">
+        <div class="container">
+            <div class="row">
+
+                <!--Left Side-->
+                @Html.Partial("~/Views/Shared/leftside.cshtml")
+
+                <!-- Post Create Box
+                ================================================= -->
+                @Html.Partial("~/Views/Shared/PostCreateBox.cshtml")
+                <!-- Post Create Box End-->
+
+                <!-- Post Content
+                ================================================= -->
+                <div id="posts">
+                    <div class="post-content">
+                        @Html.Action("NewsFeedPosts", "Post")
+                    </div>
+                </div>
+            </div>
+            <!-- Right side-->
+            @Html.Action("FollowSuggest","Users")
+        </div>
+        
+ 
+    	</div>
+    </div>
+
+<!--Footer-->
+
+    @Html.Partial("~/Views/Shared/footer.cshtml")
+<script src="../../Scripts/jquery.signalR-2.2.3.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.3.min.js"></script>
+<script src="../../signalr/hubs"></script>
+    <script type="text/javascript" src="../../js/right-side.js"></script>
+<script>
+    $("body").on('click',
+        ".chat-top",
+        function() {
+            var self = $(".chat-box");
+            var chat = $(".chat-box");
+            if (!self.hasClass("kapali")) {
+                
+                chat.animate({
+                        bottom: "-410px"
+                    },
+                    1000);
+                self.addClass("kapali");
+            } else {
+                chat.animate({
+                        bottom: "0px"
+                    },
+                    1000);
+                self.removeClass("kapali");
+            }
+        });
+            function refreshUsersFollowing() {
+                var url = "@(Html.Raw(Url.Action("usersFollowers", "Home")))";
+                $.get(url,
+                    function(e) {
+                        $("#follower-count").text(e + " Takipçi")
+                    });
+                setInterval(function() {
+                    var url = "@(Html.Raw(Url.Action("usersFollowers", "Home")))";
+            $.get(url, function (e) {
+                $("#follower-count").text(e + " Takipçi")
+            });
+        }, 30000); ///Refreshes every 30 seconds
+
+        $.ajaxSetup({ cache: false });  //Turn off caching
+    }; refreshUsersFollowing();
+</script>
+<script>
+    var loaded = 5;
+    addComment();
+    $(window).scroll(function() {
+        if($(window).scrollTop() == $(document).height() - $(window).height()) {
+            loaded = loaded + 5;
+            var url = "/post/newsfeedposts?count="+loaded;
+            $.get(url,
+                function(html) {
+                    $(".post-content").append(html);
+                    $('.form-control').off();
+                    addComment();
+                });
+        }
+    });
+    function addComment(){
+        $(".form-control").keypress(function(e) {
+            if (e.which == 13) {
+                var self = $(this);
+                var commen = self.val();
+                var id = self.attr('data-id');
+                var url = "/post/addcommenttopost";
+                $.post(url,
+                    { postid: id, comment: commen },
+                    function(o) {
+                        if (o == 1) {
+                            var url = "/post/postcomments/"+id;
+                            $("#yorum" + id).load(url);
+                            self.val("");
+                        } else {
+                            alert("Yorumu gönderirken bir sorun oluştu.");
+                        }
+                    });
+            }
+        });
+    }
+    $("body").on('click',
+        '.yorum',
+        function (e) {
+            e.preventDefault();
+            var self = $(this);
+            var id = self.attr("data-id");
+            var x = $("#yorum" + id);
+            var commentCount = (x[0].children.length-1)/2;
+            var url = "/post/postcomments/" + id +"/"+ (commentCount + 5);
+            $.get(url, function(html) {
+                var y = $("#yorum" + id).children();
+                var x = $(html);
+                $(".yorum").remove();
+                for (i = x.length-1; i >=0; i--) {
+                    y.get(y.length - 2).after(x[i]);
+                }
+                
+            });
+        });
+    $('#userPost').submit(function (evt) {
+        evt.preventDefault();
+        var $file = document.getElementById('postImage'),
+            $formData = new FormData();
+        var text = $('#postText').val();
+        $formData.append("postText", text);
+        if ($file.files.length > 0) {
+            for (var i = 0; i < $file.files.length; i++) {
+                $formData.append('file-' + i, $file.files[i]);
+            }
+        }
+        $.ajax({
+            url: '/post/addpost',
+            type: 'POST',
+            data: $formData,
+            datatype: "multipart/form-data",
+            processData: false,
+            contentType: false,
+            complete: function(response) {
+                if (response.responseJSON.success) {
+                    var x = $(".post-content");
+                    var y = $.get("/post/newsfeedposts?count=5&take=1");
+                    $.when(y).done(function() {
+                        x.prepend($(y.responseText).hide().fadeIn('slow'));
+                        $('.form-control').off();
+                        addComment();
+                        $('#postImage').val("");
+                        $('#postText').val("");
+                    });
+                } else {
+                    alert("Bir hata oluştu" + response["message"]);
+                }
+            },
+            error: function($data) {
+                alert("Bir hata oluştu" + $data["message"]);
+            }
+        });
+    });
+</script>

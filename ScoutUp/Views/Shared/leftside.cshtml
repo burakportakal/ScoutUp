@@ -1,0 +1,42 @@
+﻿<!-- Newsfeed Common Side Bar Left
+         ================================================= -->
+<div class="col-md-3 static">
+    <!-- @{<div id="profile-card" class="profile-card">
+               <img src="@Model.UserProfilePhoto" alt="user" class="profile-photo" />
+               <h5><a href="timeline.html" class="text-white">@Model.UserEmail</a></h5>
+               @Html.Partial("~/Views/Shared/usersfollowercount.cshtml")
+           </div>}<!--profile card ends-->
+    <div class="row">
+        <div class="user-info">
+           
+                <div class="profile-pic">
+                    <img src="@Model.UserProfilePhoto" />
+                    <div class="layer">
+                        <div class="loader"></div>
+                    </div><a class="image-wrapper" href="#">
+                        <form id="profilePictureForm" enctype="multipart/form-data">
+                            <input class="hidden-input" id="changePicture" type="file" />
+                            <label class="edit glyphicon glyphicon-pencil" for="changePicture" type="file" title="Change picture"></label>
+                        </form>
+                    </a>
+                </div>
+            <div class="username">
+                <div class="name"><span class="verified"></span><a href="/users/index">@Model.UserName @Model.UserSurname</a></div>
+                <div class="about">Frontend developer and coffee lover</div>
+            </div>
+        </div>
+    </div>
+    <ul class="nav-news-feed">
+        <li><i class="icon ion-ios-paper"></i><div><a href="/home/newsfeed">Haber Kaynağı</a></div></li>
+        <li><i class="icon ion-ios-people"></i><div><a href="/users/nearby">Çevremdekiler</a></div></li>
+        <li><i class="icon ion-ios-people-outline"></i><div><a href="/users/friends">Takip Ettiklerim</a></div></li>
+        <li><i class="icon ion-chatboxes"></i><div><a href="/users/messages">Mesajlar</a></div></li>
+    </ul><!--news-feed links ends-->
+    <div id="chat-block">
+        <div class="title">Çevrimiçi Arkadaşlar</div>
+        <ul id="online-users" class="online-users list-inline">
+            
+        </ul>
+    </div><!--chat block ends-->
+</div>
+<div class="col-md-7">

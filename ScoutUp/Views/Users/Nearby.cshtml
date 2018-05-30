@@ -1,0 +1,65 @@
+﻿
+@model  ScoutUp.Models.User
+@Html.Partial("~/Views/Shared/header.cshtml")
+<!--Header End-->
+
+<div id="page-contents">
+    <div class="container">
+        <div class="row">
+
+            <!-- Newsfeed Common Side Bar Left -->
+
+            @Html.Partial("~/Views/Shared/leftside.cshtml")
+
+            <!-- Post Create Box
+            ================================================= -->
+            @Html.Partial("~/Views/Shared/PostCreateBox.cshtml")
+            <!-- Post Create Box End -->
+            <!-- Friend List
+            ================================================= -->
+            <div class="friend-list">
+                <div id="following_users" class="row">
+                    @Html.Action("NearbyUsers","Users");
+                </div>
+            </div>
+        </div>
+
+        <!-- Newsfeed Common Side Bar Right
+        ================================================= -->
+        @Html.Action("FollowSuggest", "Users")
+    </div>
+</div>
+<!-- Footer
+================================================= -->
+@Html.Partial("~/Views/Shared/footer.cshtml")
+<script src="../../Scripts/jquery.signalR-2.2.3.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.3.min.js"></script>
+<script src="../../signalr/hubs"></script>
+<script type="text/javascript" src="../../js/right-side.js"></script>
+<script>
+       function refreshFollowing() {
+        var url = "@(Html.Raw(Url.Action("FriendsPartial", "Users")))";
+        $("#following_users").load(url);
+       // setInterval(function () {
+        //    var url = "@(Html.Raw(Url.Action("FriendsPartial", "Users")))";
+       //     $("#following_users").load(url);
+       // }, 3000); ///Refreshes every 30 seconds
+
+        $.ajaxSetup({ cache: false });  //Turn off caching
+       };
+       function refreshUsersFollowing() {
+           var url = "@(Html.Raw(Url.Action("usersFollowers", "Home")))";
+           $.get(url, function (e) {
+               $("#follower-count").text(e + " Takipçi")
+           });
+        setInterval(function () {
+            var url = "@(Html.Raw(Url.Action("usersFollowers", "Home")))";
+            $.get(url, function (e) {
+                $("#follower-count").text(e + " Takipçi")
+            });
+        }, 30000); ///Refreshes every 30 seconds
+
+        $.ajaxSetup({ cache: false });  //Turn off caching
+       };
+    refreshUsersFollowing();
+</script>

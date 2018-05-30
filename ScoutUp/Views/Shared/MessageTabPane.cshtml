@@ -1,0 +1,38 @@
+﻿@model List< ScoutUp.ViewModels.MessageViewModel>
+@foreach (var listUserTabPane in Model)
+{
+    if (ViewBag.tabPaneActive || ViewBag.targetId!=0)
+    {
+        if (ViewBag.targetId == listUserTabPane.UserId)
+        {
+            <div class="tab-pane active" id="@String.Concat("contact-", @listUserTabPane.UserId)">
+                <div class="chat-body">
+                    <ul class="chat-message">
+                        @Html.Action("LoadMessagesBetweenUsers", "Message", new {targetUserId = listUserTabPane.UserId})
+                    </ul>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="tab-pane" id="@String.Concat("contact-", @listUserTabPane.UserId)">
+                <div class="chat-body">
+                    <ul class="chat-message">
+                        @Html.Action("LoadMessagesBetweenUsers", "Message", new { targetUserId = listUserTabPane.UserId })
+                    </ul>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="tab-pane" id="@String.Concat("contact-", @listUserTabPane.UserId)">
+            <div class="chat-body">
+                <ul class="chat-message">
+                    @Html.Action("LoadMessagesBetweenUsers", "Message", new { targetUserId = listUserTabPane.UserId })
+                </ul>
+            </div>
+        </div>
+    }
+}
+

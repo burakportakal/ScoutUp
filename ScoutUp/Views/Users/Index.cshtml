@@ -1,0 +1,123 @@
+﻿@model ScoutUp.Models.User
+@Html.Partial("~/Views/Shared/header.cshtml")
+    <!--Header End-->
+
+    <div class="container">
+       
+      <!-- Timeline
+      ================================================= -->
+        @Html.Partial("~/Views/Shared/TimeLineMenu.cshtml")
+        <!--Timeline Menu for Small Screens End-->
+
+        </div>
+<div id="page-contents">
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-7">
+            @if (@ViewBag.targetUser == false)
+            {
+                <!-- Post Create Box
+                ================================================= -->
+                @Html.Partial("~/Views/Shared/PostCreateBox.cshtml")
+                <!-- Post Create Box End-->
+            }
+            else
+            {
+                <div class="create-post">
+                    <div class="row">
+
+                    </div>
+                </div>
+
+            }
+            <!-- Post Content
+            ================================================= -->
+            <div id ="posts">
+                @Html.Action("Posts","Post", new { userid = @Model.UserID})
+            </div>
+        </div>
+        @Html.Action("UsersLastMoves", "Users",new {id = @Model.UserID})
+    </div>
+</div>
+<div id="notifications"></div>
+      </div>
+    </div>
+
+  @Html.Partial("~/Views/Shared/footer.cshtml")
+<script src="../../Scripts/jquery.signalR-2.2.3.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.3.min.js"></script>
+<script src="../../signalr/hubs"></script>
+<script>
+    $("#profile-link").addClass('active');
+    function displayNumbers() {
+        $.get({ url: "/users/followerCount/@Model.UserID", success: function (result) { $("#follower-count").text(result+" Takipçi"); } });
+    }
+    window.setInterval(function () {
+        displayNumbers();
+    }, 30000);
+</script>
+<script src="../../js/follow.js" ></script>
+<script>
+    $(".form-control").keypress(function(e) {
+        if (e.which == 13) {
+            var self = $(this);
+            var commen = self.val();
+            var id = self.attr('data-id');
+            var url = "/post/addcommenttopost";
+            $.post(url,
+                { postid: id, comment: commen },
+                function(o) {
+                    if (o == 1) {
+                        var url = "/post/postcomments/"+id;
+                        $("#yorum" + id).load(url);
+                        self.val("");
+                    } else {
+                        alert("Yorumu gönderirken bir sorun oluştu.");
+                    }
+                });
+        }
+    });
+    $("body").on('click',
+        '.yorum',
+        function (e) {
+            e.preventDefault();
+            var self = $(this);
+            var id = self.attr("data-id");
+            var x = $("#yorum" + id);
+            var commentCount = (x[0].children.length-1)/2;
+            var url = "/post/postcomments/" + id +"/"+ (commentCount + 5);
+            $("#yorum" + id).load(url);
+        });
+</script>
+<script>
+    $('#userPost').submit(function (evt) {
+        evt.preventDefault();
+        var $file = document.getElementById('postImage'),
+            $formData = new FormData();
+        var text = $('#postText').val();
+        $formData.append("postText", text);
+        if ($file.files.length > 0) {
+            for (var i = 0; i < $file.files.length; i++) {
+                $formData.append('file-' + i, $file.files[i]);
+            }
+        }
+        $.ajax({
+            url: '/post/addpost',
+            type: 'POST',
+            data: $formData,
+            datatype: "multipart/form-data",
+            processData: false,
+            contentType: false,
+            complete: function(response) {
+                if (response.responseJSON.success) {
+                    $("#posts").load("@Html.Raw(Url.Action("Posts", "Post", new {userid = @Model.UserID}))");
+                } else {
+                    alert("Bir hata oluştu" + response["message"]);
+                }
+            },
+            error: function($data) {
+                alert("Bir hata oluştu" + $data["message"]);
+            }
+        });
+    });
+</script>

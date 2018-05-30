@@ -1,0 +1,15 @@
+﻿@model List<ScoutUp.ViewModels.UserMoveViewModel>
+<div class="col-md-2 static">
+    <div id="sticky-sidebar">
+        <h4 class="grey">@ViewBag.userName 'in hareketleri</h4>
+        @foreach (var item in Model)
+        {
+            <div class="feed-item">
+                <div class="live-activity">
+                    <p><a href="@item.UsersMoveLink" class="profile-link">@ViewBag.userName</a> <a href="@item.UsersMoveLink"> @item.UsersLastMoveText</a></p>
+                    <p class="text-muted">@item.MoveDate</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>

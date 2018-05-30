@@ -87,11 +87,9 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-2 static">
               
               <!--Sticky Timeline Activity Sidebar-->
-                @Html.Partial("~/Views/Shared/TimelineSidebar.cshtml")
-            </div>
+                @Html.Action("UsersLastMoves", "Users", new { id = @Model.UserID })
           </div>
         </div>
       </div>

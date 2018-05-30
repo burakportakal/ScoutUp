@@ -132,6 +132,36 @@
                 var x = document.getElementById('tab-pane');
                 x.scrollTop = x.scrollHeight;
             });
+        $(".form-control").keypress(function(e) {
+            if (e.which == 13) {
+                var self = $(this);
+                var targetUserId = self.attr('data-id');
+                var tab = $('#list-' + targetUserId);
+                if (tab.attr('id') == null) {
+                    $('li').removeClass('active');
+                    $('div').removeClass('active');
+                    $.get('/message/messagetabId/' + targetUserId,
+                        function (e) {
+                            var leftContactList = $('#left-contact-list');
+                            leftContactList.append(e);
+                        });
+                    $.get('/message/messagetabpaneId/' + targetUserId,
+                        function (e) {
+                            var tabPane = $('#tab-pane');
+                            tabPane.append(e);
+                        });
+                } else {
+                    $('li').removeClass('active');
+                    $('div').removeClass('active');
+                    var listTab = $('#list-' + targetUserId);
+                    listTab.addClass('active');
+                    $('#contact-' + targetUserId).addClass('active');
+                    $('#chat-alert-' + targetUserId).text("");
+                }
+                var x = document.getElementById('tab-pane');
+                x.scrollTop = x.scrollHeight;
+            }
+            });
         //basılan chat tabını ve konuşma tablarını aktif hale getirir
         $('body').on('click',
             '.left-tab',

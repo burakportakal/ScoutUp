@@ -14,14 +14,12 @@
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-7">
-
             <!-- About
             ================================================= -->
             <div class="about-profile">
                     @Html.Action("CategoriesLiked", "Category",new {id = @Model.UserID})
                 </div>
             </div>
-        </div>
     @Html.Action("UsersLastMoves", "Users",new {id = @Model.UserID})
     </div>
 </div>

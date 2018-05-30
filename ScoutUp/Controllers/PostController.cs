@@ -54,6 +54,7 @@ namespace ScoutUp.Controllers
                          UserProfilePhoto = t1.UserProfilePhoto,
                          UserId = t1.UserID
                     }).OrderByDescending(e => e.PostCommentDate).Skip(skip).Take(5).ToList();
+
             var postCommentViewModel = new PostCommentViewModel
             {
                 Count = count,

@@ -8,7 +8,7 @@ namespace ScoutUp.Models
     public class UserNotifications
     {
         public int UserNotificationsID { get; set; }
-        public int UserID { get; set; }
+        public string UserId { get; set; }
         public string UserNotificationsMessage { get; set; }
         public DateTime UserNotificationsDate { get; set; }
         public bool UserNotificationsRead { get; set; }

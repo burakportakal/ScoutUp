@@ -2,7 +2,7 @@
    ================================================= -->
 <input type="hidden" value="@Model.UserName" id="UserName" />
 <input type="hidden" value="@Model.UserSurname" id="UserSurname" />
-<input type="hidden" value="@Model.UserID" id="UserId" />
+<input type="hidden" value="@Model.Id" id="UserId" />
 <!-- Scripts
 ================================================= -->
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTMXfmDn0VlqWIyoOxK8997L-amWbUPiQ&callback=initMap"></script>
@@ -15,6 +15,24 @@
 <script src="../../js/tagit.js"></script>
 <script src="../../js/script.js"></script>
 <script  src="../../js/profile-picture.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.3.js"></script>
+<script src="../../Scripts/jquery.signalR-2.2.3.min.js"></script>
+<script src="../../signalr/hubs"></script>
 <script src="../../js/hub-connections.js"></script>
+<script>
+    $("body").on('click', "#logout", function (e) {
+        e.preventDefault();
+        var tokenKey = 'accessToken';
+
+        $.ajax({
+            type: 'GET',
+            url: '/users/Logout',
+        }).done(function (data) {
+            // Successfully logged out. Delete the token.
+            sessionStorage.removeItem(tokenKey);
+            window.location.href = "/home/index";
+        }).fail();
+    });
+</script>
   </body>
 </html>

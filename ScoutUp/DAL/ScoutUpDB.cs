@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using ScoutUp.Models;
 using Microsoft.AspNet.Identity.EntityFramework;
-using ScoutUp.Classes;
+
 namespace ScoutUp.DAL
 {
-    public class ScoutUpDB : IdentityDbContext<AppUser>
+    public class ScoutUpDB : IdentityDbContext<User>
     {
         public ScoutUpDB() : base("ScoutUpDB") { }
 
-        public new DbSet<ScoutUp.Models.User> Users {get;set;}
+      //  public new DbSet<ScoutUp.Models.User> Users {get;set;}
     public DbSet<Post> Posts {get;set;}
     public DbSet<Hobbies> Hobbies {get;set;}
     public DbSet<PostComments> PostComments {get;set;}

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using ScoutUp.DAL;
 using ScoutUp.Models;
 
@@ -36,9 +33,9 @@ namespace ScoutUp.Classes
                 Include(nt => nt.UserNotifications);
         }
 
-        public static User UserById(this ScoutUpDB context, int userId)
+        public static User UserById(this ScoutUpDB context, string userId)
         {
-            return CompleteUsers(context).FirstOrDefault(e => e.UserID == userId);
+            return CompleteUsers(context).FirstOrDefault(e => e.Id == userId);
         }
 
         public static IQueryable<User> GetAllUsers(this ScoutUpDB context)

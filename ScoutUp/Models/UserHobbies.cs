@@ -8,7 +8,7 @@ namespace ScoutUp.Models
     public class UserHobbies
     {
         public int UserHobbiesID { get; set; }
-        public int UserID { get; set; }
+        public string UserId {get; set; }
         public int HobbiesID { get; set; }
         public virtual User User { get; set; }
         public virtual Hobbies Hobbies { get; set; }

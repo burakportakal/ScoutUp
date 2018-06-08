@@ -9,7 +9,7 @@ namespace ScoutUp.Models
     {
         public int PostLikesID { get; set; }
         public int PostID { get; set; }
-        public int UserID { get; set; }
+        public string UserId { get; set; }
         public bool IsLiked { get; set; }
         public virtual Post Post { get; set; }
         //public virtual User User { get; set; }

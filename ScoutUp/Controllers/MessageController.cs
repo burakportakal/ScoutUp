@@ -20,20 +20,22 @@ namespace ScoutUp.Controllers
             return View();
         }
 
-        public ActionResult MessageTabId(int? id)
+        public ActionResult MessageTabId(string id)
         {
-            if (id != null)
+            if (!String.IsNullOrEmpty(id))
             {
-                var currentUserId = Convert.ToInt32(HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId());
-                var userMessagedWith = _db.Chat.Where(e => e.UserID == currentUserId).Select(e => e.OtherUserId).ToArray();
-                var userMessagedWithAsReciever = _db.Chat.Where(e => e.OtherUserId == currentUserId).Select(e => e.UserID).ToArray();
-                if (userMessagedWith.Contains((int) id) || userMessagedWithAsReciever.Contains((int) id))
+                var currentUserId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId();
+                var userMessagedWith =
+                    _db.Chat.Where(e => e.UserId == currentUserId).Select(e => e.OtherUserId).ToArray();
+                var userMessagedWithAsReciever =
+                    _db.Chat.Where(e => e.OtherUserId == currentUserId).Select(e => e.UserId).ToArray();
+                if (userMessagedWith.Contains(id) || userMessagedWithAsReciever.Contains(id))
                     return null;
                 var user = _db.Users.Find(id);
                 MessageViewModel model = new MessageViewModel
                 {
-                    UserId = user.UserID,
-                    UserName = user.UserName,
+                    UserId = user.Id,
+                    UserName = user.UserFirstName,
                     UserSurname = user.UserSurname,
                     UserProfilePhoto = user.UserProfilePhoto,
                     DateSend = DateTime.Now
@@ -42,26 +44,30 @@ namespace ScoutUp.Controllers
                 ViewBag.targetId = id;
                 return PartialView("MessageTab", new List<MessageViewModel> {model});
             }
-
+            else
+            {
+                ViewBag.tabActive = false;
+                ViewBag.targetId = "";
+            }
             return null;
         }
-        public ActionResult MessageTab(int? id)
+        public ActionResult MessageTab(string id)
         {
             var listModel = new List<MessageViewModel>();
-            var currentUserId = Convert.ToInt32(HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId());
-            var userMessagedWith = _db.Chat.Where(e => e.UserID == currentUserId).Select(e => e.OtherUserId).ToArray();
-            var userMessagedWithAsReciever = _db.Chat.Where(e => e.OtherUserId == currentUserId).Select(e => e.UserID).ToArray();
-            var userMessagedListUsers = _db.Users.Where(e => userMessagedWith.Contains(e.UserID)).Select(e => new MessageViewModel
+            var currentUserId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId();
+            var userMessagedWith = _db.Chat.Where(e => e.UserId == currentUserId).Select(e => e.OtherUserId).ToArray();
+            var userMessagedWithAsReciever = _db.Chat.Where(e => e.OtherUserId == currentUserId).Select(e => e.UserId).ToArray();
+            var userMessagedListUsers = _db.Users.Where(e => userMessagedWith.Contains(e.Id)).Select(e => new MessageViewModel
             {
-                UserId = e.UserID,
-                UserName = e.UserName,
+                UserId = e.Id,
+                UserName = e.UserFirstName,
                 UserSurname = e.UserSurname,
                 UserProfilePhoto = e.UserProfilePhoto,
             }).ToList();
-            var userMessagedAsRecieverListUsers = _db.Users.Where(e => userMessagedWithAsReciever.Contains(e.UserID)).Select(e => new MessageViewModel
+            var userMessagedAsRecieverListUsers = _db.Users.Where(e => userMessagedWithAsReciever.Contains(e.Id)).Select(e => new MessageViewModel
             {
-                UserId = e.UserID,
-                UserName = e.UserName,
+                UserId = e.Id,
+                UserName = e.UserFirstName,
                 UserSurname = e.UserSurname,
                 UserProfilePhoto = e.UserProfilePhoto,
             }).ToList();
@@ -73,31 +79,31 @@ namespace ScoutUp.Controllers
                     listModel.Add(item);
             }
 
-            if (id != null && (userMessagedWith.Contains((int) id) || userMessagedWithAsReciever.Contains((int) id)))
+            if (id != null && (userMessagedWith.Contains( id) || userMessagedWithAsReciever.Contains( id)))
                 ViewBag.targetId = id;
             else
-                ViewBag.targetId = 0;
+                ViewBag.targetId = "";
             ViewBag.tabActive = false;
             return PartialView("MessageTab", listModel);
         }
 
-        public ActionResult MessageTabPaneId(int? id)
+        public ActionResult MessageTabPaneId(string id)
         {
-            if (id != null)
+            if (!String.IsNullOrEmpty(id))
             {
                 var currentUserId =
-                    Convert.ToInt32(HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId());
+                    HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId();
                 var userMessagedWith =
-                    _db.Chat.Where(e => e.UserID == currentUserId).Select(e => e.OtherUserId).ToArray();
+                    _db.Chat.Where(e => e.UserId == currentUserId).Select(e => e.OtherUserId).ToArray();
                 var userMessagedWithAsReciever =
-                    _db.Chat.Where(e => e.OtherUserId == currentUserId).Select(e => e.UserID).ToArray();
-                if (userMessagedWith.Contains((int) id) || userMessagedWithAsReciever.Contains((int) id))
+                    _db.Chat.Where(e => e.OtherUserId == currentUserId).Select(e => e.UserId).ToArray();
+                if (userMessagedWith.Contains( id) || userMessagedWithAsReciever.Contains( id))
                     return null;
                 var user = _db.Users.Find(id);
                 var temp = new MessageViewModel
                 {
-                    UserId = user.UserID,
-                    UserName = user.UserName,
+                    UserId = user.Id,
+                    UserName = user.UserFirstName,
                     UserSurname = user.UserSurname,
                     UserProfilePhoto = user.UserProfilePhoto,
                 };
@@ -106,26 +112,30 @@ namespace ScoutUp.Controllers
                 ViewBag.targetId = id;
                 return PartialView("MessageTabPane", list);
             }
-
+            else
+            {
+                ViewBag.tabPaneActive = false;
+                ViewBag.targetId = "";
+            }
             return null;
         }
-        public ActionResult MessageTabPane(int? id)
+        public ActionResult MessageTabPane(string id)
         {
 
-            var currentUserId =Convert.ToInt32( HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId());
-            var userMessagedWith = _db.Chat.Where(e => e.UserID == currentUserId).Select(e=> e.OtherUserId).ToArray();
-            var userMessagedWithAsReciever = _db.Chat.Where(e => e.OtherUserId == currentUserId).Select(e => e.UserID).ToArray();
-            var userMessagedListUsers = _db.Users.Where(e => userMessagedWith.Contains(e.UserID)).Select(e => new MessageViewModel
+            var currentUserId =HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId();
+            var userMessagedWith = _db.Chat.Where(e => e.UserId == currentUserId).Select(e=> e.OtherUserId).ToArray();
+            var userMessagedWithAsReciever = _db.Chat.Where(e => e.OtherUserId == currentUserId).Select(e => e.UserId).ToArray();
+            var userMessagedListUsers = _db.Users.Where(e => userMessagedWith.Contains(e.Id)).Select(e => new MessageViewModel
             {
-                UserId = e.UserID,
-                UserName = e.UserName,
+                UserId = e.Id,
+                UserName = e.UserFirstName,
                 UserSurname = e.UserSurname,
                 UserProfilePhoto = e.UserProfilePhoto,
             }).ToList();
-            var userMessagedAsRecieverListUsers = _db.Users.Where(e => userMessagedWithAsReciever.Contains(e.UserID)).Select(e => new MessageViewModel
+            var userMessagedAsRecieverListUsers = _db.Users.Where(e => userMessagedWithAsReciever.Contains(e.Id)).Select(e => new MessageViewModel
             {
-                UserId = e.UserID,
-                UserName = e.UserName,
+                UserId = e.Id,
+                UserName = e.UserFirstName,
                 UserSurname = e.UserSurname,
                 UserProfilePhoto = e.UserProfilePhoto,
             }).ToList();
@@ -135,10 +145,10 @@ namespace ScoutUp.Controllers
                 if (!userMessagedListUsers.Contains(item))
                     userMessagedListUsers.Add(item);
             }
-            if (id != null && (userMessagedWith.Contains((int)id) || userMessagedWithAsReciever.Contains((int)id)))
+            if (id != null && (userMessagedWith.Contains(id) || userMessagedWithAsReciever.Contains(id)))
                 ViewBag.targetId = id;
             else
-                ViewBag.targetId = 0;
+                ViewBag.targetId = "";
             ViewBag.tabPaneActive = false;
             return PartialView("MessageTabPane", userMessagedListUsers);
         }
@@ -155,7 +165,7 @@ namespace ScoutUp.Controllers
             var user = _db.Users.Find(model.UserId);
             model.UserProfilePhoto = user.UserProfilePhoto;
             model.DateSend=DateTime.Now;
-            model.UserName = user.UserName;
+            model.UserName = user.UserFirstName;
             model.UserSurname = user.UserSurname;
             return PartialView("MessageSender", model);
         }
@@ -171,14 +181,14 @@ namespace ScoutUp.Controllers
             return PartialView("OnlineUsers", model);
         }
 
-        public ActionResult LoadMessagesBetweenUsers(int? targetUserId)
+        public ActionResult LoadMessagesBetweenUsers(string targetUserId)
         {
-            if (targetUserId == null) return null;
-            var currentUserId =Convert.ToInt32( HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId());
+            if (String.IsNullOrEmpty(targetUserId)) return null;
+            var currentUserId = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId();
             var currentUser = _db.Users.Find(currentUserId);
             ChatMessageRepository repository=new ChatMessageRepository();
-            ViewBag.currentUserId = currentUser.UserID;
-            return PartialView("MessageLoader",repository.GetAllMessagesBetweenUsers(currentUser.UserID,(int) targetUserId));
+            ViewBag.currentUserId = currentUser.Id;
+            return PartialView("MessageLoader",repository.GetAllMessagesBetweenUsers(currentUser.Id,targetUserId));
         }
     }
 }

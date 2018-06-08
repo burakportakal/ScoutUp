@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.SignalR;
 using ScoutUp.Classes;
 using ScoutUp.DAL;
-using ScoutUp.Models;
 using ScoutUp.Repository;
 using ScoutUp.ViewModels;
 
@@ -27,7 +24,7 @@ namespace ScoutUp.Hubs
         /// <param name="userid">Bildirim gönderilecek kullanıcının unique id si.</param>
         /// <param name="message">Bildirim gönderen kullanıcın adı soyadı varsa mesajı</param>
         /// <returns></returns>
-        public Task SendMessage(int userid, int recieverUserId, string messageText)
+        public Task SendMessage(string userid, string recieverUserId, string messageText)
         {
             var user = _db.Users.Find(userid);
             var message = new MessageViewModel
@@ -37,7 +34,7 @@ namespace ScoutUp.Hubs
                 RecieverUserId = recieverUserId,
                 MessageText = messageText,
                 UserProfilePhoto = user.UserProfilePhoto,
-                UserName = user.UserName,
+                UserName = user.UserFirstName,
                 UserSurname = user.UserSurname
             };
             ChatMessageRepository repository=new ChatMessageRepository();
@@ -55,11 +52,11 @@ namespace ScoutUp.Hubs
         {
             //Create an instance of the Repository class
             string name = Context.User.Identity.GetUserId();
-            var user = _db.Users.Find(Convert.ToInt32(name));
-            var usersFollowing = user.UserFollow.Select(e => e.UserBeingFollowedUserID).ToArray();
+            var user = _db.Users.Find(name);
+            var usersFollowing = user.UserFollow.Select(e => e.UserBeingFollowedUserId).ToArray();
 
-            var followingEachOther = _db.UserFollow.Where(e => usersFollowing.Contains(e.UserID))
-                .Where(e => e.UserBeingFollowedUserID == user.UserID).Select(id => id.UserID).ToArray();
+            var followingEachOther = _db.UserFollow.Where(e => usersFollowing.Contains(e.UserId))
+                .Where(e => e.UserBeingFollowedUserId == user.Id).Select(id => id.UserId).ToArray();
             List<OnlineUsersViewModel> model = new List<OnlineUsersViewModel>();
             List<string> connectionIds = new List<string>();
             foreach (var connection in followingEachOther)
@@ -72,8 +69,8 @@ namespace ScoutUp.Hubs
                     var onlineUser = _db.Users.Find(connection);
                     OnlineUsersViewModel temp = new OnlineUsersViewModel
                     {
-                        UserId = onlineUser.UserID,
-                        UserName = onlineUser.UserName + " " + onlineUser.UserSurname,
+                        UserId = onlineUser.Id,
+                        UserName = onlineUser.UserFirstName + " " + onlineUser.UserSurname,
                         UserProfilePhoto = onlineUser.UserProfilePhoto
                     };
                     model.Add(temp);
@@ -89,8 +86,8 @@ namespace ScoutUp.Hubs
 
             Clients.Clients(connectionIds).updateOnlineUsers(new OnlineUsersViewModel()
             {
-                UserId = user.UserID,
-                UserName = user.UserName + " " + user.UserSurname,
+                UserId = user.Id,
+                UserName = user.UserFirstName + " " + user.UserSurname,
                 UserProfilePhoto = user.UserProfilePhoto
             });
             client.onlineUsers(model);
@@ -106,11 +103,11 @@ namespace ScoutUp.Hubs
             {
                 return base.OnDisconnected(stopCalled);
             }
-            var user = _db.Users.Find(Convert.ToInt32(name));
-            var usersFollowing = user.UserFollow.Select(e => e.UserBeingFollowedUserID).ToArray();
+            var user = _db.Users.Find(name);
+            var usersFollowing = user.UserFollow.Select(e => e.UserBeingFollowedUserId).ToArray();
 
-            var followingEachOther = _db.UserFollow.Where(e => usersFollowing.Contains(e.UserID))
-                .Where(e => e.UserBeingFollowedUserID == user.UserID).Select(id => id.UserID).ToArray();
+            var followingEachOther = _db.UserFollow.Where(e => usersFollowing.Contains(e.UserId))
+                .Where(e => e.UserBeingFollowedUserId == user.Id).Select(id => id.UserId).ToArray();
             List<string> connectionIds = new List<string>();
             foreach (var connection in followingEachOther)
             {
@@ -124,8 +121,8 @@ namespace ScoutUp.Hubs
 
             Clients.Clients(connectionIds).updateUserOffline(new OnlineUsersViewModel()
             {
-                UserId = user.UserID,
-                UserName = user.UserName + " " + user.UserSurname,
+                UserId = user.Id,
+                UserName = user.UserFirstName + " " + user.UserSurname,
                 UserProfilePhoto = user.UserProfilePhoto
             });
             return base.OnDisconnected(stopCalled);

@@ -125,21 +125,22 @@
 					<a href="/" class="logo"><img src="../../images/logo.png" alt="Friend Finder"/></a>
 					<h2 class="text-white">Find My Friends</h2>
 					<div class="line-divider"></div>
-					<div class="form-wrapper">
-						<p class="signup-text">Signup now and meet awesome people around the world</p>
-                       <form id="login_form" action='@Url.Content("~/users/login")' method="post">
-							<fieldset class="form-group">
-							    <input type="email" name="email" class="form-control" id="example-email"
-							           required data-errormessage-value-missing="Lütfen geçerli bir email adresi girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Email"/>
-							</fieldset>
-                           <fieldset class="form-group">
-                               <input type="password" name="password" class="form-control" id="example-password"
-                                      required data-errormessage-value-missing="Lütfen geçerli bir şifre girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Şifre"/>
-                           </fieldset>
-                           @Html.Hidden("returnUrl", @Request.QueryString)
-						<button class="btn-secondary" type="submit" >Login</button>
-                        </form>
-					</div>
+            <div class="form-wrapper">
+                <p class="signup-text">Signup now and meet awesome people around the world</p>
+                <form id="login_form" method="post" action="/users/login/">
+                    <fieldset class="form-group">
+                        <input type="text" name="loginEmail" class="form-control" id="loginEmail"
+                               data-bind="value: loginEmail"/>
+                        <!--required data-errormessage-value-missing="Lütfen geçerli bir email adresi girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Email" -->
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <input type="password" name="loginPassword" class="form-control" id="loginPassword"
+                               required data-errormessage-value-missing="Lütfen geçerli bir şifre girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Şifre" data-bind="value: loginPassword"/>
+                    </fieldset>
+                    @Html.Hidden("returnUrl", @Request.QueryString)
+                    <button class="btn-secondary" type="submit" >Login</button>
+                </form>
+            </div>
 					<button class="btn-secondary" id="register-btn" name="register-btn">Register!</button>
 					<img class="form-shadow" src="../../images/bottom-shadow.png" alt="" />
 				</div><!-- Sign in Form End -->
@@ -458,6 +459,38 @@
 	//		},'json');
 	//	});
 	//});
+           
+            $("#login_form").submit(function (evt) {
+                var tokenKey = 'accessToken';
+                var self = $(this);
+               // evt.preventDefault();
+
+                var loginData = {
+                    grant_type: 'password',
+                    username: $("#loginEmail").val(),
+                    password: $("#loginPassword").val()
+                };
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/Token',
+                    data: loginData
+                }).done(function (data) {
+                    // Cache the access token in session storage.
+                    sessionStorage.setItem(tokenKey, data.access_token);
+                    var url = self.attr('action');
+                    	var postData=self.serialize();
+
+                    	$.post(url, postData, function (o) {
+                    		},'json');
+                }).fail(function() {
+                    var url = self.attr('action');
+                    var postData = self.serialize();
+
+                    $.post(url, postData, function (o) {
+                    }, 'json');
+                });
+            });
 
             $(function () {
                 $("#register_form").submit(function (evt) {

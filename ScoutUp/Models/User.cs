@@ -2,7 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using System.Web;
+using Microsoft.AspNet.Identity;
 
 namespace ScoutUp.Models
 {
@@ -11,13 +14,10 @@ namespace ScoutUp.Models
         Erkek,
         Kadın
     }
-    public class User
+    public class User : IdentityUser
     {
-        public int UserID { get; set; }
-        public string UserName { get; set; }
+        public string UserFirstName { get; set; }
         public string UserSurname { get; set;}
-        public string UserPassword { get; set; }
-        public string UserEmail { get; set; }
         public string UserCity { get; set; }
         public string UserAbout { get; set; }
         public DateTime UserBirthDate { get; set; }
@@ -32,5 +32,13 @@ namespace ScoutUp.Models
         public virtual ICollection<UserRatings> UserRatings { get; set; }
         public virtual ICollection<Chat> Chat { get; set; }
         public virtual ICollection<UsersLastMoves> UsersLastMoves { get; set; }
+
+        public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<User> manager, string authenticationType)
+        {
+            // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
+            var userIdentity = await manager.CreateIdentityAsync(this, authenticationType);
+            // Add custom user claims here
+            return userIdentity;
+        }
     }
 }

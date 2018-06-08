@@ -2,16 +2,14 @@
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using ScoutUp.DAL;
+using ScoutUp.Models;
+
 namespace ScoutUp.Classes
 {
-    public class AppUserManager : UserManager<AppUser>
+    public class AppUserManager : UserManager<User>
     {
-        public AppUserManager(IUserStore<AppUser> store)
+        public AppUserManager(IUserStore<User> store)
             : base(store)
         {
         }
@@ -20,12 +18,27 @@ namespace ScoutUp.Classes
         public static AppUserManager Create(
             IdentityFactoryOptions<AppUserManager> options, IOwinContext context)
         {
-            var manager = new AppUserManager(
-                new UserStore<AppUser>(context.Get<ScoutUpDB>()));
-
-            // optionally configure your manager
-            // ...
-
+            var manager = new AppUserManager(new UserStore<User>(context.Get<ScoutUpDB>()));
+            // Configure validation logic for usernames
+            manager.UserValidator = new UserValidator<User>(manager)
+            {
+                AllowOnlyAlphanumericUserNames = false,
+                RequireUniqueEmail = true
+            };
+            // Configure validation logic for passwords
+            manager.PasswordValidator = new PasswordValidator
+            {
+                RequiredLength = 6,
+                RequireNonLetterOrDigit = true,
+                RequireDigit = true,
+                RequireLowercase = true,
+                RequireUppercase = true,
+            };
+            var dataProtectionProvider = options.DataProtectionProvider;
+            if (dataProtectionProvider != null)
+            {
+                manager.UserTokenProvider = new DataProtectorTokenProvider<User>(dataProtectionProvider.Create("ASP.NET Identity"));
+            }
             return manager;
         }
     }

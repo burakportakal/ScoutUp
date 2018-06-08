@@ -15,6 +15,7 @@
 		<link rel="stylesheet" href="../../css/ionicons.min.css" />
 	    <link rel="stylesheet" href="../../css/font-awesome.min.css" />
 	    <link rel="stylesheet" href="../../css/parsley.css" />
+	    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     
     <!--Google Font-->
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,400i,700,700i" rel="stylesheet">
@@ -143,10 +144,17 @@
                   <!--Register Form-->
                   <form id="register_form" action='@Url.Content("~/users/create")' method="post" novalidate="novalidate" class="form-inline">
                     @Html.AntiForgeryToken()
+                      <div class="row">
+                      <div class="form-group col-xs-12">
+                          <label for="UserName" class="sr-only">Kullanıcı Adı</label>
+                          <input class="form-control input-group-lg" id="UserName" name="UserName" title="Kullanıcı Adı" 
+                                 required data-errormessage-value-missing="Lütfen geçerli bir email adresi girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Email"/>
+                      </div>
+                      </div>
                     <div class="row">
                       <div class="form-group col-xs-6">
                         <label for="firstname" class="sr-only">Ad</label>
-                          <input class="form-control input-group-lg" type="text" id="UserName" name="UserName" title="Enter first name"
+                          <input class="form-control input-group-lg" type="text" id="UserFirstName" name="UserFirstName" title="Enter first name"
                                  required data-errormessage-value-missing="Lütfen geçerli bir email adresi girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Adınız"/>
                       </div>
                       <div class="form-group col-xs-6">
@@ -172,7 +180,7 @@
                     <div class="row">
                       <p class="birth"><strong>Doğum Tarihi</strong></p>
                       <div class="col-xs-8">
-                          <input type="datetime" class="form-control" id="UserBirthDate" name="UserBirthDate" 
+                          <input type="text" class="form-control" id="UserBirthDate" name="UserBirthDate" 
                                  required data-errormessage-value-missing="Lütfen geçerli bir email adresi girin!" data-errormessage-type-mismatch="Invalid!" placeholder="Doğum Tarihiniz GG.AA.YYYY">
                       </div>
                     </div>
@@ -257,7 +265,8 @@
 
     <!-- Scripts
     ================================================= -->
-    <script src="../../js/jquery-3.1.1.min.js"></script>
+	<script src="../../js/jquery-3.1.1.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="../../js/bootstrap.min.js"></script>
     <script src="../../js/jquery.appear.min.js"></script>
 	<script src="../../js/jquery.incremental-counter.js"></script>
@@ -265,33 +274,52 @@
 	<script src="../../js/parsley.js"></script>
 	<script type="text/javascript">
 	    $('#register_form').parsley();
-	      $(function () {
-	          $("#register_form").submit(function (evt) {
-	              if($('#register_form').parsley().validationResult){
-	           evt.preventDefault();
-	          var url = $(this).attr('action');
-	           var postData = $(this).serialize();
+	    $(function () {
+	        $("#register_form").submit(function (evt) {
+	            var self = $(this);
+	            if($('#register_form').parsley().validationResult){
+	                evt.preventDefault();
+	                var url = $(this).attr('action');
+	                var postData = $(this).serialize();
+	                var email = $("#UserEmail").val();
+	                var userName = $("#UserName").val();
+	                var userFirstName = $("#UserFirstName").val();
+	                var userSurname = $("#UserSurname").val();
+	                var password = $("#UserPassword").val();
+	                var userCity = $("#UserCity").val();
+	                var userAbout = $("#UserAbout").val();
+	                var userBirthDate = $("#UserBirthDate").val();
+	                var userGender = $("#UserGender").val();
+	                var RegisterViewModel = {
+	                    Email: email,UserName:userName, UserFirstName: userFirstName, UserSurname: userSurname, Password: password,
+	                    UserBirthDate: userBirthDate, UserAbout: userAbout, UserCity: userCity, UserGender: userGender, IsFirstLogin:true
+	                };
+	                $.post(url, RegisterViewModel, function (o) {
 
-	        $.post(url, postData, function (o) {
+	                    if (o.Result == 1) {
+	                        alert('kayıt başarılı');
+	                        $("#register_pane").removeClass("active");
+	                        $("#login_pane").addClass("active");
+	                        $("#register").removeClass("active");
+	                        $("#login").addClass("active");
+	                    }
+	                    else if (o.Result == 0) {
+	                        alert('Kayıt başarısız');
+	                    } else {
+	                        $("#UserEmail").removeClass("parsley-success");
+	                        $("#UserEmail").addClass("parsley-error");
+	                        alert(o);
+	                    }
+	                }, 'json');
+	            }
+	        });
+	    });
 
-	             if (o.Result == 1) {
-	                  alert('kayıt başarılı');
-	                  $("#register_pane").removeClass("active");
-	                 $("#login_pane").addClass("active");
-	                  $("#register").removeClass("active");
-	                 $("#login").addClass("active");
-	              }
-	             else if (o.Result == 0) {
-	                 alert('Kayıt başarısız');
-	             } else {
-	                 $("#UserEmail").removeClass("parsley-success");
-	                 $("#UserEmail").addClass("parsley-error");
-	                 alert(o);
-	             }
-	         }, 'json');
-                      }
-	              });
-	     });
+	</script>
+	<script>
+	    $(function () {
+	        $("#UserBirthDate").datepicker();
+	    });
 	</script>
 	</body>
 

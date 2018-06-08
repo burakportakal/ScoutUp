@@ -7,7 +7,7 @@ namespace ScoutUp.ViewModels
 {
     public class FollowSuggestViewModel
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public string Name { get; set; }
         public string ImagePath { get; set; }
         public double Similarity { get; set; }

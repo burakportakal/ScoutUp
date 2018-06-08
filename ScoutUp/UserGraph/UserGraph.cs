@@ -25,7 +25,7 @@ namespace ScoutUp
             
             foreach (var user in Users)
             {
-                userGraph.addVertex(user.UserID);
+                userGraph.addVertex(user.Id);
             }
 
             foreach (var user in Users)
@@ -34,9 +34,9 @@ namespace ScoutUp
                 {
                     try
                     {
-                        var destUser = Users.FirstOrDefault(e => e.UserID == connection.UserBeingFollowedUserID);
+                        var destUser = Users.FirstOrDefault(e => e.Id == connection.UserBeingFollowedUserId);
                         var weight = WeightCalc(user,destUser);
-                        userGraph.addEdge(connection.UserID, connection.UserBeingFollowedUserID, (int)weight);
+                        userGraph.addEdge(connection.UserId, connection.UserBeingFollowedUserId, (int)weight);
                     }
                     catch (Exception e)
                     {
@@ -45,17 +45,17 @@ namespace ScoutUp
                 }
             }
 
-            var vertex =userGraph.find(1);
-            userGraph.shortestPath(vertex);
-            float[] distance = userGraph.Distance;
-            int[] prev = userGraph.Prev;
+            //var vertex =userGraph.find(1);
+            //userGraph.shortestPath(vertex);
+            //float[] distance = userGraph.Distance;
+            //int[] prev = userGraph.Prev;
         }
 
         public double WeightCalc(User sourceUser,User destUser)
         {
             int counter = 0;
-           int[] listSource= sourceUser.UserFollow.Select(e => e.UserBeingFollowedUserID).ToArray();
-           int[] listDest = destUser.UserFollow.Select(e => e.UserBeingFollowedUserID).ToArray();
+           string[] listSource= sourceUser.UserFollow.Select(e => e.UserBeingFollowedUserId).ToArray();
+           string[] listDest = destUser.UserFollow.Select(e => e.UserBeingFollowedUserId).ToArray();
 
             var list = listSource.Except(listDest);
             counter = listSource.Length-list.Count();

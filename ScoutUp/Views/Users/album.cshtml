@@ -59,7 +59,7 @@
                     </ul>
                  </div>
             </div>
-              @Html.Action("UsersLastMoves", "Users", new { id = @Model.UserID })
+              @Html.Action("UsersLastMoves", "Users", new { id = @Model.Id })
           </div>
         </div>
       </div>
@@ -75,7 +75,7 @@
 <script>
     $("#album-link").addClass('active');
     function displayNumbers() {
-        $.get({ url: "/users/followerCount/@Model.UserID", success: function (result) { $("#follower-count").text(result+" Takipçi"); } });
+        $.get({ url: "/users/followerCount/@Model.Id", success: function (result) { $("#follower-count").text(result+" Takipçi"); } });
     }
     window.setInterval(function () {
         displayNumbers();

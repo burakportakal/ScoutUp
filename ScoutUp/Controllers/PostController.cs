@@ -5,13 +5,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using ScoutUp.Classes;
 using ScoutUp.DAL;
 using ScoutUp.Models;
-using ScoutUp.Repository;
 using ScoutUp.ViewModels;
 
 namespace ScoutUp.Controllers
@@ -26,10 +24,10 @@ namespace ScoutUp.Controllers
             return View();
         }
 
-        public ActionResult Posts(int? userid)
+        public ActionResult Posts(string userid)
         {
             var currentUser = GetUserModel();
-            var user =userid==null ? currentUser : _db.UserById((int)userid);
+            var user =string.IsNullOrEmpty(userid) ? currentUser : _db.UserById(userid);
             if(user==null) return HttpNotFound();
             user.UserPosts=  user.UserPosts.OrderByDescending(e => e.PostDatePosted).ToList();
             ViewBag.currentUser = currentUser;
@@ -43,16 +41,16 @@ namespace ScoutUp.Controllers
             var skip = count - 5;
             var postCommentCount = _db.PostComments.Where(e => e.PostID == id).ToList().Count;
             var postCommentsList = (from t1 in _db.Users
-                     join t2 in _db.PostComments on t1.UserID equals t2.UserID
+                     join t2 in _db.PostComments on t1.Id equals t2.UserId
                      where t2.PostID==id
                      select new PostCommentModel
                     {
                          PostComment = t2.PostComment,
                          PostCommentDate = t2.PostCommentDate,
-                         UserName = t1.UserName,
+                         UserName = t1.UserFirstName,
                          UserSurname = t1.UserSurname,
                          UserProfilePhoto = t1.UserProfilePhoto,
-                         UserId = t1.UserID
+                         UserId = t1.Id
                     }).OrderByDescending(e => e.PostCommentDate).Skip(skip).Take(5).ToList();
 
             var postCommentViewModel = new PostCommentViewModel
@@ -72,8 +70,8 @@ namespace ScoutUp.Controllers
             var post = _db.PostById((int)postid);
             if(post ==null ) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             var user = GetUserModel();
-            var userComment = new PostComments { UserID = user.UserID,PostID = (int)postid,PostComment = comment,PostCommentDate = DateTime.Now};
-            _db.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserID = user.UserID, UsersLastMoveText =" bir gönderiye yorum yaptı.",UsersMoveLink = "/users/index/"+post.UserID+"#post"+post.PostID});
+            var userComment = new PostComments { UserId = user.Id,PostID = (int)postid,PostComment = comment,PostCommentDate = DateTime.Now};
+            _db.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserId = user.Id, UsersLastMoveText =" bir gönderiye yorum yaptı.",UsersMoveLink = "/users/index/"+post.UserId+"#post"+post.PostID});
             _db.PostComments.Add(userComment);
             try
             {
@@ -93,7 +91,7 @@ namespace ScoutUp.Controllers
             var user = GetUserModel();
             var post = new Post
             {
-                UserID=user.UserID,
+                UserId=user.Id,
                 PostText = postText,
                 PostDatePosted = DateTime.Now
                
@@ -103,7 +101,7 @@ namespace ScoutUp.Controllers
                 //yeni post kaydedilip id'si alınıyo
                 _db.Posts.Add(post);
                 _db.SaveChanges();
-                _db.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserID = user.UserID, UsersLastMoveText =" bir gönderi paylaştı.", UsersMoveLink = "/users/index/" + post.UserID + "#post" + post.PostID });
+                _db.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserId = user.Id, UsersLastMoveText =" bir gönderi paylaştı.", UsersMoveLink = "/users/index/" + post.UserId + "#post" + post.PostID });
             }
             catch (Exception ex)
             {
@@ -161,19 +159,19 @@ namespace ScoutUp.Controllers
             var post = _db.PostById((int)id);
             
             var user = GetUserModel();
-            var isLiked = _db.PostLikes.Where(e => e.UserID == user.UserID).FirstOrDefault(e => e.PostID == id);
+            var isLiked = _db.PostLikes.Where(e => e.UserId == user.Id).FirstOrDefault(e => e.PostID == id);
             if (isLiked != null)
             {
                     _db.PostLikes.Attach(isLiked);
                     _db.Entry(isLiked).State = EntityState.Deleted;
                     _db.SaveChanges();
                     //NotificationRepository repo=new NotificationRepository();
-                    //repo.AddNotification(post.UserID,user.UserName+ " " + user.UserSurname +" gönderini beğendi");
+                    //repo.AddNotification(post.UserId,user.UserFirstName+ " " + user.UserSurname +" gönderini beğendi");
                     return Json(new { success = true,liked = false, likes = _db.PostById((int)id).PostLikes.Count }, JsonRequestBehavior.AllowGet);
                 }
             var postLike = new PostLikes
             {
-                UserID = user.UserID,
+                UserId = user.Id,
                 PostID = (int) id,
                 IsLiked = true
             };
@@ -183,7 +181,7 @@ namespace ScoutUp.Controllers
                 using (var context = new ScoutUpDB())
                 {
                     context.PostLikes.Add(postLike);
-                    context.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserID = user.UserID, UsersLastMoveText =" bir gönderiyi beğendi.", UsersMoveLink = "/users/index/" + post.UserID + "#post" + post.PostID });
+                    context.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserId = user.Id, UsersLastMoveText =" bir gönderiyi beğendi.", UsersMoveLink = "/users/index/" + post.UserId + "#post" + post.PostID });
                     context.SaveChanges();
                     return Json(new { success = true,liked=true,likes =context.PostById((int)id).PostLikes.Count },JsonRequestBehavior.AllowGet);
                 }
@@ -201,13 +199,13 @@ namespace ScoutUp.Controllers
             var user = GetUserModel();
             PostLikes isLiked;
 
-            isLiked = _db.PostLikes.Where(e => e.UserID == user.UserID).FirstOrDefault(e => e.PostID == id);
+            isLiked = _db.PostLikes.Where(e => e.UserId == user.Id).FirstOrDefault(e => e.PostID == id);
 
             if (isLiked == null)
             {
                 ViewBag.isLiked = false;
                 ViewBag.postid = id;
-                ViewBag.postUserid = _db.Posts.FirstOrDefault(e => e.PostID == (int) id).UserID;
+                ViewBag.postUserid = _db.Posts.FirstOrDefault(e => e.PostID == (int) id).UserId;
                 ViewBag.postLikesCount = _db.PostById((int)id).PostLikes.Count;
                 return PartialView("UserLikedPost");
             }
@@ -215,7 +213,7 @@ namespace ScoutUp.Controllers
             {
                 ViewBag.isLiked = true;
                 ViewBag.postid = id;
-                ViewBag.postUserid = _db.Posts.FirstOrDefault(e => e.PostID == (int)id).UserID;
+                ViewBag.postUserid = _db.Posts.FirstOrDefault(e => e.PostID == (int)id).UserId;
                 ViewBag.postLikesCount = _db.PostById((int)id).PostLikes.Count;
                 return PartialView("UserLikedPost");
             }
@@ -224,8 +222,8 @@ namespace ScoutUp.Controllers
         {
             var user = GetUserModel();
             var skip = count - 5;
-            var followingUsers = user.UserFollow.Select(e => e.UserBeingFollowedUserID).ToArray();
-            var followingUsersPosts = _db.Posts.Where(e => followingUsers.Contains(e.UserID) || e.UserID==user.UserID).
+            var followingUsers = user.UserFollow.Select(e => e.UserBeingFollowedUserId).ToArray();
+            var followingUsersPosts = _db.Posts.Where(e => followingUsers.Contains(e.UserId) || e.UserId==user.Id).
                 Select(e => new NewsFeedPostsViewModel
                 {
                     CurrentUserPhoto = user.UserProfilePhoto,PostDatePosted = e.PostDatePosted,PostId = e.PostID,PostOwnerPhoto = e.User.UserProfilePhoto,
@@ -236,7 +234,7 @@ namespace ScoutUp.Controllers
                             PostPhotoLocateBig = ph.PostPhotosLocateBig
                         }).ToList()
                     },
-                    PostText = e.PostText,UserId = e.UserID,UserName = e.User.UserName,UserSurname = e.User.UserSurname
+                    PostText = e.PostText,UserId = e.UserId,UserName = e.User.UserFirstName,UserSurname = e.User.UserSurname
                 }).OrderByDescending(e=> e.PostDatePosted).Skip(skip).Take(take).ToList();
             if (followingUsersPosts.Count > 0)
                 return PartialView("NewsFeedPosts", followingUsersPosts);

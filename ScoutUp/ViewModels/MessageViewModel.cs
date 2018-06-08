@@ -7,11 +7,11 @@ namespace ScoutUp.ViewModels
 {
     public class MessageViewModel
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public string UserProfilePhoto { get; set; }
         public string UserName { get; set; }
         public string UserSurname { get; set; }
-        public int RecieverUserId { get; set; }
+        public string RecieverUserId { get; set; }
         public string MessageText { get; set; }
         public DateTime DateSend { get; set; }
         public override bool Equals(object o)
@@ -27,7 +27,7 @@ namespace ScoutUp.ViewModels
 
     public class OnlineUsersViewModel
     {
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         public string UserName { get; set; }
         public string UserProfilePhoto { get; set; }
     }

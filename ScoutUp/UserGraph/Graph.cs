@@ -12,7 +12,7 @@ namespace ScoutUp
         public float[] Distance;
         public int[] Prev;
 
-        public void addVertex(int vertexId)
+        public void addVertex(string vertexId)
         {
             if (!search(vertexId))//vertex yoksa
             {
@@ -27,7 +27,7 @@ namespace ScoutUp
                 }
             }
         }
-        public bool search(int vertexId)//Id'si verilen bir vertex'in graph'ta olup olmadigi bilgisini dondurur
+        public bool search(string vertexId)//Id'si verilen bir vertex'in graph'ta olup olmadigi bilgisini dondurur
         {
             Vertex iterator = vertexHead;
             while (iterator != null)
@@ -38,7 +38,7 @@ namespace ScoutUp
             }
             return false;
         }
-        public void addEdge(int sourceId, int destId,float weight)//destId=>destinationId
+        public void addEdge(string sourceId, string destId,float weight)//destId=>destinationId
         {
             Vertex sourceVertex = find(sourceId);
             Vertex destid2 = find(destId);
@@ -61,7 +61,7 @@ namespace ScoutUp
 
         }
         
-        public Vertex find(int vertexId)
+        public Vertex find(string vertexId)
         {
             Vertex iterator = vertexHead;
             while (iterator != null)
@@ -108,17 +108,17 @@ namespace ScoutUp
             Vertex iterator = vertexHead;
             while(iterator != null)
             {
-                float weight = weightBetweenVertexes(source, iterator);
-                if (source.Vertexid == iterator.Vertexid)
-                {
-                    distance[iterator.Vertexid] = 0;
-                    iterator.Value = 0;
-                }
-                else
-                {
-                    distance[iterator.Vertexid] = weight == 0 ? 100000 : weight;
-                    iterator.Value = weight == 0 ? 100000 : weight;
-                }
+                //float weight = weightBetweenVertexes(source, iterator);
+                //if (source.Vertexid == iterator.Vertexid)
+                //{
+                //    distance[iterator.Vertexid] = 0;
+                //    iterator.Value = 0;
+                //}
+                //else
+                //{
+                //    distance[iterator.Vertexid] = weight == 0 ? 100000 : weight;
+                //    iterator.Value = weight == 0 ? 100000 : weight;
+                //}
                 vertexList.Add(iterator);
                 iterator = iterator.NextVertex;
             }
@@ -130,16 +130,16 @@ namespace ScoutUp
                 Edge iteratorE = u.EdgeLink;
                 while(iteratorE !=null)
                 {
-                    float temp = distance[u.Vertexid] + weightBetweenVertexes(u, iteratorE.VertexLink);
-                    if(temp < distance[iteratorE.VertexLink.Vertexid])
-                    {
-                        var item =vertexList.Find(x => x.Vertexid == iteratorE.VertexLink.Vertexid);
-                        if(item !=null)
-                            item.Value = temp;
-                        distance[iteratorE.VertexLink.Vertexid] = temp;
-                        prev[iteratorE.VertexLink.Vertexid] = u.Vertexid;   
+                    //float temp = distance[u.Vertexid] + weightBetweenVertexes(u, iteratorE.VertexLink);
+                    //if(temp < distance[iteratorE.VertexLink.Vertexid])
+                    //{
+                    //    var item =vertexList.Find(x => x.Vertexid == iteratorE.VertexLink.Vertexid);
+                    //    if(item !=null)
+                    //        item.Value = temp;
+                    //    distance[iteratorE.VertexLink.Vertexid] = temp;
+                    //    prev[iteratorE.VertexLink.Vertexid] = u.Vertexid;   
                         
-                    }
+                    //}
                     iteratorE = iteratorE.NextEdge;
                 }
             }

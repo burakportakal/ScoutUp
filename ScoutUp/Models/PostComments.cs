@@ -9,7 +9,7 @@ namespace ScoutUp.Models
     {
         public int PostCommentsID { get; set; }
         public int PostID { get; set; }
-        public int UserID { get; set; }
+        public string UserId { get; set; }
         public string PostComment { get; set; }
         public DateTime PostCommentDate { get; set; }
         public virtual Post Post { get; set; }

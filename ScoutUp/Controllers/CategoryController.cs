@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -18,26 +17,25 @@ namespace ScoutUp.Controllers
         {
             return View();
         }
-
         public ActionResult Categories()
         {// kullanıcının puanladıkları
-            /*select UserRatings.UserID,UserRatings.UserRating,CategoryItems.CategoryItemID,
+            /*select UserRatings.UserId,UserRatings.UserRating,CategoryItems.CategoryItemID,
 CategoryItems.CategoryItemPhoto,CategoryItems.CategoryItemName
 from UserRatings
 inner join 
 CategoryItems on dbo.UserRatings.CategoryItemID = dbo.CategoryItems.CategoryID
-where UserID=1*/
+where UserId=1*/
             //Kullanıcının puanlamadığı itemler
             /*select * from CategoryItems where CategoryItemID not in(
 select CategoryItemID
-from UserRatings where UserID=1)*/
-            var userid = Convert.ToInt32(HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId());
+from UserRatings where UserId=1)*/
+            var userid = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId();
             var itemViewModel = _db.CategoryItems.SqlQuery(
-                "select * from CategoryItems where CategoryItemID not in(select CategoryItemID from UserRatings where UserID = "+userid +")")
+                "select * from CategoryItems where CategoryItemID not in(select CategoryItemID from UserRatings where UserId = '"+userid +"')")
                 .Select(e => new CategoryItemViewModel { CategoryItemName = e.CategoryItemName, CategoryItemId = e.CategoryItemID, CategoryId = e.CategoryID ,CategoryItemPhoto = e.CategoryItemPhoto});
             var viewModel = _db.Categories.Select(e => new ViewModels.CategoryViewModel {CategoryId = e.CategoryID,CategoryName = e.CategoryName});
             //var itemViewModel = _db.CategoryItems.Select(e => new CategoryItemViewModel { CategoryItemName =e.CategoryItemName,CategoryItemId = e.CategoryItemID,CategoryId = e.CategoryID});
-            //var userRatings = _db.UserRatings.Where(e => e.UserID==userid).Select(t => new )
+            //var userRatings = _db.UserRatings.Where(e => e.UserId==userid).Select(t => new )
             Dictionary<CategoryViewModel,List<CategoryItemViewModel>> model = new Dictionary<CategoryViewModel,List<CategoryItemViewModel>>();
             foreach (var categoryViewModel in viewModel)
             {
@@ -53,31 +51,31 @@ from UserRatings where UserID=1)*/
             }
             return PartialView("Categories", model);
         }
-        public ActionResult CategoriesLiked(int? id)
+        public ActionResult CategoriesLiked(string id)
         {// kullanıcının puanladıkları
-            /*select UserRatings.UserID,UserRatings.UserRating,CategoryItems.CategoryItemID,
+            /*select UserRatings.UserId,UserRatings.UserRating,CategoryItems.CategoryItemID,
 CategoryItems.CategoryItemPhoto,CategoryItems.CategoryItemName
 from UserRatings
 inner join 
 CategoryItems on dbo.UserRatings.CategoryItemID = dbo.CategoryItems.CategoryID
-where UserID=1*/
+where UserId=1*/
             //Kullanıcının puanlamadığı itemler
             /*select * from CategoryItems where CategoryItemID not in(
 select CategoryItemID
-from UserRatings where UserID=1)*/
-            var userid = Convert.ToInt32(HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId());
-            if (id != null)
+from UserRatings where UserId=1)*/
+            var userid = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId();
+            if (!string.IsNullOrEmpty(id))
             {
-                userid = (int)id;
+                userid = id;
             }
             
             var itemViewModel = _db.CategoryItems.SqlQuery(
-                "select * from CategoryItems where CategoryItemID in(select CategoryItemID from UserRatings where UserID = " + userid + ")")
+                "select * from CategoryItems where CategoryItemID in(select CategoryItemID from UserRatings where UserId = '" + userid + "')")
                 .Select(e => new CategoryItemViewModel { CategoryItemName = e.CategoryItemName, CategoryItemId = e.CategoryItemID, CategoryId = e.CategoryID, CategoryItemPhoto = e.CategoryItemPhoto });
             var viewModel = _db.Categories.Select(e => new ViewModels.CategoryViewModel { CategoryId = e.CategoryID, CategoryName = e.CategoryName });
             //var itemViewModel = _db.CategoryItems.Select(e => new CategoryItemViewModel { CategoryItemName =e.CategoryItemName,CategoryItemId = e.CategoryItemID,CategoryId = e.CategoryID});
-            //var userRatings = _db.UserRatings.Where(e => e.UserID==userid).Select(t => new )
-            var ratings = _db.UserRatings.Where(e => e.UserID == userid).ToDictionary(e => e.CategoryItemID);
+            //var userRatings = _db.UserRatings.Where(e => e.UserId==userid).Select(t => new )
+            var ratings = _db.UserRatings.Where(e => e.UserId == userid).ToDictionary(e => e.CategoryItemID);
             Dictionary<CategoryViewModel, List<CategoryItemViewModel>> model = new Dictionary<CategoryViewModel, List<CategoryItemViewModel>>();
             foreach (var categoryViewModel in viewModel)
             {

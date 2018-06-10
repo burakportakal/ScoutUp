@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using ScoutUp.DAL;
 using ScoutUp.Models;
 using ScoutUp.ViewModels;
@@ -15,31 +14,31 @@ namespace ScoutUp.Repository
         {
             StartMessaging(model.UserId,model.RecieverUserId);
             var chatId = _db.Chat
-                .FirstOrDefault(e => (e.UserID == model.UserId && e.OtherUserId == model.RecieverUserId));
+                .FirstOrDefault(e => (e.UserId == model.UserId && e.OtherUserId == model.RecieverUserId));
             var temp = new ChatMessages {ChatId = chatId.ChatId,ChatMessageText = model.MessageText,ChatMessagesSendDate = DateTime.Now};
 
             _db.ChatMessages.Add(temp);
             _db.SaveChanges();
         }
 
-        public void StartMessaging(int userId,int otherUserId)
+        public void StartMessaging(string userId,string otherUserId)
         {
             var alreadyInDb = _db.Chat.FirstOrDefault(e =>
-                (e.UserID == userId && e.OtherUserId == otherUserId) )== null;
+                (e.UserId == userId && e.OtherUserId == otherUserId) )== null;
             if (alreadyInDb)
             {
-                var chat = new Chat {UserID = userId, OtherUserId = otherUserId};
+                var chat = new Chat {UserId = userId, OtherUserId = otherUserId};
                 _db.Chat.Add(chat);
                 _db.SaveChanges();
             }
         }
 
-        public List<MessageViewModel> GetAllMessagesBetweenUsers(int userId,int otherUserId)
+        public List<MessageViewModel> GetAllMessagesBetweenUsers(string userId,string otherUserId)
         {
             var userAsSender = _db.Chat.FirstOrDefault(e =>
-                                  (e.UserID == userId && e.OtherUserId == otherUserId));
+                                  (e.UserId == userId && e.OtherUserId == otherUserId));
             var userAsReciever = _db.Chat.FirstOrDefault(e =>
-                (e.UserID == otherUserId && e.OtherUserId == userId));
+                (e.UserId == otherUserId && e.OtherUserId == userId));
             
            
             var userAsSenderchatMessages=new List<MessageViewModel>();
@@ -54,7 +53,7 @@ namespace ScoutUp.Repository
                         MessageText = t.ChatMessageText,
                         RecieverUserId = otherUserId,
                         UserId = userId,
-                        UserName = user.UserName,
+                        UserName = user.UserFirstName,
                         UserSurname = user.UserSurname,
                         UserProfilePhoto = user.UserProfilePhoto
                     }).ToList();
@@ -69,8 +68,8 @@ namespace ScoutUp.Repository
                         DateSend = t.ChatMessagesSendDate,
                         MessageText = t.ChatMessageText,
                         RecieverUserId = userId,
-                        UserId = otherUser.UserID,
-                        UserName = otherUser.UserName,
+                        UserId = otherUser.Id,
+                        UserName = otherUser.UserFirstName,
                         UserSurname = otherUser.UserSurname,
                         UserProfilePhoto = otherUser.UserProfilePhoto
                     }).ToList();

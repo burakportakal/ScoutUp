@@ -8,7 +8,7 @@ namespace ScoutUp.Models
     public class Post
     {
         public int PostID { get; set; }
-        public int UserID { get; set; }
+        public string UserId { get; set; }
         public string PostText { get; set; }
         public DateTime PostDatePosted { get; set; }
         public virtual User User { get; set; }

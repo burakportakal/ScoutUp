@@ -8,7 +8,7 @@ namespace ScoutUp.Models
     public class UsersLastMoves
     {
         public int UsersLastMovesID { get; set; }
-        public int UserID { get; set; }
+        public string UserId { get; set; }
         public string UsersLastMoveText { get; set; }
         public string UsersMoveLink { get; set; }
         public DateTime MoveDate { get; set; }

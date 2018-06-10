@@ -1,7 +1,7 @@
 ﻿@model List< ScoutUp.ViewModels.MessageViewModel>
 @foreach (var listUserTabPane in Model)
 {
-    if (ViewBag.tabPaneActive || ViewBag.targetId!=0)
+    if (ViewBag.tabPaneActive || !String.IsNullOrEmpty(ViewBag.targetId))
     {
         if (ViewBag.targetId == listUserTabPane.UserId)
         {

@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using ScoutUp.Classes;
 using ScoutUp.DAL;
-using ScoutUp.Models;
 using ScoutUp.Search;
 
 namespace ScoutUp.Controllers
@@ -24,12 +22,13 @@ namespace ScoutUp.Controllers
         [Authorize]
         public ActionResult Newsfeed()
         {
-            Models.User user = getUserModel();
-            ViewBag.email = user.UserEmail;
-            ViewBag.id = user.UserID;
+            var id = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId();
+            Models.User user = _db.UserById(id);
+            //ViewBag.email = user.UserEmail;
+            ViewBag.id = user.Id;
             UsersController controller = getUserController();
             var graph = new UserBfs();
-            var usersToFollow = graph.Calculate(user.UserID);
+            var usersToFollow = graph.Calculate(user.Id);
             var followCount = user.UserFollow.Count;
             List<UsersToFollow> usersTofollowList = new List<UsersToFollow>();
             int counter = 0;
@@ -41,18 +40,18 @@ namespace ScoutUp.Controllers
                     continue;
                 }
                 var followUser = _db.Users.Find(userid);
-                usersTofollowList.Add(new UsersToFollow (followUser.UserID,followUser.UserName + " " + followUser.UserSurname, followUser.UserProfilePhoto));
+                usersTofollowList.Add(new UsersToFollow (followUser.Id,followUser.UserFirstName + " " + followUser.UserSurname, followUser.UserProfilePhoto));
             }
 
             ViewBag.followSuggest = usersTofollowList;
-            ViewBag.followerCount = controller.FollowerCount(user.UserID);
+            ViewBag.followerCount = controller.FollowerCount(user.Id);
             return View(user);
         }
         public int usersFollowers()
         {
             UsersController controller = getUserController();
             Models.User user = getUserModel();
-            int followerCount = controller.FollowerCount(user.UserID);
+            int followerCount = controller.FollowerCount(user.Id);
             return followerCount;
         }
         public ActionResult Register()

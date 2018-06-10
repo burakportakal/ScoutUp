@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using ScoutUp.DAL;
 using ScoutUp.Models;
 using ScoutUp.ViewModels;
@@ -12,11 +11,11 @@ namespace ScoutUp.Repository
     public class NotificationRepository
     {
 
-        public UserNotifications AddNotification(int userid, string message,string notifiyDirection,string notifyLink)
+        public UserNotifications AddNotification(string userid, string message,string notifiyDirection,string notifyLink)
         {
             var notify = new UserNotifications()
             {
-                UserID = userid,
+                UserId = userid,
                 UserNotificationsMessage = message,
                 UserNotificationsDate = DateTime.Now,
                 UserNotificationsRead = false,
@@ -30,20 +29,20 @@ namespace ScoutUp.Repository
             return notify;
         }
 
-        public List<UserNotifications> GetUserNotifications(int userid)
+        public List<UserNotifications> GetUserNotifications(string userid)
         {
             List<UserNotifications> notifications =new List<UserNotifications>();
             List<UserNotifications> notifications2 = new List<UserNotifications>();
             using (var context = new ScoutUpDB())
             {
                  notifications= context.UserNotifications.Include(e => e.User)
-                     .Where(e => e.UserID == userid)
+                     .Where(e => e.UserId == userid)
                     .Where(r => r.UserNotificationsRead==false)
                     .ToList();
                 foreach (var notify in notifications)
                 {
                     notifications2.Add(new UserNotifications {UserNotificationsID = notify.UserNotificationsID,
-                        UserID = notify.UserID,
+                        UserId = notify.UserId,
                         UserNotificationsMessage = notify.UserNotificationsMessage,
                         UserNotificationsDate = notify.UserNotificationsDate,
                         NotificationLink = notify.NotificationLink
@@ -73,7 +72,7 @@ namespace ScoutUp.Repository
             {
                 model =context.Posts.Where(e=> e.PostID==postid).Select(e=> new OnlineUsersViewModel
                 {
-                    UserId = e.UserID
+                    UserId = e.UserId
                     ,UserProfilePhoto = e.User.UserProfilePhoto
                 }).FirstOrDefault();
             }

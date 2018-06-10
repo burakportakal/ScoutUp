@@ -8,13 +8,13 @@ namespace ScoutUp
 {
     class Vertex
     {
-        int vertexid;
+        string vertexid;
         string vertexName;
         float value;
         Vertex nextVertex;
         Edge edgeLink;
 
-        public int Vertexid
+        public string Vertexid
         {
             get
             {
@@ -83,7 +83,7 @@ namespace ScoutUp
         {
             return "id : " + this.vertexid +" name : "+ VertexName+" ";
         }
-        public Vertex(int vertexid)
+        public Vertex(string vertexid)
         {
             Vertexid = vertexid;
         }

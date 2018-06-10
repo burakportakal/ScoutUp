@@ -1,7 +1,7 @@
 ﻿@model List<ScoutUp.ViewModels.MessageViewModel>
 @foreach (var tabUser in Model)
 {
-    if (ViewBag.tabActive || ViewBag.targetId!=0)
+    if (ViewBag.tabActive || !String.IsNullOrEmpty( ViewBag.targetId))
     {
         if (ViewBag.targetId == tabUser.UserId)
         {

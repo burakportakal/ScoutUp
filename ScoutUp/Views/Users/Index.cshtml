@@ -33,10 +33,10 @@
             <!-- Post Content
             ================================================= -->
             <div id ="posts">
-                @Html.Action("Posts","Post", new { userid = @Model.UserID})
+                @Html.Action("Posts","Post", new { userid = @Model.Id})
             </div>
         </div>
-        @Html.Action("UsersLastMoves", "Users",new {id = @Model.UserID})
+        @Html.Action("UsersLastMoves", "Users",new {id = @Model.Id})
     </div>
 </div>
 <div id="notifications"></div>
@@ -50,7 +50,7 @@
 <script>
     $("#profile-link").addClass('active');
     function displayNumbers() {
-        $.get({ url: "/users/followerCount/@Model.UserID", success: function (result) { $("#follower-count").text(result+" Takipçi"); } });
+        $.get({ url: "/users/followerCount/@Model.Id", success: function (result) { $("#follower-count").text(result+" Takipçi"); } });
     }
     window.setInterval(function () {
         displayNumbers();
@@ -110,7 +110,7 @@
             contentType: false,
             complete: function(response) {
                 if (response.responseJSON.success) {
-                    $("#posts").load("@Html.Raw(Url.Action("Posts", "Post", new {userid = @Model.UserID}))");
+                    $("#posts").load("@Html.Raw(Url.Action("Posts", "Post", new {userid = @Model.Id}))");
                 } else {
                     alert("Bir hata oluştu" + response["message"]);
                 }

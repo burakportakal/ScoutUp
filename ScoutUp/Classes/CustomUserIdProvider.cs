@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Microsoft.AspNet.SignalR;
+﻿using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.Identity;
 
 namespace ScoutUp.Classes
@@ -15,7 +11,7 @@ namespace ScoutUp.Classes
 
             // for example:
 
-            var userId = Convert.ToInt32(Context.User.Identity.GetUserId());
+            var userId = Context.User.Identity.GetUserId();
             return userId.ToString();
         }
     }

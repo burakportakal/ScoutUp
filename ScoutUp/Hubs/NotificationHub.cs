@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
@@ -23,7 +21,7 @@ namespace ScoutUp.Hubs
         /// <param name="userid">Bildirim gönderilecek kullanıcının unique id si.</param>
         /// <param name="message">Bildirim gönderen kullanıcın adı soyadı varsa mesajı</param>
         /// <returns></returns>
-        public Task SendNotification(int userid,string message,string notifyDirection,string notifyLink)
+        public Task SendNotification(string userid,string message,string notifyDirection,string notifyLink)
         {
             var objRepository = new NotificationRepository();
             var notification = objRepository.AddNotification(userid,message, notifyDirection, notifyLink);
@@ -70,7 +68,7 @@ namespace ScoutUp.Hubs
                 client = Clients.Client(connectionId);
             }
 
-            List<UserNotifications> notifications = objRepository.GetUserNotifications(Convert.ToInt32(name));
+            List<UserNotifications> notifications = objRepository.GetUserNotifications(name);
             client.refreshNotification(notifications);
             return base.OnConnected();
 

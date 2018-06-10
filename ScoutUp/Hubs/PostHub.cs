@@ -2,12 +2,10 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using ScoutUp.DAL;
 using ScoutUp.Models;
-using ScoutUp.Repository;
 
 namespace ScoutUp.Hubs
 {
@@ -15,19 +13,19 @@ namespace ScoutUp.Hubs
     public class PostHub : Hub
     {
         private readonly ScoutUp.DAL.ScoutUpDB _db=new ScoutUpDB();
-        public Task Like(int? postId,int userid)
+        public Task Like(int? postId,string userid)
         {
             var likePost = SaveLike(postId,userid);
             var _connections = NotificationHub._connections;
             return Clients.All.updateLikeCount(likePost);
         }
 
-        private LikePost SaveLike(int? postid,int? userid)
+        private LikePost SaveLike(int? postid,string userid)
         {
             var post = _db.Posts.Find(postid);
 
             var user = _db.Users.Find(userid);
-            var isLiked = _db.PostLikes.Where(e => e.UserID == user.UserID).FirstOrDefault(e => e.PostID == postid);
+            var isLiked = _db.PostLikes.Where(e => e.UserId == user.Id).FirstOrDefault(e => e.PostID == postid);
             if (isLiked != null)
             {
                 using (var context = new ScoutUpDB())
@@ -48,7 +46,7 @@ namespace ScoutUp.Hubs
 
             var postLike = new PostLikes
             {
-                UserID = user.UserID,
+                UserId = user.Id,
                 PostID = (int) postid,
                 IsLiked = true
             };
@@ -58,7 +56,7 @@ namespace ScoutUp.Hubs
                 using (var context = new ScoutUpDB())
                 {
                     context.PostLikes.Add(postLike);
-                    context.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserID = user.UserID, UsersLastMoveText = " bir gönderiyi beğendi.", UsersMoveLink = "/users/index/" + post.UserID + "#post" + post.PostID });
+                    context.UsersLastMoves.Add(new UsersLastMoves { MoveDate = DateTime.Now, UserId = user.Id, UsersLastMoveText = " bir gönderiyi beğendi.", UsersMoveLink = "/users/index/" + post.UserId + "#post" + post.PostID });
                     context.SaveChanges();
                     return new LikePost
                     {

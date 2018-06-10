@@ -17,7 +17,7 @@
      *   Microsoft Signalr
      *   Javascript, Jquery, Html, Css
      
- Link http://www.scoutup.tk
+ Link http://www.scoutup.tk kullanıcı adı: burak şifre: burak1234
 
 # Ana Sayfa
 [![image](http://www.imgim.com/anaekran.jpg)](http://www.imgim.com/anaekran.jpg)

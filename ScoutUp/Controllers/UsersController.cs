@@ -806,8 +806,8 @@ namespace ScoutUp.Controllers
         }
         public User GetUser()
         {
-            var t = HttpContext.GetOwinContext().Authentication.User.Claims;
-            var id = (from item in t where item.Type.Contains("primarysid") select item.Value).FirstOrDefault();
+            var t = HttpContext.GetOwinContext().Authentication;
+            var id = t.User.Identity.GetUserId();
                 //Extensions classı kullanılıyor
                 return _db.UserById(id);
         }

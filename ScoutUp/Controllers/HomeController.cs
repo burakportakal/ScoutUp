@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using ScoutUp.Classes;
 using ScoutUp.DAL;
 using ScoutUp.Search;
@@ -21,7 +22,8 @@ namespace ScoutUp.Controllers
         [Authorize]
         public ActionResult Newsfeed()
         {
-            Models.User user = getUserModel();
+            var id = HttpContext.GetOwinContext().Authentication.User.Identity.GetUserId();
+            Models.User user = _db.UserById(id);
             //ViewBag.email = user.UserEmail;
             ViewBag.id = user.Id;
             UsersController controller = getUserController();
